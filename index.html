@@ -1,0 +1,1534 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Studio Arcade</title>
+  <style>
+    /* ==========================================================================
+       Studio Arcade styles
+       ========================================================================== */
+    :root {
+      --background: #0b0b0f;
+      --surface: #13131b;
+      --surface2: #1b1b26;
+      --border: #252533;
+      --gold: #c8a86b;
+      --text: #e6e2d9;
+      --muted: #8f8e9d;
+      --blue: #5b9cf6;
+      --danger: #f66f8d;
+      --success: #7ee3b2;
+      --shadow: rgba(0, 0, 0, 0.55);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(91, 156, 246, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200, 168, 107, 0.04) 1px, transparent 1px),
+        radial-gradient(circle at 20% 10%, rgba(91, 156, 246, 0.16), transparent 28rem),
+        radial-gradient(circle at 80% 20%, rgba(200, 168, 107, 0.12), transparent 22rem),
+        var(--background);
+      background-size: 32px 32px, 32px 32px, auto, auto, auto;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .screen.is-active {
+      display: block;
+    }
+
+    .library {
+      width: min(1120px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+
+    .library-header {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 0;
+      font-size: clamp(2.2rem, 8vw, 5.8rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      text-shadow: 0 0 24px rgba(91, 156, 246, 0.22);
+    }
+
+    .library-copy {
+      max-width: 680px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .cartridge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .cartridge {
+      position: relative;
+      min-height: 310px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px 22px;
+      overflow: hidden;
+      color: var(--text);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 36%),
+        linear-gradient(180deg, #222230 0%, #14141d 52%, #0f0f15 100%);
+      box-shadow: 0 20px 45px var(--shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+      text-align: left;
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .cartridge:hover,
+    .cartridge:focus-visible {
+      transform: translateY(-4px);
+      border-color: rgba(200, 168, 107, 0.72);
+      box-shadow: 0 24px 55px var(--shadow), 0 0 32px rgba(200, 168, 107, 0.18);
+      outline: none;
+    }
+
+    .cartridge:active {
+      transform: translateY(-1px);
+    }
+
+    .cartridge-top {
+      height: 22px;
+      margin: -8px auto 16px;
+      border: 1px solid rgba(0, 0, 0, 0.35);
+      border-radius: 0 0 6px 6px;
+      background:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 5px, transparent 5px 10px),
+        #101018;
+      width: 72%;
+    }
+
+    .cartridge-art {
+      display: grid;
+      place-items: center;
+      min-height: 140px;
+      border: 1px solid rgba(200, 168, 107, 0.32);
+      border-radius: 6px;
+      margin-bottom: 18px;
+      background:
+        linear-gradient(rgba(91, 156, 246, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(91, 156, 246, 0.08) 1px, transparent 1px),
+        radial-gradient(circle, rgba(91, 156, 246, 0.28), transparent 62%),
+        #101018;
+      background-size: 18px 18px, 18px 18px, auto, auto;
+      box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.45);
+    }
+
+    .patch-icon {
+      width: min(150px, 64%);
+      aspect-ratio: 1;
+    }
+
+    .cartridge-title {
+      margin-bottom: 7px;
+      font-size: 1.25rem;
+      text-transform: uppercase;
+    }
+
+    .cartridge-subtitle {
+      margin-bottom: 18px;
+      color: var(--muted);
+      line-height: 1.45;
+      min-height: 42px;
+    }
+
+    .cartridge-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 14px;
+      color: var(--gold);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+    }
+
+    .coming-soon {
+      opacity: 0.52;
+      filter: saturate(0.5);
+      cursor: not-allowed;
+    }
+
+    .game-shell {
+      width: min(1180px, calc(100vw - 20px));
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 14px 0 24px;
+      display: grid;
+      gap: 12px;
+      grid-template-rows: auto minmax(280px, 1fr) auto;
+    }
+
+    .game-topbar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px;
+      background: rgba(19, 19, 27, 0.88);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.34);
+    }
+
+    .back-button,
+    .small-button,
+    .difficulty-toggle {
+      border: 1px solid rgba(200, 168, 107, 0.48);
+      border-radius: 6px;
+      background: rgba(200, 168, 107, 0.08);
+      color: var(--text);
+      padding: 10px 12px;
+      min-height: 42px;
+      transition: background 140ms ease, border-color 140ms ease;
+    }
+
+    .back-button:hover,
+    .small-button:hover,
+    .difficulty-toggle:hover,
+    .back-button:focus-visible,
+    .small-button:focus-visible,
+    .difficulty-toggle:focus-visible {
+      background: rgba(200, 168, 107, 0.16);
+      border-color: var(--gold);
+      outline: none;
+    }
+
+    .game-title {
+      min-width: 0;
+    }
+
+    .game-title h2 {
+      margin-bottom: 2px;
+      font-size: clamp(1.05rem, 3vw, 1.55rem);
+      text-transform: uppercase;
+    }
+
+    .game-title p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .scoreboard {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .score-pill {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 10px;
+      background: var(--surface2);
+      color: var(--text);
+      min-width: 74px;
+      text-align: center;
+    }
+
+    .score-pill strong {
+      color: var(--blue);
+      font-size: 1.15rem;
+    }
+
+    .arena-wrap {
+      position: relative;
+      min-height: 280px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #050508;
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.55);
+      touch-action: none;
+    }
+
+    #patchPongCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+    }
+
+    .game-overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(11, 11, 15, 0.18), rgba(11, 11, 15, 0.7));
+    }
+
+    .overlay-card {
+      width: min(500px, 100%);
+      border: 1px solid rgba(200, 168, 107, 0.42);
+      border-radius: var(--radius);
+      padding: 20px;
+      background: rgba(19, 19, 27, 0.86);
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.52);
+    }
+
+    .overlay-card h3 {
+      margin-bottom: 8px;
+      color: var(--gold);
+      font-size: clamp(1.4rem, 5vw, 2.4rem);
+      text-transform: uppercase;
+    }
+
+    .overlay-card p {
+      margin-bottom: 0;
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .game-controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: rgba(19, 19, 27, 0.88);
+    }
+
+    .instructions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+
+    .kbd {
+      display: inline-block;
+      border: 1px solid var(--border);
+      border-bottom-color: #09090d;
+      border-radius: 4px;
+      padding: 1px 6px;
+      background: var(--surface2);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .control-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .difficulty-toggle[aria-pressed="true"] {
+      border-color: var(--blue);
+      background: rgba(91, 156, 246, 0.14);
+      color: var(--text);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 720px) {
+      .library {
+        width: min(100vw - 20px, 560px);
+        padding-top: 20px;
+      }
+
+      .game-topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .scoreboard {
+        justify-content: stretch;
+      }
+
+      .score-pill {
+        flex: 1;
+      }
+
+      .game-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .control-actions {
+        justify-content: stretch;
+      }
+
+      .control-actions button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section id="libraryScreen" class="screen is-active" aria-labelledby="libraryTitle">
+      <div class="library">
+        <header class="library-header">
+          <p class="eyebrow">Belmont Recording Studios presents</p>
+          <h1 id="libraryTitle">Studio Arcade</h1>
+          <p class="library-copy">
+            A tiny browser arcade for studio breaks, signal-flow showdowns, and future audio-themed games.
+            Pick a cartridge to patch in.
+          </p>
+        </header>
+        <div id="cartridgeGrid" class="cartridge-grid" aria-label="Game Library"></div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen" aria-label="Active game">
+      <div class="game-shell">
+        <header class="game-topbar">
+          <button id="backToLibraryButton" class="back-button" type="button">Back to Game Library</button>
+          <div class="game-title">
+            <h2 id="activeGameTitle">Patch Pong</h2>
+            <p id="activeGameSubtitle">Route the signal past the CPU fader.</p>
+          </div>
+          <div id="patchPongScoreboard" class="scoreboard" aria-live="polite">
+            <span class="score-pill">You <strong id="playerScore">0</strong></span>
+            <span class="score-pill">CPU <strong id="cpuScore">0</strong></span>
+            <span class="score-pill">Wins <strong id="bestWins">0</strong></span>
+          </div>
+        </header>
+
+        <div id="gameMount" class="arena-wrap"></div>
+
+        <footer id="gameControls" class="game-controls"></footer>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    "use strict";
+
+    /* ==========================================================================
+       app state/router
+       ========================================================================== */
+    var appState = {
+      activeGameId: null,
+      activeGame: null
+    };
+
+    var libraryScreen = document.getElementById("libraryScreen");
+    var gameScreen = document.getElementById("gameScreen");
+    var cartridgeGrid = document.getElementById("cartridgeGrid");
+    var gameMount = document.getElementById("gameMount");
+    var gameControls = document.getElementById("gameControls");
+    var activeGameTitle = document.getElementById("activeGameTitle");
+    var activeGameSubtitle = document.getElementById("activeGameSubtitle");
+    var backToLibraryButton = document.getElementById("backToLibraryButton");
+
+    function showLibrary() {
+      libraryScreen.classList.add("is-active");
+      gameScreen.classList.remove("is-active");
+    }
+
+    function showGame() {
+      libraryScreen.classList.remove("is-active");
+      gameScreen.classList.add("is-active");
+    }
+
+    /* ==========================================================================
+       game registry
+       ========================================================================== */
+    var gameRegistry = [
+      {
+        id: "patch-pong",
+        title: "Patch Pong",
+        subtitle: "A glowing signal pulse duel across the patch bay.",
+        cartridgeArt: "patch",
+        launch: launchPatchPong,
+        stop: stopPatchPong
+      }
+    ];
+
+    /* ==========================================================================
+       library rendering
+       ========================================================================== */
+    function renderLibrary() {
+      cartridgeGrid.innerHTML = "";
+
+      gameRegistry.forEach(function(game) {
+        var cartridge = document.createElement("button");
+        cartridge.className = "cartridge";
+        cartridge.type = "button";
+        cartridge.setAttribute("aria-label", "Launch " + game.title);
+        cartridge.innerHTML =
+          '<div class="cartridge-top" aria-hidden="true"></div>' +
+          '<div class="cartridge-art" aria-hidden="true">' +
+            getCartridgeArt(game.cartridgeArt) +
+          '</div>' +
+          '<h2 class="cartridge-title">' + escapeHtml(game.title) + "</h2>" +
+          '<p class="cartridge-subtitle">' + escapeHtml(game.subtitle) + "</p>" +
+          '<div class="cartridge-footer"><span>Insert</span><span>Press Start</span></div>';
+
+        cartridge.addEventListener("click", function() {
+          launchGame(game.id);
+        });
+
+        cartridgeGrid.appendChild(cartridge);
+      });
+
+      var futureCartridge = document.createElement("button");
+      futureCartridge.className = "cartridge coming-soon";
+      futureCartridge.type = "button";
+      futureCartridge.disabled = true;
+      futureCartridge.innerHTML =
+        '<div class="cartridge-top" aria-hidden="true"></div>' +
+        '<div class="cartridge-art" aria-hidden="true">' +
+          getCartridgeArt("blank") +
+        '</div>' +
+        '<h2 class="cartridge-title">Next Cart</h2>' +
+        '<p class="cartridge-subtitle">Reserved slot for the next studio mini-game.</p>' +
+        '<div class="cartridge-footer"><span>Empty Bay</span><span>Soon</span></div>';
+      cartridgeGrid.appendChild(futureCartridge);
+    }
+
+    function getCartridgeArt(type) {
+      if (type === "patch") {
+        return '' +
+          '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Patch cables and pong pulse">' +
+            '<defs>' +
+              '<filter id="glow"><feGaussianBlur stdDeviation="2.5" result="blur"><\/feGaussianBlur><feMerge><feMergeNode in="blur"><\/feMergeNode><feMergeNode in="SourceGraphic"><\/feMergeNode><\/feMerge><\/filter>' +
+            '</defs>' +
+            '<rect x="18" y="20" width="16" height="80" rx="5" fill="#1b1b26" stroke="#c8a86b" stroke-width="3"><\/rect>' +
+            '<rect x="86" y="20" width="16" height="80" rx="5" fill="#1b1b26" stroke="#5b9cf6" stroke-width="3"><\/rect>' +
+            '<path d="M30 35 C48 22, 69 22, 90 36" fill="none" stroke="#c8a86b" stroke-width="5" stroke-linecap="round" filter="url(#glow)"><\/path>' +
+            '<path d="M30 84 C52 103, 70 101, 91 83" fill="none" stroke="#5b9cf6" stroke-width="5" stroke-linecap="round" filter="url(#glow)"><\/path>' +
+            '<circle cx="60" cy="60" r="11" fill="#e6e2d9" filter="url(#glow)"><\/circle>' +
+            '<line x1="45" y1="60" x2="75" y2="60" stroke="#0b0b0f" stroke-width="3"><\/line>' +
+          '</svg>';
+      }
+
+      return '' +
+        '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Empty cartridge slot">' +
+          '<rect x="28" y="24" width="64" height="72" rx="6" fill="#13131b" stroke="#8f8e9d" stroke-width="2"><\/rect>' +
+          '<line x1="42" y1="46" x2="78" y2="46" stroke="#8f8e9d" stroke-width="3"><\/line>' +
+          '<line x1="42" y1="60" x2="78" y2="60" stroke="#8f8e9d" stroke-width="3"><\/line>' +
+          '<line x1="42" y1="74" x2="64" y2="74" stroke="#8f8e9d" stroke-width="3"><\/line>' +
+        '</svg>';
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /* ==========================================================================
+       game launch/stop handling
+       ========================================================================== */
+    function launchGame(gameId) {
+      var game = gameRegistry.find(function(item) {
+        return item.id === gameId;
+      });
+
+      if (!game) {
+        return;
+      }
+
+      stopActiveGame();
+      appState.activeGameId = game.id;
+      appState.activeGame = game;
+
+      activeGameTitle.textContent = game.title;
+      activeGameSubtitle.textContent = game.subtitle;
+      gameMount.innerHTML = "";
+      gameControls.innerHTML = "";
+
+      showGame();
+      game.launch();
+    }
+
+    function stopActiveGame() {
+      if (appState.activeGame && typeof appState.activeGame.stop === "function") {
+        appState.activeGame.stop();
+      }
+
+      appState.activeGameId = null;
+      appState.activeGame = null;
+      gameMount.innerHTML = "";
+      gameControls.innerHTML = "";
+    }
+
+    backToLibraryButton.addEventListener("click", function() {
+      stopActiveGame();
+      showLibrary();
+    });
+
+    /* ==========================================================================
+       Patch Pong setup
+       ========================================================================== */
+    var patchPong = {
+      canvas: null,
+      ctx: null,
+      overlay: null,
+      animationId: null,
+      lastTime: 0,
+      running: false,
+      started: false,
+      paused: false,
+      gameOver: false,
+      orientation: "landscape",
+      difficulty: "normal",
+      scoreToWin: 7,
+      playerScore: 0,
+      cpuScore: 0,
+      playerWins: 0,
+      rally: 0,
+      pointerActive: false,
+      keys: {
+        up: false,
+        down: false,
+        left: false,
+        right: false
+      },
+      ball: {
+        x: 0,
+        y: 0,
+        vx: 0,
+        vy: 0,
+        radius: 9,
+        speed: 430
+      },
+      player: {
+        x: 0,
+        y: 0,
+        width: 14,
+        height: 96,
+        speed: 620
+      },
+      cpu: {
+        x: 0,
+        y: 0,
+        width: 14,
+        height: 96,
+        speed: 390
+      }
+    };
+
+    function launchPatchPong() {
+      patchPong.canvas = document.createElement("canvas");
+      patchPong.canvas.id = "patchPongCanvas";
+      patchPong.canvas.setAttribute("aria-label", "Patch Pong game canvas");
+      patchPong.ctx = patchPong.canvas.getContext("2d");
+
+      patchPong.overlay = document.createElement("div");
+      patchPong.overlay.className = "game-overlay";
+      patchPong.overlay.innerHTML =
+        '<div class="overlay-card">' +
+          '<h3 id="patchPongOverlayTitle">Patch Pong</h3>' +
+          '<p id="patchPongOverlayText">Move the fader, block the signal pulse, and be first to 7. Press Space or tap to start.</p>' +
+        '</div>';
+
+      gameMount.appendChild(patchPong.canvas);
+      gameMount.appendChild(patchPong.overlay);
+
+      gameControls.innerHTML =
+        '<div class="instructions">' +
+          '<span><span class="kbd">Space</span> start / pause / resume</span>' +
+          '<span><span class="kbd">Esc</span> pause</span>' +
+          '<span><span class="kbd">Mouse</span> or <span class="kbd">Touch</span> move fader</span>' +
+          '<span><span class="kbd">Arrows</span> keyboard control</span>' +
+        '</div>' +
+        '<div class="control-actions">' +
+          '<button id="difficultyButton" class="difficulty-toggle" type="button" aria-pressed="false">Difficulty: Normal</button>' +
+          '<button id="resetPatchPongButton" class="small-button" type="button">Reset Score</button>' +
+        '</div>';
+
+      document.getElementById("difficultyButton").addEventListener("click", togglePatchPongDifficulty);
+      document.getElementById("resetPatchPongButton").addEventListener("click", resetPatchPongMatch);
+
+      patchPong.playerWins = readNumberFromStorage("studioArcade.patchPong.playerWins", 0);
+      patchPong.running = true;
+      patchPong.started = false;
+      patchPong.paused = false;
+      patchPong.gameOver = false;
+      patchPong.playerScore = 0;
+      patchPong.cpuScore = 0;
+      patchPong.rally = 0;
+
+      addPatchPongInput();
+      resizePatchPong();
+      resetPatchPongPoint(1);
+      updatePatchPongScoreboard();
+      updatePatchPongOverlay("Patch Pong", "Move the fader, block the signal pulse, and be first to 7. Press Space or tap to start.");
+
+      window.addEventListener("resize", resizePatchPong);
+      patchPong.lastTime = performance.now();
+      patchPong.animationId = requestAnimationFrame(patchPongLoop);
+    }
+
+    function stopPatchPong() {
+      patchPong.running = false;
+      patchPong.started = false;
+      patchPong.paused = true;
+
+      if (patchPong.animationId) {
+        cancelAnimationFrame(patchPong.animationId);
+      }
+
+      removePatchPongInput();
+      window.removeEventListener("resize", resizePatchPong);
+      patchPong.animationId = null;
+      patchPong.canvas = null;
+      patchPong.ctx = null;
+      patchPong.overlay = null;
+    }
+
+    function resizePatchPong() {
+      if (!patchPong.canvas) {
+        return;
+      }
+
+      var rect = gameMount.getBoundingClientRect();
+      var deviceScale = window.devicePixelRatio || 1;
+      var width = Math.max(320, Math.floor(rect.width));
+      var height = Math.max(280, Math.floor(rect.height));
+
+      patchPong.canvas.width = Math.floor(width * deviceScale);
+      patchPong.canvas.height = Math.floor(height * deviceScale);
+      patchPong.canvas.style.width = width + "px";
+      patchPong.canvas.style.height = height + "px";
+      patchPong.ctx.setTransform(deviceScale, 0, 0, deviceScale, 0, 0);
+
+      patchPong.orientation = height > width ? "portrait" : "landscape";
+      sizePatchPongActors(width, height);
+    }
+
+    function sizePatchPongActors(width, height) {
+      var isPortrait = patchPong.orientation === "portrait";
+      var paddleLong = isPortrait ? Math.max(78, width * 0.28) : Math.max(78, height * 0.24);
+      var paddleShort = 14;
+
+      if (isPortrait) {
+        patchPong.player.width = paddleLong;
+        patchPong.player.height = paddleShort;
+        patchPong.cpu.width = paddleLong;
+        patchPong.cpu.height = paddleShort;
+        patchPong.player.x = clamp(patchPong.player.x || (width - paddleLong) / 2, 14, width - paddleLong - 14);
+        patchPong.player.y = height - 34;
+        patchPong.cpu.x = clamp(patchPong.cpu.x || (width - paddleLong) / 2, 14, width - paddleLong - 14);
+        patchPong.cpu.y = 20;
+      } else {
+        patchPong.player.width = paddleShort;
+        patchPong.player.height = paddleLong;
+        patchPong.cpu.width = paddleShort;
+        patchPong.cpu.height = paddleLong;
+        patchPong.player.x = 22;
+        patchPong.player.y = clamp(patchPong.player.y || (height - paddleLong) / 2, 14, height - paddleLong - 14);
+        patchPong.cpu.x = width - 36;
+        patchPong.cpu.y = clamp(patchPong.cpu.y || (height - paddleLong) / 2, 14, height - paddleLong - 14);
+      }
+
+      patchPong.ball.radius = Math.max(7, Math.min(width, height) * 0.018);
+    }
+
+    function resetPatchPongMatch() {
+      patchPong.playerScore = 0;
+      patchPong.cpuScore = 0;
+      patchPong.rally = 0;
+      patchPong.gameOver = false;
+      patchPong.started = false;
+      patchPong.paused = false;
+      resetPatchPongPoint(1);
+      updatePatchPongScoreboard();
+      updatePatchPongOverlay("Score Reset", "Fresh patch. Press Space or tap to launch the next signal pulse.");
+      playPatchPongTone("reset");
+    }
+
+    function resetPatchPongPoint(direction) {
+      var width = patchPong.canvas ? patchPong.canvas.clientWidth : 800;
+      var height = patchPong.canvas ? patchPong.canvas.clientHeight : 460;
+      var angleRange = patchPong.orientation === "portrait" ? 0.58 : 0.48;
+      var offset = (Math.random() * angleRange) - (angleRange / 2);
+      var speed = patchPong.ball.speed + Math.min(110, patchPong.rally * 7);
+
+      patchPong.ball.x = width / 2;
+      patchPong.ball.y = height / 2;
+
+      if (patchPong.orientation === "portrait") {
+        patchPong.ball.vx = Math.sin(offset) * speed;
+        patchPong.ball.vy = direction * speed;
+      } else {
+        patchPong.ball.vx = direction * speed;
+        patchPong.ball.vy = Math.sin(offset) * speed;
+      }
+    }
+
+    function togglePatchPongDifficulty() {
+      var button = document.getElementById("difficultyButton");
+      patchPong.difficulty = patchPong.difficulty === "normal" ? "easy" : "normal";
+      button.textContent = patchPong.difficulty === "easy" ? "Difficulty: Easy" : "Difficulty: Normal";
+      button.setAttribute("aria-pressed", patchPong.difficulty === "easy" ? "true" : "false");
+      playPatchPongTone("toggle");
+    }
+
+    /* ==========================================================================
+       Patch Pong input
+       ========================================================================== */
+    function addPatchPongInput() {
+      document.addEventListener("keydown", onPatchPongKeyDown);
+      document.addEventListener("keyup", onPatchPongKeyUp);
+      gameMount.addEventListener("pointerdown", onPatchPongPointer);
+      gameMount.addEventListener("pointermove", onPatchPongPointer);
+      gameMount.addEventListener("pointerup", onPatchPongPointerUp);
+      gameMount.addEventListener("pointercancel", onPatchPongPointerUp);
+    }
+
+    function removePatchPongInput() {
+      document.removeEventListener("keydown", onPatchPongKeyDown);
+      document.removeEventListener("keyup", onPatchPongKeyUp);
+      gameMount.removeEventListener("pointerdown", onPatchPongPointer);
+      gameMount.removeEventListener("pointermove", onPatchPongPointer);
+      gameMount.removeEventListener("pointerup", onPatchPongPointerUp);
+      gameMount.removeEventListener("pointercancel", onPatchPongPointerUp);
+    }
+
+    function onPatchPongKeyDown(event) {
+      if (appState.activeGameId !== "patch-pong") {
+        return;
+      }
+
+      if (event.code === "Space") {
+        event.preventDefault();
+        togglePatchPongPlayState();
+      }
+
+      if (event.code === "Escape") {
+        pausePatchPong();
+      }
+
+      if (event.code === "ArrowUp") {
+        event.preventDefault();
+        patchPong.keys.up = true;
+      }
+
+      if (event.code === "ArrowDown") {
+        event.preventDefault();
+        patchPong.keys.down = true;
+      }
+
+      if (event.code === "ArrowLeft") {
+        event.preventDefault();
+        patchPong.keys.left = true;
+      }
+
+      if (event.code === "ArrowRight") {
+        event.preventDefault();
+        patchPong.keys.right = true;
+      }
+    }
+
+    function onPatchPongKeyUp(event) {
+      if (event.code === "ArrowUp") {
+        patchPong.keys.up = false;
+      }
+
+      if (event.code === "ArrowDown") {
+        patchPong.keys.down = false;
+      }
+
+      if (event.code === "ArrowLeft") {
+        patchPong.keys.left = false;
+      }
+
+      if (event.code === "ArrowRight") {
+        patchPong.keys.right = false;
+      }
+    }
+
+    function onPatchPongPointer(event) {
+      if (!patchPong.canvas) {
+        return;
+      }
+
+      event.preventDefault();
+      patchPong.pointerActive = true;
+
+      if (patchPong.gameOver) {
+        resetPatchPongMatch();
+        startPatchPong();
+      } else if (!patchPong.started) {
+        startPatchPong();
+      } else if (patchPong.paused) {
+        resumePatchPong();
+      }
+
+      var rect = patchPong.canvas.getBoundingClientRect();
+      var x = event.clientX - rect.left;
+      var y = event.clientY - rect.top;
+      movePatchPongPlayerTo(x, y);
+    }
+
+    function onPatchPongPointerUp() {
+      patchPong.pointerActive = false;
+    }
+
+    function togglePatchPongPlayState() {
+      if (patchPong.gameOver) {
+        resetPatchPongMatch();
+        startPatchPong();
+        return;
+      }
+
+      if (!patchPong.started) {
+        startPatchPong();
+        return;
+      }
+
+      if (patchPong.paused) {
+        resumePatchPong();
+      } else {
+        pausePatchPong();
+      }
+    }
+
+    function startPatchPong() {
+      patchPong.started = true;
+      patchPong.paused = false;
+      patchPong.gameOver = false;
+      hidePatchPongOverlay();
+      resumeAudioContext();
+      playPatchPongTone("start");
+    }
+
+    function pausePatchPong() {
+      if (!patchPong.started || patchPong.gameOver) {
+        return;
+      }
+
+      patchPong.paused = true;
+      updatePatchPongOverlay("Paused", "Signal is held. Press Space or tap the arena to resume.");
+      playPatchPongTone("pause");
+    }
+
+    function resumePatchPong() {
+      patchPong.paused = false;
+      hidePatchPongOverlay();
+      resumeAudioContext();
+      playPatchPongTone("start");
+    }
+
+    function movePatchPongPlayerTo(x, y) {
+      var width = patchPong.canvas.clientWidth;
+      var height = patchPong.canvas.clientHeight;
+
+      if (patchPong.orientation === "portrait") {
+        patchPong.player.x = clamp(x - patchPong.player.width / 2, 14, width - patchPong.player.width - 14);
+      } else {
+        patchPong.player.y = clamp(y - patchPong.player.height / 2, 14, height - patchPong.player.height - 14);
+      }
+    }
+
+    /* ==========================================================================
+       Patch Pong update loop
+       ========================================================================== */
+    function patchPongLoop(now) {
+      if (!patchPong.running) {
+        return;
+      }
+
+      var delta = Math.min(0.033, (now - patchPong.lastTime) / 1000);
+      patchPong.lastTime = now;
+
+      if (patchPong.started && !patchPong.paused && !patchPong.gameOver) {
+        updatePatchPong(delta);
+      }
+
+      renderPatchPong(now);
+      patchPong.animationId = requestAnimationFrame(patchPongLoop);
+    }
+
+    function updatePatchPong(delta) {
+      updatePatchPongPlayerFromKeys(delta);
+      updatePatchPongCpu(delta);
+      updatePatchPongBall(delta);
+    }
+
+    function updatePatchPongPlayerFromKeys(delta) {
+      var width = patchPong.canvas.clientWidth;
+      var height = patchPong.canvas.clientHeight;
+      var distance = patchPong.player.speed * delta;
+
+      if (patchPong.orientation === "portrait") {
+        if (patchPong.keys.left) {
+          patchPong.player.x -= distance;
+        }
+        if (patchPong.keys.right) {
+          patchPong.player.x += distance;
+        }
+        patchPong.player.x = clamp(patchPong.player.x, 14, width - patchPong.player.width - 14);
+      } else {
+        if (patchPong.keys.up) {
+          patchPong.player.y -= distance;
+        }
+        if (patchPong.keys.down) {
+          patchPong.player.y += distance;
+        }
+        patchPong.player.y = clamp(patchPong.player.y, 14, height - patchPong.player.height - 14);
+      }
+    }
+
+    function updatePatchPongCpu(delta) {
+      var width = patchPong.canvas.clientWidth;
+      var height = patchPong.canvas.clientHeight;
+      var isEasy = patchPong.difficulty === "easy";
+      var maxSpeed = (isEasy ? 295 : 390) + Math.min(80, patchPong.rally * 5);
+      var missBias = Math.sin(performance.now() / (isEasy ? 460 : 720)) * (isEasy ? 46 : 28);
+
+      if (patchPong.orientation === "portrait") {
+        var targetX = patchPong.ball.x - patchPong.cpu.width / 2 + missBias;
+        var deltaX = clamp(targetX - patchPong.cpu.x, -maxSpeed * delta, maxSpeed * delta);
+        patchPong.cpu.x = clamp(patchPong.cpu.x + deltaX, 14, width - patchPong.cpu.width - 14);
+      } else {
+        var targetY = patchPong.ball.y - patchPong.cpu.height / 2 + missBias;
+        var deltaY = clamp(targetY - patchPong.cpu.y, -maxSpeed * delta, maxSpeed * delta);
+        patchPong.cpu.y = clamp(patchPong.cpu.y + deltaY, 14, height - patchPong.cpu.height - 14);
+      }
+    }
+
+    function updatePatchPongBall(delta) {
+      var width = patchPong.canvas.clientWidth;
+      var height = patchPong.canvas.clientHeight;
+      var ball = patchPong.ball;
+
+      ball.x += ball.vx * delta;
+      ball.y += ball.vy * delta;
+
+      if (patchPong.orientation === "portrait") {
+        handlePortraitWallBounce(width);
+
+        if (ball.vy > 0 && rectCircleCollide(patchPong.player, ball)) {
+          bounceBallFromPaddle(patchPong.player, -1);
+        }
+
+        if (ball.vy < 0 && rectCircleCollide(patchPong.cpu, ball)) {
+          bounceBallFromPaddle(patchPong.cpu, 1);
+        }
+
+        if (ball.y - ball.radius > height) {
+          scorePatchPongPoint("cpu");
+        }
+
+        if (ball.y + ball.radius < 0) {
+          scorePatchPongPoint("player");
+        }
+      } else {
+        handleLandscapeWallBounce(height);
+
+        if (ball.vx < 0 && rectCircleCollide(patchPong.player, ball)) {
+          bounceBallFromPaddle(patchPong.player, 1);
+        }
+
+        if (ball.vx > 0 && rectCircleCollide(patchPong.cpu, ball)) {
+          bounceBallFromPaddle(patchPong.cpu, -1);
+        }
+
+        if (ball.x + ball.radius < 0) {
+          scorePatchPongPoint("cpu");
+        }
+
+        if (ball.x - ball.radius > width) {
+          scorePatchPongPoint("player");
+        }
+      }
+    }
+
+    function handleLandscapeWallBounce(height) {
+      var ball = patchPong.ball;
+
+      if (ball.y - ball.radius <= 0) {
+        ball.y = ball.radius;
+        ball.vy = Math.abs(ball.vy);
+        playPatchPongTone("wall");
+      }
+
+      if (ball.y + ball.radius >= height) {
+        ball.y = height - ball.radius;
+        ball.vy = -Math.abs(ball.vy);
+        playPatchPongTone("wall");
+      }
+    }
+
+    function handlePortraitWallBounce(width) {
+      var ball = patchPong.ball;
+
+      if (ball.x - ball.radius <= 0) {
+        ball.x = ball.radius;
+        ball.vx = Math.abs(ball.vx);
+        playPatchPongTone("wall");
+      }
+
+      if (ball.x + ball.radius >= width) {
+        ball.x = width - ball.radius;
+        ball.vx = -Math.abs(ball.vx);
+        playPatchPongTone("wall");
+      }
+    }
+
+    function bounceBallFromPaddle(paddle, direction) {
+      var ball = patchPong.ball;
+      var speed = Math.min(760, Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy) + 22);
+      var hitOffset;
+
+      patchPong.rally += 1;
+
+      if (patchPong.orientation === "portrait") {
+        hitOffset = ((ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2));
+        ball.vx = hitOffset * speed * 0.72;
+        ball.vy = direction * speed;
+        ball.y = direction < 0 ? paddle.y - ball.radius - 1 : paddle.y + paddle.height + ball.radius + 1;
+      } else {
+        hitOffset = ((ball.y - (paddle.y + paddle.height / 2)) / (paddle.height / 2));
+        ball.vx = direction * speed;
+        ball.vy = hitOffset * speed * 0.72;
+        ball.x = direction > 0 ? paddle.x + paddle.width + ball.radius + 1 : paddle.x - ball.radius - 1;
+      }
+
+      playPatchPongTone("paddle");
+    }
+
+    function scorePatchPongPoint(winner) {
+      var serveDirection;
+
+      if (winner === "player") {
+        patchPong.playerScore += 1;
+        serveDirection = patchPong.orientation === "portrait" ? -1 : -1;
+        playPatchPongTone("score");
+      } else {
+        patchPong.cpuScore += 1;
+        serveDirection = patchPong.orientation === "portrait" ? 1 : 1;
+        playPatchPongTone("miss");
+      }
+
+      patchPong.rally = 0;
+      updatePatchPongScoreboard();
+
+      if (patchPong.playerScore >= patchPong.scoreToWin || patchPong.cpuScore >= patchPong.scoreToWin) {
+        endPatchPongGame(winner);
+        return;
+      }
+
+      patchPong.paused = true;
+      resetPatchPongPoint(serveDirection);
+      updatePatchPongOverlay(winner === "player" ? "Signal Routed" : "CPU Captured It", "Press Space or tap to send the next pulse.");
+    }
+
+    function endPatchPongGame(winner) {
+      patchPong.gameOver = true;
+      patchPong.paused = true;
+
+      if (winner === "player") {
+        patchPong.playerWins += 1;
+        writeNumberToStorage("studioArcade.patchPong.playerWins", patchPong.playerWins);
+        updatePatchPongScoreboard();
+        updatePatchPongOverlay("You Win", "Clean patch. Your stored wins increased. Press Space or tap to play again.");
+        playPatchPongTone("win");
+      } else {
+        updatePatchPongOverlay("CPU Wins", "The studio computer caught the pulse. Press Space or tap for a rematch.");
+        playPatchPongTone("lose");
+      }
+    }
+
+    function rectCircleCollide(rect, circle) {
+      var nearestX = clamp(circle.x, rect.x, rect.x + rect.width);
+      var nearestY = clamp(circle.y, rect.y, rect.y + rect.height);
+      var dx = circle.x - nearestX;
+      var dy = circle.y - nearestY;
+      return (dx * dx + dy * dy) <= circle.radius * circle.radius;
+    }
+
+    /* ==========================================================================
+       Patch Pong rendering
+       ========================================================================== */
+    function renderPatchPong(now) {
+      if (!patchPong.ctx || !patchPong.canvas) {
+        return;
+      }
+
+      var ctx = patchPong.ctx;
+      var width = patchPong.canvas.clientWidth;
+      var height = patchPong.canvas.clientHeight;
+
+      ctx.clearRect(0, 0, width, height);
+      drawPatchPongBackground(ctx, width, height, now);
+      drawPatchPongCenterLine(ctx, width, height, now);
+      drawPatchPongPaddle(ctx, patchPong.player, "player");
+      drawPatchPongPaddle(ctx, patchPong.cpu, "cpu");
+      drawPatchPongBall(ctx, patchPong.ball, now);
+      drawPatchPongLabels(ctx, width, height);
+    }
+
+    function drawPatchPongBackground(ctx, width, height, now) {
+      ctx.save();
+      ctx.fillStyle = "#050508";
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = "rgba(91, 156, 246, 0.08)";
+      ctx.lineWidth = 1;
+      for (var x = 0; x < width; x += 34) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (var y = 0; y < height; y += 34) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "rgba(200, 168, 107, 0.18)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      var baseY = height * 0.5;
+      for (var i = 0; i <= width; i += 8) {
+        var wave = Math.sin((i * 0.035) + now * 0.003) * 15;
+        var wave2 = Math.sin((i * 0.012) - now * 0.0017) * 9;
+        if (i === 0) {
+          ctx.moveTo(i, baseY + wave + wave2);
+        } else {
+          ctx.lineTo(i, baseY + wave + wave2);
+        }
+      }
+      ctx.stroke();
+
+      var gradient = ctx.createRadialGradient(width / 2, height / 2, 20, width / 2, height / 2, Math.max(width, height) * 0.7);
+      gradient.addColorStop(0, "rgba(91, 156, 246, 0.10)");
+      gradient.addColorStop(1, "rgba(0, 0, 0, 0.50)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+      ctx.restore();
+    }
+
+    function drawPatchPongCenterLine(ctx, width, height, now) {
+      ctx.save();
+      ctx.strokeStyle = "rgba(230, 226, 217, 0.18)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 12]);
+      ctx.lineDashOffset = -now * 0.025;
+      ctx.beginPath();
+      if (patchPong.orientation === "portrait") {
+        ctx.moveTo(0, height / 2);
+        ctx.lineTo(width, height / 2);
+      } else {
+        ctx.moveTo(width / 2, 0);
+        ctx.lineTo(width / 2, height);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawPatchPongPaddle(ctx, paddle, owner) {
+      var isPlayer = owner === "player";
+      var color = isPlayer ? "#c8a86b" : "#5b9cf6";
+
+      ctx.save();
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 16;
+      ctx.fillStyle = color;
+      roundRect(ctx, paddle.x, paddle.y, paddle.width, paddle.height, 6);
+      ctx.fill();
+
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "rgba(11, 11, 15, 0.72)";
+      if (patchPong.orientation === "portrait") {
+        roundRect(ctx, paddle.x + 10, paddle.y + 4, paddle.width - 20, paddle.height - 8, 4);
+      } else {
+        roundRect(ctx, paddle.x + 4, paddle.y + 10, paddle.width - 8, paddle.height - 20, 4);
+      }
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawPatchPongBall(ctx, ball, now) {
+      var pulse = 1 + Math.sin(now * 0.012) * 0.18;
+      var radius = ball.radius * pulse;
+      var gradient = ctx.createRadialGradient(ball.x, ball.y, 1, ball.x, ball.y, radius * 5);
+      gradient.addColorStop(0, "rgba(230, 226, 217, 1)");
+      gradient.addColorStop(0.28, "rgba(91, 156, 246, 0.82)");
+      gradient.addColorStop(1, "rgba(91, 156, 246, 0)");
+
+      ctx.save();
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, radius * 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#e6e2d9";
+      ctx.shadowColor = "#5b9cf6";
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawPatchPongLabels(ctx, width, height) {
+      ctx.save();
+      ctx.fillStyle = "rgba(230, 226, 217, 0.16)";
+      ctx.font = "12px ui-monospace, monospace";
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
+
+      if (patchPong.orientation === "portrait") {
+        ctx.fillText("CPU MONITOR BUS", width / 2, 42);
+        ctx.fillText("PLAYER PATCH BAY", width / 2, height - 54);
+      } else {
+        ctx.save();
+        ctx.translate(55, height / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText("PLAYER PATCH BAY", 0, 0);
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(width - 55, height / 2);
+        ctx.rotate(Math.PI / 2);
+        ctx.fillText("CPU MONITOR BUS", 0, 0);
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+
+    function updatePatchPongOverlay(title, text) {
+      if (!patchPong.overlay) {
+        return;
+      }
+
+      patchPong.overlay.classList.remove("hidden");
+      document.getElementById("patchPongOverlayTitle").textContent = title;
+      document.getElementById("patchPongOverlayText").textContent = text;
+    }
+
+    function hidePatchPongOverlay() {
+      if (patchPong.overlay) {
+        patchPong.overlay.classList.add("hidden");
+      }
+    }
+
+    function updatePatchPongScoreboard() {
+      document.getElementById("playerScore").textContent = patchPong.playerScore;
+      document.getElementById("cpuScore").textContent = patchPong.cpuScore;
+      document.getElementById("bestWins").textContent = patchPong.playerWins;
+    }
+
+    function roundRect(ctx, x, y, width, height, radius) {
+      var r = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + width - r, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+      ctx.lineTo(x + width, y + height - r);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+      ctx.lineTo(x + r, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    /* ==========================================================================
+       audio utilities
+       ========================================================================== */
+    var studioAudio = {
+      context: null
+    };
+
+    function getAudioContext() {
+      if (!studioAudio.context) {
+        var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) {
+          return null;
+        }
+        studioAudio.context = new AudioContextClass();
+      }
+
+      return studioAudio.context;
+    }
+
+    function resumeAudioContext() {
+      var context = getAudioContext();
+      if (context && context.state === "suspended") {
+        context.resume();
+      }
+    }
+
+    function playPatchPongTone(type) {
+      var context = getAudioContext();
+      if (!context) {
+        return;
+      }
+
+      var now = context.currentTime;
+      var oscillator = context.createOscillator();
+      var gain = context.createGain();
+      var filter = context.createBiquadFilter();
+      var frequency = 240;
+      var duration = 0.09;
+      var wave = "sine";
+
+      if (type === "paddle") {
+        frequency = 520;
+        duration = 0.08;
+        wave = "triangle";
+      } else if (type === "wall") {
+        frequency = 300;
+        duration = 0.045;
+        wave = "square";
+      } else if (type === "score") {
+        frequency = 760;
+        duration = 0.16;
+        wave = "sine";
+      } else if (type === "miss") {
+        frequency = 150;
+        duration = 0.18;
+        wave = "sawtooth";
+      } else if (type === "win") {
+        frequency = 880;
+        duration = 0.28;
+        wave = "triangle";
+      } else if (type === "lose") {
+        frequency = 120;
+        duration = 0.3;
+        wave = "sawtooth";
+      } else if (type === "reset") {
+        frequency = 410;
+        duration = 0.12;
+        wave = "triangle";
+      } else if (type === "pause") {
+        frequency = 190;
+        duration = 0.08;
+        wave = "sine";
+      } else if (type === "toggle") {
+        frequency = 650;
+        duration = 0.07;
+        wave = "triangle";
+      } else if (type === "start") {
+        frequency = 620;
+        duration = 0.11;
+        wave = "sine";
+      }
+
+      oscillator.type = wave;
+      oscillator.frequency.setValueAtTime(frequency, now);
+      oscillator.frequency.exponentialRampToValueAtTime(Math.max(60, frequency * 0.65), now + duration);
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(1800, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.08, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      oscillator.connect(filter);
+      filter.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + duration + 0.02);
+    }
+
+    /* ==========================================================================
+       localStorage
+       ========================================================================== */
+    function readNumberFromStorage(key, fallback) {
+      try {
+        var stored = window.localStorage.getItem(key);
+        var parsed = Number(stored);
+        return Number.isFinite(parsed) ? parsed : fallback;
+      } catch (error) {
+        return fallback;
+      }
+    }
+
+    function writeNumberToStorage(key, value) {
+      try {
+        window.localStorage.setItem(key, String(value));
+      } catch (error) {
+        // Private browsing or disabled storage should not stop the game.
+      }
+    }
+
+    renderLibrary();
+  </script>
+</body>
+</html>
