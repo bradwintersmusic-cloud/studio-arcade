@@ -261,6 +261,7 @@
         grid-template-columns: auto 1fr auto;
         gap: 12px;
         align-items: center;
+        min-width: 0;
         border: 1px solid var(--border);
         border-radius: var(--radius);
         padding: 10px;
@@ -317,6 +318,7 @@
         align-items: center;
         justify-content: flex-end;
         gap: 8px;
+        min-width: 0;
         color: var(--muted);
         white-space: nowrap;
       }
@@ -348,7 +350,9 @@
       }
 
       #patchPongCanvas,
-      #studioBricklesCanvas {
+      #studioBricklesCanvas,
+      #cableSnakeCanvas,
+      #trackTetrisCanvas {
         display: block;
         width: 100%;
         height: 100%;
@@ -372,6 +376,46 @@
         padding: 6px 8px;
         background: rgba(91, 156, 246, 0.1);
         color: var(--text);
+      }
+
+      /* ==========================================================================
+       Cable Snake Styles / Track Tetris Styles
+       ========================================================================== */
+      .touch-pad {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(48px, 1fr));
+        gap: 7px;
+        width: 100%;
+        min-width: 0;
+        max-width: min(360px, 100%);
+      }
+
+      .touch-pad.compact {
+        grid-template-columns: repeat(4, minmax(48px, 1fr));
+      }
+
+      .touch-button {
+        border: 1px solid rgba(91, 156, 246, 0.48);
+        border-radius: 6px;
+        min-height: 46px;
+        padding: 9px 10px;
+        background: rgba(91, 156, 246, 0.1);
+        color: var(--text);
+        touch-action: none;
+      }
+
+      .touch-button:hover,
+      .touch-button:focus-visible {
+        border-color: var(--blue);
+        background: rgba(91, 156, 246, 0.18);
+        outline: none;
+      }
+
+      .session-panel {
+        display: grid;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 0.8rem;
       }
 
       .game-overlay {
@@ -416,6 +460,7 @@
         grid-template-columns: 1fr auto;
         gap: 12px;
         align-items: center;
+        min-width: 0;
         border: 1px solid var(--border);
         border-radius: var(--radius);
         padding: 12px;
@@ -426,6 +471,7 @@
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
+        min-width: 0;
         color: var(--muted);
         font-size: 0.84rem;
         line-height: 1.5;
@@ -447,6 +493,7 @@
         flex-wrap: wrap;
         justify-content: flex-end;
         gap: 8px;
+        min-width: 0;
       }
 
       .difficulty-toggle[aria-pressed="true"] {
@@ -471,6 +518,8 @@
 
         .scoreboard {
           justify-content: stretch;
+          flex-wrap: wrap;
+          white-space: normal;
         }
 
         .score-pill {
@@ -577,6 +626,7 @@
       var backToLibraryButton = document.getElementById("backToLibraryButton");
 
       function showLibrary() {
+        renderLibrary();
         libraryScreen.classList.add("is-active");
         gameScreen.classList.remove("is-active");
       }
@@ -605,6 +655,22 @@
           cartridgeArt: "brickles",
           launch: launchStudioBrickles,
           stop: stopStudioBrickles,
+        },
+        {
+          id: "cable-snake",
+          title: "Cable Snake",
+          subtitle: "Keep the signal moving. Don’t cross the cable.",
+          cartridgeArt: "snake",
+          launch: launchCableSnake,
+          stop: stopCableSnake,
+        },
+        {
+          id: "track-tetris",
+          title: "Track Tetris",
+          subtitle: "Build the session. Clear the tracks.",
+          cartridgeArt: "tetris",
+          launch: launchTrackTetris,
+          stop: stopTrackTetris,
         },
       ];
 
@@ -698,6 +764,44 @@
           );
         }
 
+        if (type === "snake") {
+          return (
+            "" +
+            '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Glowing coiled studio cable and patch point">' +
+            "<defs>" +
+            '<filter id="snakeGlow"><feGaussianBlur stdDeviation="2.4" result="blur"><\/feGaussianBlur><feMerge><feMergeNode in="blur"><\/feMergeNode><feMergeNode in="SourceGraphic"><\/feMergeNode><\/feMerge><\/filter>' +
+            "</defs>" +
+            '<rect x="18" y="18" width="84" height="84" rx="8" fill="#13131b" stroke="#252533" stroke-width="3"><\/rect>' +
+            '<path d="M30 74 H66 Q82 74 82 58 Q82 42 64 42 H42 Q32 42 32 32" fill="none" stroke="#5b9cf6" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" filter="url(#snakeGlow)"><\/path>' +
+            '<path d="M30 74 H66 Q82 74 82 58 Q82 42 64 42 H42 Q32 42 32 32" fill="none" stroke="#0b0b0f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><\/path>' +
+            '<circle cx="91" cy="29" r="8" fill="#c8a86b" filter="url(#snakeGlow)"><\/circle>' +
+            '<rect x="24" y="24" width="16" height="14" rx="3" fill="#e6e2d9"><\/rect>' +
+            '<line x1="27" y1="29" x2="37" y2="29" stroke="#0b0b0f" stroke-width="2"><\/line>' +
+            "</svg>"
+          );
+        }
+
+        if (type === "tetris") {
+          return (
+            "" +
+            '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Falling audio regions over track lanes">' +
+            '<rect x="20" y="16" width="80" height="88" rx="6" fill="#13131b" stroke="#252533" stroke-width="3"><\/rect>' +
+            '<line x1="25" y1="38" x2="95" y2="38" stroke="rgba(230,226,217,.18)" stroke-width="2"><\/line>' +
+            '<line x1="25" y1="60" x2="95" y2="60" stroke="rgba(230,226,217,.18)" stroke-width="2"><\/line>' +
+            '<line x1="25" y1="82" x2="95" y2="82" stroke="rgba(230,226,217,.18)" stroke-width="2"><\/line>' +
+            '<rect x="40" y="24" width="14" height="14" rx="3" fill="#5b9cf6"><\/rect>' +
+            '<rect x="54" y="24" width="14" height="14" rx="3" fill="#5b9cf6"><\/rect>' +
+            '<rect x="54" y="38" width="14" height="14" rx="3" fill="#5b9cf6"><\/rect>' +
+            '<rect x="68" y="38" width="14" height="14" rx="3" fill="#5b9cf6"><\/rect>' +
+            '<rect x="32" y="70" width="14" height="14" rx="3" fill="#c8a86b"><\/rect>' +
+            '<rect x="46" y="70" width="14" height="14" rx="3" fill="#c8a86b"><\/rect>' +
+            '<rect x="60" y="70" width="14" height="14" rx="3" fill="#c8a86b"><\/rect>' +
+            '<rect x="74" y="70" width="14" height="14" rx="3" fill="#c8a86b"><\/rect>' +
+            '<path d="M28 94 C40 88 50 100 62 94 S84 88 94 94" fill="none" stroke="#5b9cf6" stroke-width="3" stroke-linecap="round"><\/path>' +
+            "</svg>"
+          );
+        }
+
         return (
           "" +
           '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Empty cartridge slot">' +
@@ -714,6 +818,20 @@
           return (
             "Best " +
             readNumberFromStorage("studioArcadeBricklesBestScore", 0)
+          );
+        }
+
+        if (gameId === "cable-snake") {
+          return (
+            "Best " +
+            readNumberFromStorage("studioArcadeCableSnakeBestScore", 0)
+          );
+        }
+
+        if (gameId === "track-tetris") {
+          return (
+            "Best " +
+            readNumberFromStorage("studioArcadeTrackTetrisBestScore", 0)
           );
         }
 
@@ -2943,6 +3061,1383 @@
           }
         });
         studioBrickles.audioNodes = [];
+      }
+
+      /* ==========================================================================
+       Cable Snake State
+       ========================================================================== */
+      var cableSnakeGame = {
+        canvas: null,
+        ctx: null,
+        overlay: null,
+        animationId: null,
+        running: false,
+        inputAdded: false,
+        state: "ready",
+        lastTime: 0,
+        stepElapsed: 0,
+        width: 600,
+        height: 600,
+        cellSize: 24,
+        cols: 20,
+        rows: 20,
+        score: 0,
+        bestScore: 0,
+        collected: 0,
+        difficulty: "tracking",
+        snake: [],
+        direction: { x: 1, y: 0 },
+        nextDirection: { x: 1, y: 0 },
+        food: { x: 8, y: 8, type: "pulse" },
+        particles: [],
+        keys: {},
+        swipeStart: null,
+        audioNodes: [],
+      };
+
+      var cableSnakeDifficulties = {
+        chill: { label: "Chill Session", cols: 18, rows: 18, startMs: 175, speedUp: 6, minMs: 88 },
+        tracking: { label: "Tracking Session", cols: 20, rows: 20, startMs: 145, speedUp: 7, minMs: 74 },
+        deadline: { label: "Deadline Mode", cols: 22, rows: 22, startMs: 118, speedUp: 8, minMs: 58 },
+      };
+
+      var cableSnakeCollectibles = [
+        { type: "pulse", label: "Signal Pulse", points: 100, color: "#5b9cf6" },
+        { type: "mic", label: "Mic", points: 125, color: "#c8a86b" },
+        { type: "adapter", label: "Adapter", points: 150, color: "#7ee3b2" },
+        { type: "phones", label: "Phones", points: 175, color: "#f66f8d" },
+      ];
+
+      /* ==========================================================================
+       Cable Snake Lifecycle
+       ========================================================================== */
+      function launchCableSnake() {
+        document.getElementById("patchPongScoreboard").innerHTML =
+          '<span class="score-pill">Score <strong id="snakeScore">0</strong></span>' +
+          '<span class="score-pill">Best <strong id="snakeBest">0</strong></span>' +
+          '<span class="score-pill">Length <strong id="snakeLength">0</strong></span>' +
+          '<span class="score-pill">Speed <strong id="snakeSpeed">1</strong></span>';
+
+        cableSnakeGame.canvas = document.createElement("canvas");
+        cableSnakeGame.canvas.id = "cableSnakeCanvas";
+        cableSnakeGame.canvas.setAttribute("aria-label", "Cable Snake game canvas");
+        cableSnakeGame.ctx = cableSnakeGame.canvas.getContext("2d");
+        cableSnakeGame.overlay = document.createElement("div");
+        cableSnakeGame.overlay.className = "game-overlay";
+        cableSnakeGame.overlay.innerHTML =
+          '<div class="overlay-card">' +
+          '<h3 id="snakeOverlayTitle">Cable Snake</h3>' +
+          '<p id="snakeOverlayText">Choose a session, then press Space or tap Start to move the signal.</p>' +
+          "</div>";
+        gameMount.appendChild(cableSnakeGame.canvas);
+        gameMount.appendChild(cableSnakeGame.overlay);
+
+        gameControls.innerHTML =
+          '<div class="instructions">' +
+          '<span><span class="kbd">Arrows</span> or <span class="kbd">WASD</span> steer</span>' +
+          '<span><span class="kbd">Space</span> start / pause / resume</span>' +
+          '<span><span class="kbd">Swipe</span> on mobile</span>' +
+          '</div><div class="control-actions">' +
+          '<button class="difficulty-toggle snakeDifficultyButton" data-difficulty="chill" type="button">Chill Session</button>' +
+          '<button class="difficulty-toggle snakeDifficultyButton" data-difficulty="tracking" type="button">Tracking Session</button>' +
+          '<button class="difficulty-toggle snakeDifficultyButton" data-difficulty="deadline" type="button">Deadline Mode</button>' +
+          '<button id="startSnakeButton" class="small-button" type="button">Start</button>' +
+          '<button id="pauseSnakeButton" class="small-button" type="button">Pause</button>' +
+          '<button class="small-button studioMuteButton" type="button">' + getStudioMuteLabel() + "</button>" +
+          '<button id="restartSnakeButton" class="small-button" type="button">Restart</button>' +
+          '<div class="touch-pad" aria-label="Cable Snake touch controls">' +
+          '<span></span><button class="touch-button snakePadButton" data-direction="up" type="button">Up</button><span></span>' +
+          '<button class="touch-button snakePadButton" data-direction="left" type="button">Left</button>' +
+          '<button class="touch-button snakePadButton" data-direction="down" type="button">Down</button>' +
+          '<button class="touch-button snakePadButton" data-direction="right" type="button">Right</button>' +
+          "</div></div>";
+
+        document.querySelectorAll(".snakeDifficultyButton").forEach(function (button) {
+          button.addEventListener("click", function () {
+            setCableSnakeDifficulty(button.getAttribute("data-difficulty"));
+          });
+        });
+        document.querySelectorAll(".snakePadButton").forEach(function (button) {
+          button.addEventListener("pointerdown", function (event) {
+            event.preventDefault();
+            changeCableSnakeDirection(button.getAttribute("data-direction"));
+            startCableSnake();
+          });
+        });
+        document.getElementById("startSnakeButton").addEventListener("click", startCableSnake);
+        document.getElementById("pauseSnakeButton").addEventListener("click", toggleCableSnakePause);
+        document.getElementById("restartSnakeButton").addEventListener("click", resetCableSnakeGame);
+        document.querySelector(".studioMuteButton").addEventListener("click", toggleStudioMute);
+
+        cableSnakeGame.bestScore = readNumberFromStorage("studioArcadeCableSnakeBestScore", 0);
+        cableSnakeGame.running = true;
+        cableSnakeGame.lastTime = performance.now();
+        resizeCableSnake();
+        resetCableSnakeGame();
+        addCableSnakeInput();
+        window.addEventListener("resize", resizeCableSnake);
+        window.addEventListener("orientationchange", resizeCableSnake);
+        cableSnakeGame.animationId = requestAnimationFrame(cableSnakeLoop);
+      }
+
+      function stopCableSnake() {
+        cableSnakeGame.running = false;
+        cableSnakeGame.state = "stopped";
+        if (cableSnakeGame.animationId) {
+          cancelAnimationFrame(cableSnakeGame.animationId);
+        }
+        removeCableSnakeInput();
+        window.removeEventListener("resize", resizeCableSnake);
+        window.removeEventListener("orientationchange", resizeCableSnake);
+        stopCableSnakeAudio();
+        cableSnakeGame.animationId = null;
+        cableSnakeGame.canvas = null;
+        cableSnakeGame.ctx = null;
+        cableSnakeGame.overlay = null;
+        cableSnakeGame.keys = {};
+        cableSnakeGame.swipeStart = null;
+        cableSnakeGame.particles = [];
+      }
+
+      function resetCableSnakeGame() {
+        var settings = cableSnakeDifficulties[cableSnakeGame.difficulty];
+        cableSnakeGame.cols = settings.cols;
+        cableSnakeGame.rows = settings.rows;
+        cableSnakeGame.score = 0;
+        cableSnakeGame.collected = 0;
+        cableSnakeGame.stepElapsed = 0;
+        cableSnakeGame.state = "ready";
+        cableSnakeGame.direction = { x: 1, y: 0 };
+        cableSnakeGame.nextDirection = { x: 1, y: 0 };
+        var startX = Math.floor(cableSnakeGame.cols / 2);
+        var startY = Math.floor(cableSnakeGame.rows / 2);
+        cableSnakeGame.snake = [
+          { x: startX, y: startY },
+          { x: startX - 1, y: startY },
+          { x: startX - 2, y: startY },
+        ];
+        placeCableSnakeFood();
+        resizeCableSnake();
+        updateCableSnakeHud();
+        updateCableSnakeDifficultyButtons();
+        updateCableSnakeOverlay("Cable Snake", "Choose a session, then press Space or tap Start to move the signal.");
+      }
+
+      function setCableSnakeDifficulty(value) {
+        if (!cableSnakeDifficulties[value]) {
+          return;
+        }
+        cableSnakeGame.difficulty = value;
+        resetCableSnakeGame();
+      }
+
+      function startCableSnake() {
+        if (cableSnakeGame.state === "gameover") {
+          resetCableSnakeGame();
+        }
+        if (cableSnakeGame.state === "ready" || cableSnakeGame.state === "paused") {
+          cableSnakeGame.state = "playing";
+          cableSnakeGame.lastTime = performance.now();
+          hideCableSnakeOverlay();
+          resumeAudioContext();
+          playCableSnakeTone("start");
+        }
+      }
+
+      function toggleCableSnakePause() {
+        if (cableSnakeGame.state === "playing") {
+          cableSnakeGame.state = "paused";
+          updateCableSnakeOverlay("Paused", "Signal is held. Press Space, swipe, or use Pause to resume.");
+          playCableSnakeTone("pause");
+        } else {
+          startCableSnake();
+        }
+      }
+
+      function resizeCableSnake() {
+        if (!cableSnakeGame.canvas || !cableSnakeGame.ctx) {
+          return;
+        }
+        var rect = gameMount.getBoundingClientRect();
+        var deviceScale = window.devicePixelRatio || 1;
+        var viewportLimit = Math.max(280, window.innerWidth - 20);
+        var size = Math.max(
+          280,
+          Math.floor(Math.min(rect.width, rect.height, viewportLimit)),
+        );
+        cableSnakeGame.width = size;
+        cableSnakeGame.height = size;
+        cableSnakeGame.cellSize = size / cableSnakeGame.cols;
+        cableSnakeGame.canvas.width = Math.floor(size * deviceScale);
+        cableSnakeGame.canvas.height = Math.floor(size * deviceScale);
+        cableSnakeGame.canvas.style.width = size + "px";
+        cableSnakeGame.canvas.style.height = size + "px";
+        cableSnakeGame.ctx.setTransform(deviceScale, 0, 0, deviceScale, 0, 0);
+      }
+
+      /* ==========================================================================
+       Cable Snake Input
+       ========================================================================== */
+      function addCableSnakeInput() {
+        if (cableSnakeGame.inputAdded) {
+          return;
+        }
+        document.addEventListener("keydown", onCableSnakeKeyDown);
+        gameMount.addEventListener("pointerdown", onCableSnakePointerDown);
+        gameMount.addEventListener("pointerup", onCableSnakePointerUp);
+        gameMount.addEventListener("pointercancel", onCableSnakePointerUp);
+        cableSnakeGame.inputAdded = true;
+      }
+
+      function removeCableSnakeInput() {
+        if (!cableSnakeGame.inputAdded) {
+          return;
+        }
+        document.removeEventListener("keydown", onCableSnakeKeyDown);
+        gameMount.removeEventListener("pointerdown", onCableSnakePointerDown);
+        gameMount.removeEventListener("pointerup", onCableSnakePointerUp);
+        gameMount.removeEventListener("pointercancel", onCableSnakePointerUp);
+        cableSnakeGame.inputAdded = false;
+      }
+
+      function onCableSnakeKeyDown(event) {
+        if (appState.activeGameId !== "cable-snake") {
+          return;
+        }
+        var direction = null;
+        if (event.code === "ArrowUp" || event.code === "KeyW") direction = "up";
+        if (event.code === "ArrowDown" || event.code === "KeyS") direction = "down";
+        if (event.code === "ArrowLeft" || event.code === "KeyA") direction = "left";
+        if (event.code === "ArrowRight" || event.code === "KeyD") direction = "right";
+        if (direction) {
+          event.preventDefault();
+          changeCableSnakeDirection(direction);
+          startCableSnake();
+        }
+        if (event.code === "Space") {
+          event.preventDefault();
+          toggleCableSnakePause();
+        }
+        if (event.code === "Escape") {
+          event.preventDefault();
+          if (cableSnakeGame.state === "playing") {
+            toggleCableSnakePause();
+          }
+        }
+      }
+
+      function onCableSnakePointerDown(event) {
+        if (!cableSnakeGame.canvas || appState.activeGameId !== "cable-snake") {
+          return;
+        }
+        event.preventDefault();
+        cableSnakeGame.swipeStart = { x: event.clientX, y: event.clientY };
+      }
+
+      function onCableSnakePointerUp(event) {
+        if (!cableSnakeGame.swipeStart) {
+          return;
+        }
+        event.preventDefault();
+        var dx = event.clientX - cableSnakeGame.swipeStart.x;
+        var dy = event.clientY - cableSnakeGame.swipeStart.y;
+        cableSnakeGame.swipeStart = null;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) < 26) {
+          startCableSnake();
+          return;
+        }
+        changeCableSnakeDirection(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up"));
+        startCableSnake();
+      }
+
+      function changeCableSnakeDirection(direction) {
+        var map = {
+          up: { x: 0, y: -1 },
+          down: { x: 0, y: 1 },
+          left: { x: -1, y: 0 },
+          right: { x: 1, y: 0 },
+        };
+        var next = map[direction];
+        if (!next) {
+          return;
+        }
+        if (next.x + cableSnakeGame.direction.x === 0 && next.y + cableSnakeGame.direction.y === 0) {
+          return;
+        }
+        cableSnakeGame.nextDirection = next;
+      }
+
+      /* ==========================================================================
+       Cable Snake Update
+       ========================================================================== */
+      function cableSnakeLoop(now) {
+        if (!cableSnakeGame.running) {
+          return;
+        }
+        var delta = Math.min(0.05, (now - cableSnakeGame.lastTime) / 1000);
+        cableSnakeGame.lastTime = now;
+        updateCableSnakeParticles(delta);
+        if (cableSnakeGame.state === "playing") {
+          cableSnakeGame.stepElapsed += delta * 1000;
+          var stepMs = getCableSnakeStepMs();
+          while (cableSnakeGame.stepElapsed >= stepMs) {
+            cableSnakeGame.stepElapsed -= stepMs;
+            stepCableSnake();
+          }
+        }
+        renderCableSnake(now);
+        cableSnakeGame.animationId = requestAnimationFrame(cableSnakeLoop);
+      }
+
+      function getCableSnakeStepMs() {
+        var settings = cableSnakeDifficulties[cableSnakeGame.difficulty];
+        return Math.max(settings.minMs, settings.startMs - cableSnakeGame.collected * settings.speedUp);
+      }
+
+      function stepCableSnake() {
+        cableSnakeGame.direction = cableSnakeGame.nextDirection;
+        var head = cableSnakeGame.snake[0];
+        var nextHead = {
+          x: head.x + cableSnakeGame.direction.x,
+          y: head.y + cableSnakeGame.direction.y,
+        };
+        if (
+          nextHead.x < 0 ||
+          nextHead.y < 0 ||
+          nextHead.x >= cableSnakeGame.cols ||
+          nextHead.y >= cableSnakeGame.rows ||
+          cableSnakeGame.snake.some(function (part) { return part.x === nextHead.x && part.y === nextHead.y; })
+        ) {
+          endCableSnakeGame();
+          return;
+        }
+        cableSnakeGame.snake.unshift(nextHead);
+        if (nextHead.x === cableSnakeGame.food.x && nextHead.y === cableSnakeGame.food.y) {
+          collectCableSnakeFood();
+        } else {
+          cableSnakeGame.snake.pop();
+        }
+      }
+
+      function collectCableSnakeFood() {
+        var item = cableSnakeCollectibles.find(function (entry) {
+          return entry.type === cableSnakeGame.food.type;
+        }) || cableSnakeCollectibles[0];
+        cableSnakeGame.collected += 1;
+        cableSnakeGame.score += item.points + cableSnakeGame.collected * 12;
+        createCableSnakeParticles(cableSnakeGame.food.x, cableSnakeGame.food.y, item.color);
+        updateCableSnakeBestScore();
+        placeCableSnakeFood();
+        updateCableSnakeHud();
+        playCableSnakeTone(cableSnakeGame.collected % 4 === 0 ? "speed" : "collect");
+      }
+
+      function placeCableSnakeFood() {
+        var open = [];
+        for (var y = 0; y < cableSnakeGame.rows; y += 1) {
+          for (var x = 0; x < cableSnakeGame.cols; x += 1) {
+            var occupied = cableSnakeGame.snake.some(function (part) {
+              return part.x === x && part.y === y;
+            });
+            if (!occupied) {
+              open.push({ x: x, y: y });
+            }
+          }
+        }
+        if (!open.length) {
+          endCableSnakeGame();
+          return;
+        }
+        var cell = open[Math.floor(Math.random() * open.length)];
+        var item = cableSnakeCollectibles[cableSnakeGame.collected % cableSnakeCollectibles.length];
+        cableSnakeGame.food = { x: cell.x, y: cell.y, type: item.type };
+      }
+
+      function endCableSnakeGame() {
+        cableSnakeGame.state = "gameover";
+        updateCableSnakeBestScore();
+        updateCableSnakeOverlay("Signal Lost", "The cable crossed or hit the wall. Press Space or Restart for a fresh take.");
+        playCableSnakeTone("crash");
+      }
+
+      function updateCableSnakeBestScore() {
+        if (cableSnakeGame.score > cableSnakeGame.bestScore) {
+          cableSnakeGame.bestScore = cableSnakeGame.score;
+          writeNumberToStorage("studioArcadeCableSnakeBestScore", cableSnakeGame.bestScore);
+          playCableSnakeTone("best");
+        }
+      }
+
+      /* ==========================================================================
+       Cable Snake Rendering
+       ========================================================================== */
+      function renderCableSnake(now) {
+        if (!cableSnakeGame.ctx || !cableSnakeGame.canvas) {
+          return;
+        }
+        var ctx = cableSnakeGame.ctx;
+        var size = cableSnakeGame.width;
+        var cell = cableSnakeGame.cellSize;
+        ctx.clearRect(0, 0, size, size);
+        ctx.fillStyle = "#050508";
+        ctx.fillRect(0, 0, size, size);
+        ctx.strokeStyle = "rgba(91,156,246,.09)";
+        ctx.lineWidth = 1;
+        for (var i = 0; i <= cableSnakeGame.cols; i += 1) {
+          ctx.beginPath();
+          ctx.moveTo(i * cell, 0);
+          ctx.lineTo(i * cell, size);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, i * cell);
+          ctx.lineTo(size, i * cell);
+          ctx.stroke();
+        }
+        drawCableSnakeFood(ctx, cell, now);
+        drawCableSnakeBody(ctx, cell, now);
+        drawCableSnakeParticles(ctx, cell);
+      }
+
+      function drawCableSnakeBody(ctx, cell, now) {
+        cableSnakeGame.snake.forEach(function (part, index) {
+          var centerX = part.x * cell + cell / 2;
+          var centerY = part.y * cell + cell / 2;
+          var radius = Math.max(5, cell * (index === 0 ? 0.42 : 0.34));
+          ctx.save();
+          ctx.shadowColor = index === 0 ? "#c8a86b" : "#5b9cf6";
+          ctx.shadowBlur = index === 0 ? 18 : 10;
+          ctx.fillStyle = index === 0 ? "#c8a86b" : "#5b9cf6";
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = "rgba(11,11,15,.64)";
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, Math.max(2, radius * 0.42), 0, Math.PI * 2);
+          ctx.fill();
+          if (index === 0) {
+            ctx.strokeStyle = "#e6e2d9";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(centerX - radius * 0.45, centerY);
+            ctx.lineTo(centerX + radius * 0.45, centerY);
+            ctx.stroke();
+          }
+          ctx.restore();
+        });
+        var pulseIndex = Math.floor((now * 0.008) % Math.max(1, cableSnakeGame.snake.length));
+        var pulse = cableSnakeGame.snake[pulseIndex];
+        if (pulse) {
+          ctx.fillStyle = "rgba(230,226,217,.75)";
+          ctx.beginPath();
+          ctx.arc(pulse.x * cell + cell / 2, pulse.y * cell + cell / 2, Math.max(2, cell * 0.14), 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function drawCableSnakeFood(ctx, cell, now) {
+        var item = cableSnakeCollectibles.find(function (entry) {
+          return entry.type === cableSnakeGame.food.type;
+        }) || cableSnakeCollectibles[0];
+        var x = cableSnakeGame.food.x * cell + cell / 2;
+        var y = cableSnakeGame.food.y * cell + cell / 2;
+        var r = cell * (0.28 + Math.sin(now * 0.009) * 0.04);
+        ctx.save();
+        ctx.shadowColor = item.color;
+        ctx.shadowBlur = 16;
+        ctx.fillStyle = item.color;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = "#0b0b0f";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x - r * 0.65, y);
+        ctx.lineTo(x + r * 0.65, y);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function createCableSnakeParticles(x, y, color) {
+        for (var i = 0; i < 14; i += 1) {
+          cableSnakeGame.particles.push({
+            x: x + 0.5,
+            y: y + 0.5,
+            vx: (Math.random() - 0.5) * 5,
+            vy: (Math.random() - 0.5) * 5,
+            life: 0.45 + Math.random() * 0.3,
+            color: color,
+          });
+        }
+      }
+
+      function updateCableSnakeParticles(delta) {
+        for (var i = cableSnakeGame.particles.length - 1; i >= 0; i -= 1) {
+          var particle = cableSnakeGame.particles[i];
+          particle.life -= delta;
+          particle.x += particle.vx * delta;
+          particle.y += particle.vy * delta;
+          if (particle.life <= 0) {
+            cableSnakeGame.particles.splice(i, 1);
+          }
+        }
+      }
+
+      function drawCableSnakeParticles(ctx, cell) {
+        cableSnakeGame.particles.forEach(function (particle) {
+          ctx.globalAlpha = clamp(particle.life / 0.7, 0, 1);
+          ctx.fillStyle = particle.color;
+          ctx.fillRect(particle.x * cell, particle.y * cell, 3, 3);
+          ctx.globalAlpha = 1;
+        });
+      }
+
+      function updateCableSnakeHud() {
+        var score = document.getElementById("snakeScore");
+        var best = document.getElementById("snakeBest");
+        var length = document.getElementById("snakeLength");
+        var speed = document.getElementById("snakeSpeed");
+        if (!score || !best || !length || !speed) {
+          return;
+        }
+        score.textContent = cableSnakeGame.score;
+        best.textContent = cableSnakeGame.bestScore;
+        length.textContent = cableSnakeGame.snake.length;
+        speed.textContent = Math.max(1, Math.round(200 / getCableSnakeStepMs()));
+      }
+
+      function updateCableSnakeDifficultyButtons() {
+        document.querySelectorAll(".snakeDifficultyButton").forEach(function (button) {
+          var active = button.getAttribute("data-difficulty") === cableSnakeGame.difficulty;
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+      }
+
+      function updateCableSnakeOverlay(title, text) {
+        if (!cableSnakeGame.overlay) {
+          return;
+        }
+        cableSnakeGame.overlay.classList.remove("hidden");
+        document.getElementById("snakeOverlayTitle").textContent = title;
+        document.getElementById("snakeOverlayText").textContent = text;
+      }
+
+      function hideCableSnakeOverlay() {
+        if (cableSnakeGame.overlay) {
+          cableSnakeGame.overlay.classList.add("hidden");
+        }
+      }
+
+      /* ==========================================================================
+       Cable Snake Audio
+       ========================================================================== */
+      function playCableSnakeTone(type) {
+        if (studioAudio.muted) {
+          return;
+        }
+        var context = getAudioContext();
+        if (!context) {
+          return;
+        }
+        var now = context.currentTime;
+        var oscillator = context.createOscillator();
+        var gain = context.createGain();
+        var frequency = 360;
+        var duration = 0.08;
+        if (type === "collect") frequency = 640;
+        if (type === "speed") { frequency = 820; duration = 0.13; }
+        if (type === "crash") { frequency = 110; duration = 0.24; oscillator.type = "sawtooth"; }
+        if (type === "pause") frequency = 190;
+        if (type === "best") { frequency = 960; duration = 0.16; }
+        oscillator.frequency.setValueAtTime(frequency, now);
+        oscillator.frequency.exponentialRampToValueAtTime(Math.max(55, frequency * 0.62), now + duration);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.07, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start(now);
+        oscillator.stop(now + duration + 0.02);
+        cableSnakeGame.audioNodes.push(oscillator);
+        oscillator.addEventListener("ended", function () {
+          var index = cableSnakeGame.audioNodes.indexOf(oscillator);
+          if (index >= 0) cableSnakeGame.audioNodes.splice(index, 1);
+        });
+      }
+
+      function stopCableSnakeAudio() {
+        cableSnakeGame.audioNodes.forEach(function (node) {
+          try {
+            node.stop();
+          } catch (error) {
+            // One-shot tone may already be finished.
+          }
+        });
+        cableSnakeGame.audioNodes = [];
+      }
+
+      /* ==========================================================================
+       Track Tetris State
+       ========================================================================== */
+      var trackTetrisGame = {
+        canvas: null,
+        ctx: null,
+        overlay: null,
+        animationId: null,
+        running: false,
+        inputAdded: false,
+        state: "ready",
+        lastTime: 0,
+        width: 720,
+        height: 620,
+        boardX: 0,
+        boardY: 0,
+        cellSize: 24,
+        cols: 10,
+        rows: 20,
+        board: [],
+        active: null,
+        nextQueue: [],
+        bag: [],
+        hold: null,
+        canHold: true,
+        score: 0,
+        bestScore: 0,
+        lines: 0,
+        level: 1,
+        dropElapsed: 0,
+        lockElapsed: 0,
+        lockResets: 0,
+        keys: {},
+        keyRepeat: {},
+        audioNodes: [],
+      };
+
+      var trackTetrisSettings = {
+        baseFallMs: 760,
+        minFallMs: 92,
+        lockDelayMs: 520,
+        maxLockResets: 8,
+        repeatDelayMs: 150,
+        repeatRateMs: 52,
+        scoring: [0, 100, 300, 500, 850],
+      };
+
+      var trackTetrisPieces = {
+        I: { color: "#5b9cf6", cells: [[0, 1], [1, 1], [2, 1], [3, 1]] },
+        O: { color: "#c8a86b", cells: [[1, 0], [2, 0], [1, 1], [2, 1]] },
+        T: { color: "#b68cff", cells: [[1, 0], [0, 1], [1, 1], [2, 1]] },
+        S: { color: "#7ee3b2", cells: [[1, 0], [2, 0], [0, 1], [1, 1]] },
+        Z: { color: "#f66f8d", cells: [[0, 0], [1, 0], [1, 1], [2, 1]] },
+        J: { color: "#8f8e9d", cells: [[0, 0], [0, 1], [1, 1], [2, 1]] },
+        L: { color: "#e6e2d9", cells: [[2, 0], [0, 1], [1, 1], [2, 1]] },
+      };
+
+      /* ==========================================================================
+       Track Tetris Lifecycle
+       ========================================================================== */
+      function launchTrackTetris() {
+        document.getElementById("patchPongScoreboard").innerHTML =
+          '<span class="score-pill">Session <strong id="tetrisScore">0</strong></span>' +
+          '<span class="score-pill">Best <strong id="tetrisBest">0</strong></span>' +
+          '<span class="score-pill">Level <strong id="tetrisLevel">1</strong></span>' +
+          '<span class="score-pill">Tracks <strong id="tetrisLines">0</strong></span>';
+
+        trackTetrisGame.canvas = document.createElement("canvas");
+        trackTetrisGame.canvas.id = "trackTetrisCanvas";
+        trackTetrisGame.canvas.setAttribute("aria-label", "Track Tetris game canvas");
+        trackTetrisGame.ctx = trackTetrisGame.canvas.getContext("2d");
+        trackTetrisGame.overlay = document.createElement("div");
+        trackTetrisGame.overlay.className = "game-overlay";
+        trackTetrisGame.overlay.innerHTML =
+          '<div class="overlay-card">' +
+          '<h3 id="tetrisOverlayTitle">Track Tetris</h3>' +
+          '<p id="tetrisOverlayText">Build the session. Press Space or tap Start to drop the first region.</p>' +
+          "</div>";
+        gameMount.appendChild(trackTetrisGame.canvas);
+        gameMount.appendChild(trackTetrisGame.overlay);
+
+        gameControls.innerHTML =
+          '<div class="instructions">' +
+          '<span><span class="kbd">A/D</span> move</span>' +
+          '<span><span class="kbd">X/Z</span> rotate</span>' +
+          '<span><span class="kbd">Space</span> hard drop</span>' +
+          '<span><span class="kbd">C</span> hold</span>' +
+          '<span><span class="kbd">P</span> pause</span>' +
+          '</div><div class="control-actions">' +
+          '<button id="startTetrisButton" class="small-button" type="button">Start</button>' +
+          '<button id="pauseTetrisButton" class="small-button" type="button">Pause</button>' +
+          '<button class="small-button studioMuteButton" type="button">' + getStudioMuteLabel() + "</button>" +
+          '<button id="restartTetrisButton" class="small-button" type="button">Restart</button>' +
+          '<div class="touch-pad compact" aria-label="Track Tetris touch controls">' +
+          '<button class="touch-button tetrisTouchButton" data-action="left" type="button">Left</button>' +
+          '<button class="touch-button tetrisTouchButton" data-action="right" type="button">Right</button>' +
+          '<button class="touch-button tetrisTouchButton" data-action="rotate" type="button">Rotate</button>' +
+          '<button class="touch-button tetrisTouchButton" data-action="soft" type="button">Soft</button>' +
+          '<button class="touch-button tetrisTouchButton" data-action="hard" type="button">Drop</button>' +
+          '<button class="touch-button tetrisTouchButton" data-action="hold" type="button">Hold</button>' +
+          '<button class="touch-button tetrisTouchButton" data-action="pause" type="button">Pause</button>' +
+          "</div></div>";
+
+        document.getElementById("startTetrisButton").addEventListener("click", startTrackTetris);
+        document.getElementById("pauseTetrisButton").addEventListener("click", toggleTrackTetrisPause);
+        document.getElementById("restartTetrisButton").addEventListener("click", resetTrackTetrisGame);
+        document.querySelector(".studioMuteButton").addEventListener("click", toggleStudioMute);
+        document.querySelectorAll(".tetrisTouchButton").forEach(function (button) {
+          button.addEventListener("pointerdown", onTrackTetrisTouchDown);
+          button.addEventListener("pointerup", onTrackTetrisTouchUp);
+          button.addEventListener("pointercancel", onTrackTetrisTouchUp);
+        });
+
+        trackTetrisGame.bestScore = readNumberFromStorage("studioArcadeTrackTetrisBestScore", 0);
+        trackTetrisGame.running = true;
+        trackTetrisGame.lastTime = performance.now();
+        resizeTrackTetris();
+        resetTrackTetrisGame();
+        addTrackTetrisInput();
+        window.addEventListener("resize", resizeTrackTetris);
+        window.addEventListener("orientationchange", resizeTrackTetris);
+        trackTetrisGame.animationId = requestAnimationFrame(trackTetrisLoop);
+      }
+
+      function stopTrackTetris() {
+        trackTetrisGame.running = false;
+        trackTetrisGame.state = "stopped";
+        if (trackTetrisGame.animationId) {
+          cancelAnimationFrame(trackTetrisGame.animationId);
+        }
+        removeTrackTetrisInput();
+        window.removeEventListener("resize", resizeTrackTetris);
+        window.removeEventListener("orientationchange", resizeTrackTetris);
+        stopTrackTetrisAudio();
+        trackTetrisGame.animationId = null;
+        trackTetrisGame.canvas = null;
+        trackTetrisGame.ctx = null;
+        trackTetrisGame.overlay = null;
+        trackTetrisGame.keys = {};
+        trackTetrisGame.keyRepeat = {};
+      }
+
+      function resetTrackTetrisGame() {
+        trackTetrisGame.board = [];
+        for (var y = 0; y < trackTetrisGame.rows; y += 1) {
+          trackTetrisGame.board.push(new Array(trackTetrisGame.cols).fill(null));
+        }
+        trackTetrisGame.bag = [];
+        trackTetrisGame.nextQueue = [];
+        trackTetrisGame.hold = null;
+        trackTetrisGame.canHold = true;
+        trackTetrisGame.score = 0;
+        trackTetrisGame.lines = 0;
+        trackTetrisGame.level = 1;
+        trackTetrisGame.dropElapsed = 0;
+        trackTetrisGame.lockElapsed = 0;
+        trackTetrisGame.lockResets = 0;
+        trackTetrisGame.state = "ready";
+        refillTrackTetrisQueue();
+        spawnTrackTetrisPiece();
+        updateTrackTetrisHud();
+        updateTrackTetrisOverlay("Track Tetris", "Build the session. Press Space or tap Start to drop the first region.");
+      }
+
+      function startTrackTetris() {
+        if (trackTetrisGame.state === "gameover") {
+          resetTrackTetrisGame();
+        }
+        if (trackTetrisGame.state === "ready" || trackTetrisGame.state === "paused") {
+          trackTetrisGame.state = "playing";
+          trackTetrisGame.lastTime = performance.now();
+          hideTrackTetrisOverlay();
+          resumeAudioContext();
+          playTrackTetrisTone("start");
+        }
+      }
+
+      function toggleTrackTetrisPause() {
+        if (trackTetrisGame.state === "playing") {
+          trackTetrisGame.state = "paused";
+          updateTrackTetrisOverlay("Paused", "Session is held. Press P, Start, or Pause to resume.");
+          playTrackTetrisTone("pause");
+        } else {
+          startTrackTetris();
+        }
+      }
+
+      function resizeTrackTetris() {
+        if (!trackTetrisGame.canvas || !trackTetrisGame.ctx) {
+          return;
+        }
+        var rect = gameMount.getBoundingClientRect();
+        var deviceScale = window.devicePixelRatio || 1;
+        var viewportLimit = Math.max(280, window.innerWidth - 20);
+        var width = Math.max(280, Math.floor(Math.min(rect.width, viewportLimit)));
+        var height = Math.max(360, Math.floor(rect.height));
+        trackTetrisGame.width = width;
+        trackTetrisGame.height = height;
+        var sideReserve = width > 620 ? 190 : 92;
+        trackTetrisGame.cellSize = Math.floor(
+          Math.min((width - sideReserve - 24) / trackTetrisGame.cols, (height - 28) / trackTetrisGame.rows),
+        );
+        trackTetrisGame.cellSize = Math.max(13, trackTetrisGame.cellSize);
+        trackTetrisGame.boardX = Math.max(12, Math.floor((width - sideReserve - trackTetrisGame.cellSize * trackTetrisGame.cols) / 2));
+        trackTetrisGame.boardY = Math.max(12, Math.floor((height - trackTetrisGame.cellSize * trackTetrisGame.rows) / 2));
+        trackTetrisGame.canvas.width = Math.floor(width * deviceScale);
+        trackTetrisGame.canvas.height = Math.floor(height * deviceScale);
+        trackTetrisGame.canvas.style.width = width + "px";
+        trackTetrisGame.canvas.style.height = height + "px";
+        trackTetrisGame.ctx.setTransform(deviceScale, 0, 0, deviceScale, 0, 0);
+      }
+
+      /* ==========================================================================
+       Track Tetris Board Logic / Piece Logic
+       ========================================================================== */
+      function refillTrackTetrisQueue() {
+        while (trackTetrisGame.nextQueue.length < 5) {
+          if (!trackTetrisGame.bag.length) {
+            trackTetrisGame.bag = shuffleTrackTetrisBag(["I", "O", "T", "S", "Z", "J", "L"]);
+          }
+          trackTetrisGame.nextQueue.push(trackTetrisGame.bag.pop());
+        }
+      }
+
+      function shuffleTrackTetrisBag(values) {
+        var bag = values.slice();
+        for (var i = bag.length - 1; i > 0; i -= 1) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = bag[i];
+          bag[i] = bag[j];
+          bag[j] = temp;
+        }
+        return bag;
+      }
+
+      function spawnTrackTetrisPiece() {
+        refillTrackTetrisQueue();
+        var type = trackTetrisGame.nextQueue.shift();
+        refillTrackTetrisQueue();
+        trackTetrisGame.active = createTrackTetrisPiece(type);
+        trackTetrisGame.canHold = true;
+        trackTetrisGame.lockElapsed = 0;
+        trackTetrisGame.lockResets = 0;
+        if (!canPlaceTrackTetris(trackTetrisGame.active, 0, 0, trackTetrisGame.active.cells)) {
+          trackTetrisGame.state = "gameover";
+          updateTrackTetrisOverlay("Session Over", "The session is full. Press Restart for a clean board.");
+          playTrackTetrisTone("gameover");
+        }
+      }
+
+      function createTrackTetrisPiece(type) {
+        return {
+          type: type,
+          x: 3,
+          y: -1,
+          cells: trackTetrisPieces[type].cells.map(function (cell) {
+            return [cell[0], cell[1]];
+          }),
+          color: trackTetrisPieces[type].color,
+        };
+      }
+
+      function rotateTrackTetrisCells(cells, clockwise) {
+        if (!clockwise) {
+          return cells.map(function (cell) { return [cell[1], 3 - cell[0]]; });
+        }
+        return cells.map(function (cell) { return [3 - cell[1], cell[0]]; });
+      }
+
+      function canPlaceTrackTetris(piece, dx, dy, cells) {
+        var testCells = cells || piece.cells;
+        for (var i = 0; i < testCells.length; i += 1) {
+          var x = piece.x + dx + testCells[i][0];
+          var y = piece.y + dy + testCells[i][1];
+          if (x < 0 || x >= trackTetrisGame.cols || y >= trackTetrisGame.rows) {
+            return false;
+          }
+          if (y >= 0 && trackTetrisGame.board[y][x]) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      function moveTrackTetris(dx, dy, scored) {
+        var piece = trackTetrisGame.active;
+        if (!piece || trackTetrisGame.state !== "playing") {
+          return false;
+        }
+        if (canPlaceTrackTetris(piece, dx, dy, piece.cells)) {
+          piece.x += dx;
+          piece.y += dy;
+          if (dy > 0 && scored) {
+            trackTetrisGame.score += 1;
+            updateTrackTetrisBestScore();
+            updateTrackTetrisHud();
+          }
+          resetTrackTetrisLockDelay();
+          return true;
+        }
+        return false;
+      }
+
+      function rotateTrackTetris(clockwise) {
+        var piece = trackTetrisGame.active;
+        if (!piece || trackTetrisGame.state !== "playing") {
+          return;
+        }
+        if (piece.type === "O") {
+          return;
+        }
+        var rotated = rotateTrackTetrisCells(piece.cells, clockwise);
+        var kicks = [0, -1, 1, -2, 2];
+        for (var i = 0; i < kicks.length; i += 1) {
+          if (canPlaceTrackTetris(piece, kicks[i], 0, rotated)) {
+            piece.x += kicks[i];
+            piece.cells = rotated;
+            resetTrackTetrisLockDelay();
+            playTrackTetrisTone("rotate");
+            return;
+          }
+        }
+      }
+
+      function hardDropTrackTetris() {
+        if (!trackTetrisGame.active || trackTetrisGame.state !== "playing") {
+          startTrackTetris();
+          return;
+        }
+        var distance = 0;
+        while (canPlaceTrackTetris(trackTetrisGame.active, 0, 1, trackTetrisGame.active.cells)) {
+          trackTetrisGame.active.y += 1;
+          distance += 1;
+        }
+        trackTetrisGame.score += distance * 2;
+        lockTrackTetrisPiece();
+        playTrackTetrisTone("hard");
+      }
+
+      function holdTrackTetrisPiece() {
+        if (!trackTetrisGame.active || !trackTetrisGame.canHold || trackTetrisGame.state !== "playing") {
+          return;
+        }
+        var current = trackTetrisGame.active.type;
+        if (trackTetrisGame.hold) {
+          trackTetrisGame.active = createTrackTetrisPiece(trackTetrisGame.hold);
+          trackTetrisGame.hold = current;
+        } else {
+          trackTetrisGame.hold = current;
+          spawnTrackTetrisPiece();
+        }
+        trackTetrisGame.canHold = false;
+        trackTetrisGame.lockElapsed = 0;
+        updateTrackTetrisHud();
+        playTrackTetrisTone("hold");
+      }
+
+      function lockTrackTetrisPiece() {
+        var piece = trackTetrisGame.active;
+        if (!piece) {
+          return;
+        }
+        piece.cells.forEach(function (cell) {
+          var x = piece.x + cell[0];
+          var y = piece.y + cell[1];
+          if (y >= 0 && y < trackTetrisGame.rows) {
+            trackTetrisGame.board[y][x] = { type: piece.type, color: piece.color };
+          }
+        });
+        clearTrackTetrisRows();
+        spawnTrackTetrisPiece();
+        updateTrackTetrisHud();
+        playTrackTetrisTone("lock");
+      }
+
+      function clearTrackTetrisRows() {
+        var cleared = 0;
+        for (var y = trackTetrisGame.rows - 1; y >= 0; y -= 1) {
+          var full = trackTetrisGame.board[y].every(Boolean);
+          if (full) {
+            trackTetrisGame.board.splice(y, 1);
+            trackTetrisGame.board.unshift(new Array(trackTetrisGame.cols).fill(null));
+            cleared += 1;
+            y += 1;
+          }
+        }
+        if (cleared > 0) {
+          trackTetrisGame.lines += cleared;
+          trackTetrisGame.level = Math.floor(trackTetrisGame.lines / 10) + 1;
+          trackTetrisGame.score += trackTetrisSettings.scoring[cleared] * trackTetrisGame.level;
+          updateTrackTetrisBestScore();
+          playTrackTetrisTone(cleared === 4 ? "mixdown" : "clear");
+        }
+      }
+
+      function getTrackTetrisGhostY() {
+        if (!trackTetrisGame.active) {
+          return 0;
+        }
+        var y = trackTetrisGame.active.y;
+        while (canPlaceTrackTetris(trackTetrisGame.active, 0, y - trackTetrisGame.active.y + 1, trackTetrisGame.active.cells)) {
+          y += 1;
+        }
+        return y;
+      }
+
+      function resetTrackTetrisLockDelay() {
+        if (trackTetrisGame.lockResets < trackTetrisSettings.maxLockResets) {
+          trackTetrisGame.lockElapsed = 0;
+          trackTetrisGame.lockResets += 1;
+        }
+      }
+
+      /* ==========================================================================
+       Track Tetris Input
+       ========================================================================== */
+      function addTrackTetrisInput() {
+        if (trackTetrisGame.inputAdded) {
+          return;
+        }
+        document.addEventListener("keydown", onTrackTetrisKeyDown);
+        document.addEventListener("keyup", onTrackTetrisKeyUp);
+        trackTetrisGame.inputAdded = true;
+      }
+
+      function removeTrackTetrisInput() {
+        if (!trackTetrisGame.inputAdded) {
+          return;
+        }
+        document.removeEventListener("keydown", onTrackTetrisKeyDown);
+        document.removeEventListener("keyup", onTrackTetrisKeyUp);
+        trackTetrisGame.inputAdded = false;
+      }
+
+      function onTrackTetrisKeyDown(event) {
+        if (appState.activeGameId !== "track-tetris") {
+          return;
+        }
+        var controlCodes = ["ArrowLeft", "ArrowRight", "ArrowDown", "KeyA", "KeyD", "KeyS", "ArrowUp", "KeyX", "KeyZ", "Space", "KeyC", "ShiftLeft", "ShiftRight", "KeyP", "Escape"];
+        if (controlCodes.indexOf(event.code) >= 0) {
+          event.preventDefault();
+        }
+        if (event.repeat && (event.code === "ArrowLeft" || event.code === "KeyA" || event.code === "ArrowRight" || event.code === "KeyD" || event.code === "ArrowDown" || event.code === "KeyS")) {
+          return;
+        }
+        if (event.code === "ArrowLeft" || event.code === "KeyA") pressTrackTetrisHeld("left");
+        else if (event.code === "ArrowRight" || event.code === "KeyD") pressTrackTetrisHeld("right");
+        else if (event.code === "ArrowDown" || event.code === "KeyS") pressTrackTetrisHeld("soft");
+        else if (event.code === "ArrowUp" || event.code === "KeyX") rotateTrackTetris(true);
+        else if (event.code === "KeyZ") rotateTrackTetris(false);
+        else if (event.code === "Space") hardDropTrackTetris();
+        else if (event.code === "KeyC" || event.code === "ShiftLeft" || event.code === "ShiftRight") holdTrackTetrisPiece();
+        else if (event.code === "KeyP" || event.code === "Escape") toggleTrackTetrisPause();
+      }
+
+      function onTrackTetrisKeyUp(event) {
+        if (event.code === "ArrowLeft" || event.code === "KeyA") releaseTrackTetrisHeld("left");
+        if (event.code === "ArrowRight" || event.code === "KeyD") releaseTrackTetrisHeld("right");
+        if (event.code === "ArrowDown" || event.code === "KeyS") releaseTrackTetrisHeld("soft");
+      }
+
+      function pressTrackTetrisHeld(action) {
+        startTrackTetris();
+        trackTetrisGame.keys[action] = true;
+        trackTetrisGame.keyRepeat[action] = {
+          elapsed: 0,
+          next: trackTetrisSettings.repeatDelayMs,
+        };
+        runTrackTetrisAction(action);
+      }
+
+      function releaseTrackTetrisHeld(action) {
+        trackTetrisGame.keys[action] = false;
+        delete trackTetrisGame.keyRepeat[action];
+      }
+
+      function onTrackTetrisTouchDown(event) {
+        event.preventDefault();
+        var action = event.currentTarget.getAttribute("data-action");
+        if (action === "left" || action === "right" || action === "soft") {
+          pressTrackTetrisHeld(action);
+        } else {
+          runTrackTetrisAction(action);
+        }
+      }
+
+      function onTrackTetrisTouchUp(event) {
+        event.preventDefault();
+        var action = event.currentTarget.getAttribute("data-action");
+        releaseTrackTetrisHeld(action);
+      }
+
+      function runTrackTetrisAction(action) {
+        if (action === "left") moveTrackTetris(-1, 0, false);
+        else if (action === "right") moveTrackTetris(1, 0, false);
+        else if (action === "soft") moveTrackTetris(0, 1, true);
+        else if (action === "rotate") rotateTrackTetris(true);
+        else if (action === "hard") hardDropTrackTetris();
+        else if (action === "hold") holdTrackTetrisPiece();
+        else if (action === "pause") toggleTrackTetrisPause();
+      }
+
+      /* ==========================================================================
+       Track Tetris Update
+       ========================================================================== */
+      function trackTetrisLoop(now) {
+        if (!trackTetrisGame.running) {
+          return;
+        }
+        var delta = Math.min(0.05, (now - trackTetrisGame.lastTime) / 1000);
+        trackTetrisGame.lastTime = now;
+        if (trackTetrisGame.state === "playing") {
+          updateTrackTetris(delta);
+        }
+        renderTrackTetris(now);
+        trackTetrisGame.animationId = requestAnimationFrame(trackTetrisLoop);
+      }
+
+      function updateTrackTetris(delta) {
+        updateTrackTetrisHeldKeys(delta);
+        trackTetrisGame.dropElapsed += delta * 1000;
+        if (trackTetrisGame.dropElapsed >= getTrackTetrisFallMs()) {
+          trackTetrisGame.dropElapsed = 0;
+          if (!moveTrackTetris(0, 1, false)) {
+            trackTetrisGame.lockElapsed += getTrackTetrisFallMs();
+          }
+        }
+        if (!canPlaceTrackTetris(trackTetrisGame.active, 0, 1, trackTetrisGame.active.cells)) {
+          trackTetrisGame.lockElapsed += delta * 1000;
+          if (trackTetrisGame.lockElapsed >= trackTetrisSettings.lockDelayMs) {
+            lockTrackTetrisPiece();
+          }
+        } else {
+          trackTetrisGame.lockElapsed = 0;
+          trackTetrisGame.lockResets = 0;
+        }
+      }
+
+      function updateTrackTetrisHeldKeys(delta) {
+        ["left", "right", "soft"].forEach(function (action) {
+          if (!trackTetrisGame.keys[action] || !trackTetrisGame.keyRepeat[action]) {
+            return;
+          }
+          var repeat = trackTetrisGame.keyRepeat[action];
+          repeat.elapsed += delta * 1000;
+          if (repeat.elapsed >= repeat.next) {
+            repeat.next += trackTetrisSettings.repeatRateMs;
+            runTrackTetrisAction(action);
+          }
+        });
+      }
+
+      function getTrackTetrisFallMs() {
+        return Math.max(trackTetrisSettings.minFallMs, trackTetrisSettings.baseFallMs - (trackTetrisGame.level - 1) * 58);
+      }
+
+      /* ==========================================================================
+       Track Tetris Rendering
+       ========================================================================== */
+      function renderTrackTetris(now) {
+        if (!trackTetrisGame.ctx || !trackTetrisGame.canvas) {
+          return;
+        }
+        var ctx = trackTetrisGame.ctx;
+        ctx.clearRect(0, 0, trackTetrisGame.width, trackTetrisGame.height);
+        ctx.fillStyle = "#050508";
+        ctx.fillRect(0, 0, trackTetrisGame.width, trackTetrisGame.height);
+        drawTrackTetrisBoard(ctx);
+        drawTrackTetrisGhost(ctx);
+        drawTrackTetrisPiece(ctx, trackTetrisGame.active, 1);
+        drawTrackTetrisSidePanels(ctx, now);
+      }
+
+      function drawTrackTetrisBoard(ctx) {
+        var cell = trackTetrisGame.cellSize;
+        var x0 = trackTetrisGame.boardX;
+        var y0 = trackTetrisGame.boardY;
+        ctx.save();
+        ctx.strokeStyle = "rgba(230,226,217,.18)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x0 - 2, y0 - 2, cell * trackTetrisGame.cols + 4, cell * trackTetrisGame.rows + 4);
+        for (var y = 0; y < trackTetrisGame.rows; y += 1) {
+          for (var x = 0; x < trackTetrisGame.cols; x += 1) {
+            ctx.fillStyle = y % 2 ? "rgba(19,19,27,.82)" : "rgba(27,27,38,.82)";
+            ctx.fillRect(x0 + x * cell, y0 + y * cell, cell, cell);
+            ctx.strokeStyle = "rgba(91,156,246,.08)";
+            ctx.strokeRect(x0 + x * cell, y0 + y * cell, cell, cell);
+            if (trackTetrisGame.board[y][x]) {
+              drawTrackTetrisCell(ctx, x, y, trackTetrisGame.board[y][x].color, 1);
+            }
+          }
+        }
+        ctx.restore();
+      }
+
+      function drawTrackTetrisPiece(ctx, piece, alpha) {
+        if (!piece) {
+          return;
+        }
+        piece.cells.forEach(function (cell) {
+          var x = piece.x + cell[0];
+          var y = piece.y + cell[1];
+          if (y >= 0) {
+            drawTrackTetrisCell(ctx, x, y, piece.color, alpha);
+          }
+        });
+      }
+
+      function drawTrackTetrisGhost(ctx) {
+        if (!trackTetrisGame.active) {
+          return;
+        }
+        var ghost = {
+          x: trackTetrisGame.active.x,
+          y: getTrackTetrisGhostY(),
+          cells: trackTetrisGame.active.cells,
+          color: trackTetrisGame.active.color,
+        };
+        drawTrackTetrisPiece(ctx, ghost, 0.22);
+      }
+
+      function drawTrackTetrisCell(ctx, x, y, color, alpha) {
+        var cell = trackTetrisGame.cellSize;
+        var px = trackTetrisGame.boardX + x * cell;
+        var py = trackTetrisGame.boardY + y * cell;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = alpha < 0.5 ? 0 : 10;
+        ctx.fillStyle = color;
+        roundRect(ctx, px + 2, py + 2, cell - 4, cell - 4, 4);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = "rgba(11,11,15,.56)";
+        ctx.stroke();
+        ctx.fillStyle = "rgba(11,11,15,.22)";
+        ctx.fillRect(px + 5, py + cell * 0.52, cell - 10, 2);
+        ctx.restore();
+      }
+
+      function drawTrackTetrisSidePanels(ctx, now) {
+        var panelX = trackTetrisGame.boardX + trackTetrisGame.cellSize * trackTetrisGame.cols + 18;
+        var panelY = trackTetrisGame.boardY;
+        if (panelX + 120 > trackTetrisGame.width) {
+          panelX = 12;
+          panelY = trackTetrisGame.boardY + trackTetrisGame.cellSize * trackTetrisGame.rows + 8;
+        }
+        ctx.save();
+        ctx.fillStyle = "rgba(230,226,217,.78)";
+        ctx.font = "12px ui-monospace, monospace";
+        ctx.fillText("Next Region", panelX, panelY + 14);
+        drawTrackTetrisMini(ctx, trackTetrisGame.nextQueue[0], panelX, panelY + 24);
+        ctx.fillText("Holding Bay", panelX, panelY + 112);
+        drawTrackTetrisMini(ctx, trackTetrisGame.hold, panelX, panelY + 122);
+        ctx.fillStyle = "rgba(200,168,107,.8)";
+        ctx.fillText("Fall " + Math.round(getTrackTetrisFallMs()) + "ms", panelX, panelY + 210);
+        ctx.restore();
+      }
+
+      function drawTrackTetrisMini(ctx, type, x, y) {
+        if (!type) {
+          ctx.fillStyle = "rgba(143,142,157,.32)";
+          ctx.fillRect(x, y, 68, 48);
+          return;
+        }
+        var piece = trackTetrisPieces[type];
+        piece.cells.forEach(function (cell) {
+          ctx.fillStyle = piece.color;
+          roundRect(ctx, x + cell[0] * 14, y + cell[1] * 14, 12, 12, 3);
+          ctx.fill();
+        });
+      }
+
+      function updateTrackTetrisHud() {
+        var score = document.getElementById("tetrisScore");
+        var best = document.getElementById("tetrisBest");
+        var level = document.getElementById("tetrisLevel");
+        var lines = document.getElementById("tetrisLines");
+        if (!score || !best || !level || !lines) {
+          return;
+        }
+        score.textContent = trackTetrisGame.score;
+        best.textContent = trackTetrisGame.bestScore;
+        level.textContent = trackTetrisGame.level;
+        lines.textContent = trackTetrisGame.lines;
+      }
+
+      function updateTrackTetrisBestScore() {
+        if (trackTetrisGame.score > trackTetrisGame.bestScore) {
+          trackTetrisGame.bestScore = trackTetrisGame.score;
+          writeNumberToStorage("studioArcadeTrackTetrisBestScore", trackTetrisGame.bestScore);
+          playTrackTetrisTone("best");
+        }
+      }
+
+      function updateTrackTetrisOverlay(title, text) {
+        if (!trackTetrisGame.overlay) {
+          return;
+        }
+        trackTetrisGame.overlay.classList.remove("hidden");
+        document.getElementById("tetrisOverlayTitle").textContent = title;
+        document.getElementById("tetrisOverlayText").textContent = text;
+      }
+
+      function hideTrackTetrisOverlay() {
+        if (trackTetrisGame.overlay) {
+          trackTetrisGame.overlay.classList.add("hidden");
+        }
+      }
+
+      /* ==========================================================================
+       Track Tetris Audio
+       ========================================================================== */
+      function playTrackTetrisTone(type) {
+        if (studioAudio.muted) {
+          return;
+        }
+        var context = getAudioContext();
+        if (!context) {
+          return;
+        }
+        var now = context.currentTime;
+        var oscillator = context.createOscillator();
+        var gain = context.createGain();
+        var frequency = 320;
+        var duration = 0.055;
+        if (type === "rotate") frequency = 510;
+        if (type === "hard") { frequency = 150; duration = 0.12; oscillator.type = "square"; }
+        if (type === "lock") frequency = 260;
+        if (type === "clear") { frequency = 760; duration = 0.15; }
+        if (type === "mixdown") { frequency = 980; duration = 0.24; }
+        if (type === "hold") frequency = 430;
+        if (type === "gameover") { frequency = 90; duration = 0.28; oscillator.type = "sawtooth"; }
+        if (type === "best") { frequency = 880; duration = 0.14; }
+        if (type === "pause") frequency = 190;
+        if (type === "start") frequency = 620;
+        oscillator.frequency.setValueAtTime(frequency, now);
+        oscillator.frequency.exponentialRampToValueAtTime(Math.max(55, frequency * 0.6), now + duration);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.065, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start(now);
+        oscillator.stop(now + duration + 0.02);
+        trackTetrisGame.audioNodes.push(oscillator);
+        oscillator.addEventListener("ended", function () {
+          var index = trackTetrisGame.audioNodes.indexOf(oscillator);
+          if (index >= 0) trackTetrisGame.audioNodes.splice(index, 1);
+        });
+      }
+
+      function stopTrackTetrisAudio() {
+        trackTetrisGame.audioNodes.forEach(function (node) {
+          try {
+            node.stop();
+          } catch (error) {
+            // One-shot tone may already be finished.
+          }
+        });
+        trackTetrisGame.audioNodes = [];
       }
 
       /* ==========================================================================
