@@ -347,11 +347,31 @@
         touch-action: none;
       }
 
-      #patchPongCanvas {
+      #patchPongCanvas,
+      #studioBricklesCanvas {
         display: block;
         width: 100%;
         height: 100%;
         min-height: 280px;
+      }
+
+      .brickles-power-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        justify-content: flex-end;
+        min-height: 42px;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .brickles-power-chip {
+        border: 1px solid rgba(91, 156, 246, 0.42);
+        border-radius: 6px;
+        padding: 6px 8px;
+        background: rgba(91, 156, 246, 0.1);
+        color: var(--text);
       }
 
       .game-overlay {
@@ -455,6 +475,15 @@
 
         .score-pill {
           flex: 1;
+        }
+
+        .brickles-power-list {
+          justify-content: stretch;
+        }
+
+        .brickles-power-chip {
+          flex: 1;
+          text-align: center;
         }
 
         .game-controls {
@@ -569,6 +598,14 @@
           launch: launchPatchPong,
           stop: stopPatchPong,
         },
+        {
+          id: "studio-brickles",
+          title: "Studio Brickles",
+          subtitle: "Break the mix. Clear the rack.",
+          cartridgeArt: "brickles",
+          launch: launchStudioBrickles,
+          stop: stopStudioBrickles,
+        },
       ];
 
       /* ==========================================================================
@@ -593,7 +630,9 @@
             '<p class="cartridge-subtitle">' +
             escapeHtml(game.subtitle) +
             "</p>" +
-            '<div class="cartridge-footer"><span>Insert</span><span>Press Start</span></div>';
+            '<div class="cartridge-footer"><span>Insert</span><span>' +
+            getCartridgeMeta(game.id) +
+            "</span></div>";
 
           cartridge.addEventListener("click", function () {
             launchGame(game.id);
@@ -635,6 +674,30 @@
           );
         }
 
+        if (type === "brickles") {
+          return (
+            "" +
+            '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Brick wall, fader paddle, and signal pulse">' +
+            "<defs>" +
+            '<filter id="bricklesGlow"><feGaussianBlur stdDeviation="2.3" result="blur"><\/feGaussianBlur><feMerge><feMergeNode in="blur"><\/feMergeNode><feMergeNode in="SourceGraphic"><\/feMergeNode><\/feMerge><\/filter>' +
+            "</defs>" +
+            '<rect x="18" y="22" width="84" height="54" rx="5" fill="#13131b" stroke="#252533" stroke-width="3"><\/rect>' +
+            '<rect x="24" y="29" width="18" height="10" rx="2" fill="#5b9cf6"><\/rect>' +
+            '<rect x="46" y="29" width="28" height="10" rx="2" fill="#c8a86b"><\/rect>' +
+            '<rect x="78" y="29" width="18" height="10" rx="2" fill="#5b9cf6"><\/rect>' +
+            '<rect x="24" y="44" width="28" height="10" rx="2" fill="#c8a86b"><\/rect>' +
+            '<rect x="56" y="44" width="18" height="10" rx="2" fill="#5b9cf6"><\/rect>' +
+            '<rect x="78" y="44" width="18" height="10" rx="2" fill="#c8a86b"><\/rect>' +
+            '<rect x="24" y="59" width="18" height="10" rx="2" fill="#5b9cf6"><\/rect>' +
+            '<rect x="46" y="59" width="28" height="10" rx="2" fill="#c8a86b"><\/rect>' +
+            '<rect x="78" y="59" width="18" height="10" rx="2" fill="#5b9cf6"><\/rect>' +
+            '<rect x="34" y="92" width="52" height="9" rx="4" fill="#c8a86b" filter="url(#bricklesGlow)"><\/rect>' +
+            '<circle cx="60" cy="83" r="8" fill="#e6e2d9" filter="url(#bricklesGlow)"><\/circle>' +
+            '<path d="M31 84 C45 74, 77 74, 91 84" fill="none" stroke="#5b9cf6" stroke-width="3" stroke-linecap="round" filter="url(#bricklesGlow)"><\/path>' +
+            "</svg>"
+          );
+        }
+
         return (
           "" +
           '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Empty cartridge slot">' +
@@ -644,6 +707,17 @@
           '<line x1="42" y1="74" x2="64" y2="74" stroke="#8f8e9d" stroke-width="3"><\/line>' +
           "</svg>"
         );
+      }
+
+      function getCartridgeMeta(gameId) {
+        if (gameId === "studio-brickles") {
+          return (
+            "Best " +
+            readNumberFromStorage("studioArcadeBricklesBestScore", 0)
+          );
+        }
+
+        return "Press Start";
       }
 
       function escapeHtml(value) {
@@ -751,6 +825,11 @@
       };
 
       function launchPatchPong() {
+        document.getElementById("patchPongScoreboard").innerHTML =
+          '<span class="score-pill">You <strong id="playerScore">0</strong></span>' +
+          '<span class="score-pill">CPU <strong id="cpuScore">0</strong></span>' +
+          '<span class="score-pill">Wins <strong id="bestWins">0</strong></span>';
+
         patchPong.canvas = document.createElement("canvas");
         patchPong.canvas.id = "patchPongCanvas";
         patchPong.canvas.setAttribute("aria-label", "Patch Pong game canvas");
@@ -776,6 +855,9 @@
           "</div>" +
           '<div class="control-actions">' +
           '<button id="difficultyButton" class="difficulty-toggle" type="button" aria-pressed="false">Difficulty: Normal</button>' +
+          '<button class="small-button studioMuteButton" type="button">' +
+          getStudioMuteLabel() +
+          "</button>" +
           '<button id="resetPatchPongButton" class="small-button" type="button">Reset Score</button>' +
           "</div>";
 
@@ -785,6 +867,9 @@
         document
           .getElementById("resetPatchPongButton")
           .addEventListener("click", resetPatchPongMatch);
+        document
+          .querySelector(".studioMuteButton")
+          .addEventListener("click", toggleStudioMute);
 
         patchPong.playerWins = readNumberFromStorage(
           "studioArcade.patchPong.playerWins",
@@ -1609,11 +1694,1282 @@
       }
 
       /* ==========================================================================
+       Studio Brickles state
+       ========================================================================== */
+      var studioBrickles = {
+        canvas: null,
+        ctx: null,
+        overlay: null,
+        animationId: null,
+        running: false,
+        inputAdded: false,
+        lastTime: 0,
+        state: "ready",
+        width: 800,
+        height: 520,
+        score: 0,
+        bestScore: 0,
+        levelIndex: 0,
+        lives: 3,
+        combo: 0,
+        keys: {
+          left: false,
+          right: false,
+        },
+        pointerActive: false,
+        paddle: {
+          x: 0,
+          y: 0,
+          width: 112,
+          baseWidth: 112,
+          height: 14,
+          speed: 660,
+        },
+        balls: [],
+        bricks: [],
+        powerUps: [],
+        particles: [],
+        flashes: [],
+        activePowers: {},
+        gainMultiplier: 1,
+        limiterUntil: 0,
+        shakeUntil: 0,
+        shakeAmount: 0,
+        levelStartAt: 0,
+        audioNodes: [],
+      };
+
+      var bricklesSettings = {
+        startingLives: 3,
+        baseBallSpeed: 330,
+        levelSpeedBonus: 26,
+        maxBallSpeed: 620,
+        paddleWidth: 112,
+        powerUpChance: 0.24,
+      };
+
+      /* ==========================================================================
+       Studio Brickles level data
+       ========================================================================== */
+      var bricklesLevels = [
+        {
+          name: "Rack Rows",
+          rows: [
+            "ssssssssss",
+            "srsrssrsrs",
+            "ssssssssss",
+            "..m....m..",
+          ],
+        },
+        {
+          name: "Console Faders",
+          rows: [
+            "s..r..r..s",
+            "ss.rssr.ss",
+            ".srsmmrs.",
+            "..srrrrs..",
+            "....ss....",
+          ],
+        },
+        {
+          name: "Waveform",
+          rows: [
+            "..ss..ss..",
+            ".srrssrrs.",
+            "srmssssmrs",
+            ".srrssrrs.",
+            "..ss..ss..",
+          ],
+        },
+        {
+          name: "Master Diamond",
+          rows: [
+            "....ss....",
+            "...srrs...",
+            "..srmrs..",
+            ".srrmmrrs.",
+            "..srmrs..",
+            "...srrs...",
+            "....ss....",
+          ],
+        },
+        {
+          name: "Patchbay Grid",
+          rows: [
+            "srsrsrsrsr",
+            "r.r.r.r.r.",
+            "smsmsmsmsm",
+            ".r.r.r.r.r",
+            "srsrsrsrsr",
+          ],
+        },
+      ];
+
+      /* ==========================================================================
+       Studio Brickles initialization
+       ========================================================================== */
+      function launchStudioBrickles() {
+        document.getElementById("patchPongScoreboard").innerHTML =
+          '<span class="score-pill">Score <strong id="bricklesScore">0</strong></span>' +
+          '<span class="score-pill">Best <strong id="bricklesBest">0</strong></span>' +
+          '<span class="score-pill">Lv <strong id="bricklesLevel">1</strong></span>' +
+          '<span class="score-pill">Lives <strong id="bricklesLives">3</strong></span>';
+
+        studioBrickles.canvas = document.createElement("canvas");
+        studioBrickles.canvas.id = "studioBricklesCanvas";
+        studioBrickles.canvas.setAttribute(
+          "aria-label",
+          "Studio Brickles game canvas",
+        );
+        studioBrickles.ctx = studioBrickles.canvas.getContext("2d");
+
+        studioBrickles.overlay = document.createElement("div");
+        studioBrickles.overlay.className = "game-overlay";
+        studioBrickles.overlay.innerHTML =
+          '<div class="overlay-card">' +
+          '<h3 id="bricklesOverlayTitle">Studio Brickles</h3>' +
+          '<p id="bricklesOverlayText">Move the fader, then press Space or tap the rack to launch the signal pulse.</p>' +
+          "</div>";
+
+        gameMount.appendChild(studioBrickles.canvas);
+        gameMount.appendChild(studioBrickles.overlay);
+
+        gameControls.innerHTML =
+          '<div class="instructions">' +
+          '<span><span class="kbd">Space</span> launch / pause / resume</span>' +
+          '<span><span class="kbd">Esc</span> pause</span>' +
+          '<span><span class="kbd">Mouse</span> or <span class="kbd">Touch</span> move fader</span>' +
+          '<span><span class="kbd">A/D</span> or <span class="kbd">Arrows</span> steer</span>' +
+          '</div><div class="control-actions">' +
+          '<div id="bricklesPowerList" class="brickles-power-list" aria-live="polite"></div>' +
+          '<button id="pauseBricklesButton" class="small-button" type="button">Pause</button>' +
+          '<button class="small-button studioMuteButton" type="button">' +
+          getStudioMuteLabel() +
+          "</button>" +
+          '<button id="restartBricklesButton" class="small-button" type="button">Restart</button>' +
+          "</div>";
+
+        document
+          .getElementById("pauseBricklesButton")
+          .addEventListener("click", toggleStudioBricklesPause);
+        document
+          .getElementById("restartBricklesButton")
+          .addEventListener("click", resetStudioBricklesGame);
+        document
+          .querySelector(".studioMuteButton")
+          .addEventListener("click", toggleStudioMute);
+
+        studioBrickles.bestScore = readNumberFromStorage(
+          "studioArcadeBricklesBestScore",
+          0,
+        );
+        studioBrickles.running = true;
+        studioBrickles.state = "ready";
+        studioBrickles.score = 0;
+        studioBrickles.levelIndex = 0;
+        studioBrickles.lives = bricklesSettings.startingLives;
+        studioBrickles.combo = 0;
+        studioBrickles.lastTime = performance.now();
+
+        addStudioBricklesInput();
+        resizeStudioBrickles();
+        buildStudioBricklesLevel();
+        resetStudioBricklesRound();
+        updateStudioBricklesHud();
+        updateStudioBricklesOverlay(
+          "Studio Brickles",
+          "Move the fader, then press Space or tap the rack to launch the signal pulse.",
+        );
+
+        window.addEventListener("resize", resizeStudioBrickles);
+        window.addEventListener("orientationchange", resizeStudioBrickles);
+        studioBrickles.animationId = requestAnimationFrame(studioBricklesLoop);
+      }
+
+      function resetStudioBricklesGame() {
+        clearStudioBricklesPowerUps();
+        studioBrickles.score = 0;
+        studioBrickles.levelIndex = 0;
+        studioBrickles.lives = bricklesSettings.startingLives;
+        studioBrickles.combo = 0;
+        studioBrickles.state = "ready";
+        studioBrickles.powerUps = [];
+        studioBrickles.particles = [];
+        studioBrickles.flashes = [];
+        buildStudioBricklesLevel();
+        resetStudioBricklesRound();
+        updateStudioBricklesHud();
+        updateStudioBricklesOverlay(
+          "Fresh Session",
+          "The rack is rebuilt. Press Space or tap to launch.",
+        );
+        playStudioBricklesTone("restart");
+      }
+
+      function resizeStudioBrickles() {
+        if (!studioBrickles.canvas || !studioBrickles.ctx) {
+          return;
+        }
+
+        var rect = gameMount.getBoundingClientRect();
+        var deviceScale = window.devicePixelRatio || 1;
+        var width = Math.max(320, Math.floor(rect.width));
+        var height = Math.max(300, Math.floor(rect.height));
+
+        studioBrickles.canvas.width = Math.floor(width * deviceScale);
+        studioBrickles.canvas.height = Math.floor(height * deviceScale);
+        studioBrickles.canvas.style.width = width + "px";
+        studioBrickles.canvas.style.height = height + "px";
+        studioBrickles.ctx.setTransform(deviceScale, 0, 0, deviceScale, 0, 0);
+
+        studioBrickles.width = width;
+        studioBrickles.height = height;
+        studioBrickles.paddle.baseWidth = Math.max(
+          78,
+          Math.min(bricklesSettings.paddleWidth, width * 0.24),
+        );
+        studioBrickles.paddle.width =
+          studioBrickles.activePowers.wideStereo
+            ? studioBrickles.paddle.baseWidth * 1.45
+            : studioBrickles.paddle.baseWidth;
+        studioBrickles.paddle.height = Math.max(12, Math.min(16, height * 0.03));
+        studioBrickles.paddle.y = height - Math.max(34, height * 0.075);
+        studioBrickles.paddle.x = clamp(
+          studioBrickles.paddle.x || (width - studioBrickles.paddle.width) / 2,
+          10,
+          width - studioBrickles.paddle.width - 10,
+        );
+
+        buildStudioBricklesLevel(true);
+        keepStudioBricklesBallsValid();
+      }
+
+      function buildStudioBricklesLevel(preserveProgress) {
+        var previousBricks = preserveProgress ? studioBrickles.bricks : [];
+        var level = bricklesLevels[studioBrickles.levelIndex % bricklesLevels.length];
+        var rows = level.rows;
+        var columns = rows.reduce(function (max, row) {
+          return Math.max(max, row.length);
+        }, 0);
+        var marginX = Math.max(14, studioBrickles.width * 0.04);
+        var top = Math.max(42, studioBrickles.height * 0.1);
+        var gap = 6;
+        var brickWidth = Math.max(
+          22,
+          (studioBrickles.width - marginX * 2 - gap * (columns - 1)) / columns,
+        );
+        var brickHeight = Math.max(15, Math.min(25, studioBrickles.height * 0.045));
+
+        studioBrickles.bricks = [];
+        rows.forEach(function (row, rowIndex) {
+          for (var column = 0; column < row.length; column += 1) {
+            var code = row.charAt(column);
+            if (code === ".") {
+              continue;
+            }
+
+            var type = code === "r" ? "reinforced" : code === "m" ? "master" : "standard";
+            var hp = type === "reinforced" ? 2 : 1;
+            var previousBrick = previousBricks[studioBrickles.bricks.length];
+            studioBrickles.bricks.push({
+              x: marginX + column * (brickWidth + gap),
+              y: top + rowIndex * (brickHeight + gap),
+              width: brickWidth,
+              height: brickHeight,
+              type: type,
+              hp:
+                previousBrick && previousBrick.type === type
+                  ? previousBrick.hp
+                  : hp,
+              maxHp: hp,
+              points: type === "master" ? 160 : type === "reinforced" ? 95 : 55,
+              flash: 0,
+              power:
+                previousBrick && previousBrick.type === type
+                  ? previousBrick.power
+                  : type === "master" ||
+                    Math.random() < bricklesSettings.powerUpChance,
+            });
+          }
+        });
+      }
+
+      function resetStudioBricklesRound() {
+        clearStudioBricklesPowerUps();
+        studioBrickles.powerUps = [];
+        studioBrickles.combo = 0;
+        studioBrickles.balls = [createAttachedBricklesBall()];
+        studioBrickles.state = studioBrickles.lives > 0 ? "ready" : "gameover";
+      }
+
+      function createAttachedBricklesBall() {
+        return {
+          x: studioBrickles.paddle.x + studioBrickles.paddle.width / 2,
+          y: studioBrickles.paddle.y - 11,
+          vx: 0,
+          vy: 0,
+          radius: Math.max(7, Math.min(10, studioBrickles.width * 0.014)),
+          attached: true,
+        };
+      }
+
+      function launchStudioBricklesBall() {
+        if (studioBrickles.state === "gameover") {
+          resetStudioBricklesGame();
+          return;
+        }
+
+        if (studioBrickles.state === "paused") {
+          resumeStudioBrickles();
+          return;
+        }
+
+        if (studioBrickles.state !== "ready") {
+          return;
+        }
+
+        resumeAudioContext();
+        studioBrickles.state = "playing";
+        hideStudioBricklesOverlay();
+        studioBrickles.balls.forEach(function (ball, index) {
+          var speed = getStudioBricklesBallSpeed();
+          var angle = -Math.PI / 2 + (index - 0.5) * 0.28;
+          ball.attached = false;
+          ball.vx = Math.cos(angle) * speed;
+          ball.vy = Math.sin(angle) * speed;
+          normalizeBricklesBallVelocity(ball);
+        });
+        playStudioBricklesTone("launch");
+      }
+
+      /* ==========================================================================
+       Studio Brickles input
+       ========================================================================== */
+      function addStudioBricklesInput() {
+        if (studioBrickles.inputAdded) {
+          return;
+        }
+
+        document.addEventListener("keydown", onStudioBricklesKeyDown);
+        document.addEventListener("keyup", onStudioBricklesKeyUp);
+        gameMount.addEventListener("pointerdown", onStudioBricklesPointer);
+        gameMount.addEventListener("pointermove", onStudioBricklesPointer);
+        gameMount.addEventListener("pointerup", onStudioBricklesPointerUp);
+        gameMount.addEventListener("pointercancel", onStudioBricklesPointerUp);
+        studioBrickles.inputAdded = true;
+      }
+
+      function removeStudioBricklesInput() {
+        if (!studioBrickles.inputAdded) {
+          return;
+        }
+
+        document.removeEventListener("keydown", onStudioBricklesKeyDown);
+        document.removeEventListener("keyup", onStudioBricklesKeyUp);
+        gameMount.removeEventListener("pointerdown", onStudioBricklesPointer);
+        gameMount.removeEventListener("pointermove", onStudioBricklesPointer);
+        gameMount.removeEventListener("pointerup", onStudioBricklesPointerUp);
+        gameMount.removeEventListener("pointercancel", onStudioBricklesPointerUp);
+        studioBrickles.inputAdded = false;
+      }
+
+      function onStudioBricklesKeyDown(event) {
+        if (appState.activeGameId !== "studio-brickles") {
+          return;
+        }
+
+        if (event.code === "Space") {
+          event.preventDefault();
+          if (studioBrickles.state === "playing") {
+            pauseStudioBrickles();
+          } else {
+            launchStudioBricklesBall();
+          }
+        }
+
+        if (event.code === "Escape") {
+          pauseStudioBrickles();
+        }
+
+        if (event.code === "ArrowLeft" || event.code === "KeyA") {
+          event.preventDefault();
+          studioBrickles.keys.left = true;
+        }
+
+        if (event.code === "ArrowRight" || event.code === "KeyD") {
+          event.preventDefault();
+          studioBrickles.keys.right = true;
+        }
+      }
+
+      function onStudioBricklesKeyUp(event) {
+        if (event.code === "ArrowLeft" || event.code === "KeyA") {
+          studioBrickles.keys.left = false;
+        }
+
+        if (event.code === "ArrowRight" || event.code === "KeyD") {
+          studioBrickles.keys.right = false;
+        }
+      }
+
+      function onStudioBricklesPointer(event) {
+        if (!studioBrickles.canvas || appState.activeGameId !== "studio-brickles") {
+          return;
+        }
+
+        event.preventDefault();
+        studioBrickles.pointerActive = true;
+        moveStudioBricklesPaddleTo(event.clientX);
+
+        if (event.type === "pointerdown") {
+          launchStudioBricklesBall();
+        }
+      }
+
+      function onStudioBricklesPointerUp() {
+        studioBrickles.pointerActive = false;
+      }
+
+      function moveStudioBricklesPaddleTo(clientX) {
+        var rect = studioBrickles.canvas.getBoundingClientRect();
+        studioBrickles.paddle.x = clamp(
+          clientX - rect.left - studioBrickles.paddle.width / 2,
+          10,
+          studioBrickles.width - studioBrickles.paddle.width - 10,
+        );
+        keepAttachedBricklesBallOnPaddle();
+      }
+
+      /* ==========================================================================
+       Studio Brickles physics
+       ========================================================================== */
+      function studioBricklesLoop(now) {
+        if (!studioBrickles.running) {
+          return;
+        }
+
+        var delta = Math.min(0.033, (now - studioBrickles.lastTime) / 1000);
+        studioBrickles.lastTime = now;
+
+        if (studioBrickles.state === "playing" || studioBrickles.state === "ready") {
+          updateStudioBrickles(delta, now);
+        }
+
+        renderStudioBrickles(now);
+        studioBrickles.animationId = requestAnimationFrame(studioBricklesLoop);
+      }
+
+      function updateStudioBrickles(delta, now) {
+        updateStudioBricklesPowers(now);
+        updateStudioBricklesPaddle(delta);
+        updateStudioBricklesPowerUps(delta);
+        updateStudioBricklesParticles(delta);
+
+        if (studioBrickles.state === "ready") {
+          keepAttachedBricklesBallOnPaddle();
+          return;
+        }
+
+        updateStudioBricklesBalls(delta);
+        checkStudioBricklesLevelComplete();
+      }
+
+      function updateStudioBricklesPaddle(delta) {
+        var distance = studioBrickles.paddle.speed * delta;
+        if (studioBrickles.keys.left) {
+          studioBrickles.paddle.x -= distance;
+        }
+        if (studioBrickles.keys.right) {
+          studioBrickles.paddle.x += distance;
+        }
+        studioBrickles.paddle.x = clamp(
+          studioBrickles.paddle.x,
+          10,
+          studioBrickles.width - studioBrickles.paddle.width - 10,
+        );
+        keepAttachedBricklesBallOnPaddle();
+      }
+
+      function updateStudioBricklesBalls(delta) {
+        for (var i = studioBrickles.balls.length - 1; i >= 0; i -= 1) {
+          var ball = studioBrickles.balls[i];
+          if (ball.attached) {
+            continue;
+          }
+
+          var speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+          var steps = Math.max(1, Math.ceil((speed * delta) / 8));
+          var stepDelta = delta / steps;
+
+          for (var step = 0; step < steps; step += 1) {
+            ball.x += ball.vx * stepDelta;
+            ball.y += ball.vy * stepDelta;
+            handleBricklesWallCollision(ball);
+            handleBricklesPaddleCollision(ball);
+            handleBricklesBrickCollision(ball);
+          }
+
+          if (ball.y - ball.radius > studioBrickles.height) {
+            studioBrickles.balls.splice(i, 1);
+          }
+        }
+
+        if (studioBrickles.balls.length === 0) {
+          loseStudioBricklesLife();
+        }
+      }
+
+      function getStudioBricklesBallSpeed() {
+        return Math.min(
+          bricklesSettings.maxBallSpeed,
+          bricklesSettings.baseBallSpeed +
+            studioBrickles.levelIndex * bricklesSettings.levelSpeedBonus,
+        );
+      }
+
+      function normalizeBricklesBallVelocity(ball) {
+        var speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy) || getStudioBricklesBallSpeed();
+        var minX = speed * 0.18;
+        var minY = speed * 0.34;
+
+        if (Math.abs(ball.vx) < minX) {
+          ball.vx = (ball.vx < 0 ? -1 : 1) * minX;
+        }
+        if (Math.abs(ball.vy) < minY) {
+          ball.vy = (ball.vy < 0 ? -1 : 1) * minY;
+        }
+
+        var adjusted = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+        var scale = Math.min(bricklesSettings.maxBallSpeed, speed) / adjusted;
+        ball.vx *= scale;
+        ball.vy *= scale;
+      }
+
+      function keepAttachedBricklesBallOnPaddle() {
+        studioBrickles.balls.forEach(function (ball) {
+          if (ball.attached) {
+            ball.x = studioBrickles.paddle.x + studioBrickles.paddle.width / 2;
+            ball.y = studioBrickles.paddle.y - ball.radius - 2;
+          }
+        });
+      }
+
+      function keepStudioBricklesBallsValid() {
+        studioBrickles.balls.forEach(function (ball) {
+          ball.radius = Math.max(7, Math.min(10, studioBrickles.width * 0.014));
+          ball.x = clamp(ball.x, ball.radius, studioBrickles.width - ball.radius);
+          ball.y = clamp(ball.y, ball.radius, studioBrickles.height - ball.radius);
+        });
+        keepAttachedBricklesBallOnPaddle();
+      }
+
+      /* ==========================================================================
+       Studio Brickles collision
+       ========================================================================== */
+      function handleBricklesWallCollision(ball) {
+        if (ball.x - ball.radius <= 0) {
+          ball.x = ball.radius;
+          ball.vx = Math.abs(ball.vx);
+          playStudioBricklesTone("wall");
+        }
+
+        if (ball.x + ball.radius >= studioBrickles.width) {
+          ball.x = studioBrickles.width - ball.radius;
+          ball.vx = -Math.abs(ball.vx);
+          playStudioBricklesTone("wall");
+        }
+
+        if (ball.y - ball.radius <= 0) {
+          ball.y = ball.radius;
+          ball.vy = Math.abs(ball.vy);
+          playStudioBricklesTone("wall");
+        }
+
+        if (
+          studioBrickles.limiterUntil > performance.now() &&
+          ball.y + ball.radius >= studioBrickles.height - 8
+        ) {
+          ball.y = studioBrickles.height - ball.radius - 8;
+          ball.vy = -Math.abs(ball.vy);
+          playStudioBricklesTone("limiter");
+        }
+      }
+
+      function handleBricklesPaddleCollision(ball) {
+        var paddle = studioBrickles.paddle;
+        if (ball.vy <= 0 || !rectCircleCollide(paddle, ball)) {
+          return;
+        }
+
+        var offset = clamp(
+          (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2),
+          -1,
+          1,
+        );
+        var speed = Math.min(
+          bricklesSettings.maxBallSpeed,
+          Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy) + 8,
+        );
+        var angle = -Math.PI / 2 + offset * 1.08;
+
+        ball.x = clamp(ball.x, paddle.x, paddle.x + paddle.width);
+        ball.y = paddle.y - ball.radius - 1;
+        ball.vx = Math.cos(angle) * speed;
+        ball.vy = Math.sin(angle) * speed;
+        normalizeBricklesBallVelocity(ball);
+        playStudioBricklesTone("paddle");
+      }
+
+      function handleBricklesBrickCollision(ball) {
+        for (var i = 0; i < studioBrickles.bricks.length; i += 1) {
+          var brick = studioBrickles.bricks[i];
+          if (brick.hp <= 0 || !rectCircleCollide(brick, ball)) {
+            continue;
+          }
+
+          var nearestX = clamp(ball.x, brick.x, brick.x + brick.width);
+          var nearestY = clamp(ball.y, brick.y, brick.y + brick.height);
+          var overlapX =
+            ball.radius - Math.abs(ball.x - nearestX);
+          var overlapY =
+            ball.radius - Math.abs(ball.y - nearestY);
+
+          if (overlapX < overlapY) {
+            ball.vx = ball.x < brick.x + brick.width / 2 ? -Math.abs(ball.vx) : Math.abs(ball.vx);
+            ball.x += ball.vx < 0 ? -overlapX - 0.5 : overlapX + 0.5;
+          } else {
+            ball.vy = ball.y < brick.y + brick.height / 2 ? -Math.abs(ball.vy) : Math.abs(ball.vy);
+            ball.y += ball.vy < 0 ? -overlapY - 0.5 : overlapY + 0.5;
+          }
+
+          normalizeBricklesBallVelocity(ball);
+          damageStudioBricklesBrick(brick);
+          return;
+        }
+      }
+
+      function damageStudioBricklesBrick(brick) {
+        brick.hp -= 1;
+        brick.flash = 1;
+        studioBrickles.combo += 1;
+        createBricklesParticles(
+          brick.x + brick.width / 2,
+          brick.y + brick.height / 2,
+          brick.type === "master" ? "#c8a86b" : "#5b9cf6",
+          brick.hp <= 0 ? 12 : 5,
+        );
+
+        if (brick.hp <= 0) {
+          var comboBonus = Math.min(150, studioBrickles.combo * 8);
+          var points = Math.floor((brick.points + comboBonus) * studioBrickles.gainMultiplier);
+          studioBrickles.score += points;
+          maybeDropStudioBricklesPowerUp(brick);
+          playStudioBricklesTone("break");
+        } else {
+          studioBrickles.score += Math.floor(25 * studioBrickles.gainMultiplier);
+          playStudioBricklesTone("reinforced");
+        }
+
+        updateStudioBricklesBestScore();
+        updateStudioBricklesHud();
+      }
+
+      function loseStudioBricklesLife() {
+        studioBrickles.lives -= 1;
+        studioBrickles.combo = 0;
+        clearStudioBricklesPowerUps();
+        studioBrickles.powerUps = [];
+        updateStudioBricklesHud();
+
+        if (studioBrickles.lives <= 0) {
+          studioBrickles.state = "gameover";
+          updateStudioBricklesOverlay("Signal Lost", "The signal chain dropped. Press Space or tap to restart.");
+          playStudioBricklesTone("gameover");
+          return;
+        }
+
+        studioBrickles.state = "ready";
+        studioBrickles.balls = [createAttachedBricklesBall()];
+        updateStudioBricklesOverlay("Signal Dropped", "One LED went dark. Press Space or tap to relaunch.");
+        playStudioBricklesTone("life");
+      }
+
+      function checkStudioBricklesLevelComplete() {
+        var remaining = studioBrickles.bricks.some(function (brick) {
+          return brick.hp > 0;
+        });
+
+        if (remaining) {
+          return;
+        }
+
+        studioBrickles.levelIndex += 1;
+        studioBrickles.score += 500 + studioBrickles.levelIndex * 120;
+        updateStudioBricklesBestScore();
+        clearStudioBricklesPowerUps();
+        studioBrickles.state = "ready";
+        buildStudioBricklesLevel();
+        resetStudioBricklesRound();
+        updateStudioBricklesHud();
+        updateStudioBricklesOverlay(
+          "Signal Chain Cleared",
+          "Next rack is patched. Press Space or tap to launch.",
+        );
+        studioBrickles.shakeUntil = performance.now() + 180;
+        studioBrickles.shakeAmount = 5;
+        playStudioBricklesTone("level");
+      }
+
+      /* ==========================================================================
+       Studio Brickles power-ups
+       ========================================================================== */
+      function maybeDropStudioBricklesPowerUp(brick) {
+        if (!brick.power) {
+          return;
+        }
+
+        var types = ["wideStereo", "multiband", "limiter", "gainBoost"];
+        var type = types[(studioBrickles.combo + studioBrickles.levelIndex) % types.length];
+        studioBrickles.powerUps.push({
+          x: brick.x + brick.width / 2,
+          y: brick.y + brick.height / 2,
+          vy: 115,
+          size: 18,
+          type: type,
+        });
+      }
+
+      function updateStudioBricklesPowerUps(delta) {
+        for (var i = studioBrickles.powerUps.length - 1; i >= 0; i -= 1) {
+          var power = studioBrickles.powerUps[i];
+          power.y += power.vy * delta;
+
+          if (rectsOverlap({
+            x: power.x - power.size / 2,
+            y: power.y - power.size / 2,
+            width: power.size,
+            height: power.size,
+          }, studioBrickles.paddle)) {
+            collectStudioBricklesPowerUp(power.type);
+            studioBrickles.powerUps.splice(i, 1);
+          } else if (power.y - power.size > studioBrickles.height) {
+            studioBrickles.powerUps.splice(i, 1);
+          }
+        }
+      }
+
+      function collectStudioBricklesPowerUp(type) {
+        var now = performance.now();
+        if (type === "wideStereo") {
+          studioBrickles.activePowers.wideStereo = now + 10000;
+          studioBrickles.paddle.width = studioBrickles.paddle.baseWidth * 1.45;
+          studioBrickles.paddle.x = clamp(
+            studioBrickles.paddle.x,
+            10,
+            studioBrickles.width - studioBrickles.paddle.width - 10,
+          );
+        } else if (type === "multiband") {
+          addStudioBricklesMultiballs();
+        } else if (type === "limiter") {
+          studioBrickles.activePowers.limiter = now + 8000;
+          studioBrickles.limiterUntil = now + 8000;
+        } else if (type === "gainBoost") {
+          studioBrickles.activePowers.gainBoost = now + 9000;
+          studioBrickles.gainMultiplier = 2;
+        }
+
+        updateStudioBricklesHud();
+        playStudioBricklesTone("power");
+      }
+
+      function addStudioBricklesMultiballs() {
+        var source = studioBrickles.balls[0] || createAttachedBricklesBall();
+        var speed = getStudioBricklesBallSpeed();
+        [-0.62, 0.62].forEach(function (offset) {
+          studioBrickles.balls.push({
+            x: source.x,
+            y: source.y,
+            vx: Math.sin(offset) * speed,
+            vy: -Math.abs(Math.cos(offset) * speed),
+            radius: source.radius,
+            attached: false,
+          });
+        });
+        studioBrickles.activePowers.multiband = performance.now() + 2200;
+      }
+
+      function updateStudioBricklesPowers(now) {
+        if (
+          studioBrickles.activePowers.wideStereo &&
+          studioBrickles.activePowers.wideStereo <= now
+        ) {
+          delete studioBrickles.activePowers.wideStereo;
+          studioBrickles.paddle.width = studioBrickles.paddle.baseWidth;
+          studioBrickles.paddle.x = clamp(
+            studioBrickles.paddle.x,
+            10,
+            studioBrickles.width - studioBrickles.paddle.width - 10,
+          );
+        }
+
+        if (
+          studioBrickles.activePowers.gainBoost &&
+          studioBrickles.activePowers.gainBoost <= now
+        ) {
+          delete studioBrickles.activePowers.gainBoost;
+          studioBrickles.gainMultiplier = 1;
+        }
+
+        ["limiter", "multiband"].forEach(function (key) {
+          if (studioBrickles.activePowers[key] && studioBrickles.activePowers[key] <= now) {
+            delete studioBrickles.activePowers[key];
+          }
+        });
+
+        if (!studioBrickles.activePowers.limiter) {
+          studioBrickles.limiterUntil = 0;
+        }
+        updateStudioBricklesPowerList(now);
+      }
+
+      function clearStudioBricklesPowerUps() {
+        studioBrickles.activePowers = {};
+        studioBrickles.gainMultiplier = 1;
+        studioBrickles.limiterUntil = 0;
+        studioBrickles.paddle.width = studioBrickles.paddle.baseWidth;
+        updateStudioBricklesPowerList(performance.now());
+      }
+
+      /* ==========================================================================
+       Studio Brickles rendering
+       ========================================================================== */
+      function renderStudioBrickles(now) {
+        if (!studioBrickles.ctx || !studioBrickles.canvas) {
+          return;
+        }
+
+        var ctx = studioBrickles.ctx;
+        var width = studioBrickles.width;
+        var height = studioBrickles.height;
+        var shakeX = 0;
+        var shakeY = 0;
+        if (studioBrickles.shakeUntil > now) {
+          shakeX = (Math.random() - 0.5) * studioBrickles.shakeAmount;
+          shakeY = (Math.random() - 0.5) * studioBrickles.shakeAmount;
+        }
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.save();
+        ctx.translate(shakeX, shakeY);
+        drawBricklesBackground(ctx, width, height, now);
+        studioBrickles.bricks.forEach(function (brick) {
+          if (brick.hp > 0) {
+            drawBricklesBrick(ctx, brick, now);
+          }
+        });
+        studioBrickles.powerUps.forEach(function (power) {
+          drawBricklesPowerUp(ctx, power, now);
+        });
+        drawBricklesPaddle(ctx, studioBrickles.paddle);
+        studioBrickles.balls.forEach(function (ball) {
+          drawBricklesBall(ctx, ball, now);
+        });
+        if (studioBrickles.limiterUntil > now) {
+          drawBricklesLimiter(ctx, width, height, now);
+        }
+        drawBricklesParticles(ctx);
+        drawBricklesCombo(ctx);
+        ctx.restore();
+      }
+
+      function drawBricklesBackground(ctx, width, height, now) {
+        ctx.fillStyle = "#050508";
+        ctx.fillRect(0, 0, width, height);
+        ctx.strokeStyle = "rgba(91, 156, 246, 0.08)";
+        ctx.lineWidth = 1;
+        for (var x = 0; x < width; x += 30) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, height);
+          ctx.stroke();
+        }
+        for (var y = 0; y < height; y += 30) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+        }
+        ctx.strokeStyle = "rgba(200, 168, 107, 0.18)";
+        ctx.beginPath();
+        for (var i = 0; i <= width; i += 10) {
+          var wave = Math.sin(i * 0.035 + now * 0.004) * 8;
+          if (i === 0) {
+            ctx.moveTo(i, height * 0.72 + wave);
+          } else {
+            ctx.lineTo(i, height * 0.72 + wave);
+          }
+        }
+        ctx.stroke();
+      }
+
+      function drawBricklesBrick(ctx, brick) {
+        var color = brick.type === "master" ? "#c8a86b" : brick.type === "reinforced" ? "#7d8fb8" : "#5b9cf6";
+        if (brick.type === "reinforced" && brick.hp < brick.maxHp) {
+          color = "#c8a86b";
+        }
+        ctx.save();
+        ctx.shadowColor = color;
+        ctx.shadowBlur = brick.type === "master" ? 16 : 8;
+        ctx.fillStyle = color;
+        roundRect(ctx, brick.x, brick.y, brick.width, brick.height, 4);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "rgba(11, 11, 15, 0.42)";
+        roundRect(ctx, brick.x + 4, brick.y + 4, brick.width - 8, brick.height - 8, 3);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawBricklesPaddle(ctx, paddle) {
+        ctx.save();
+        ctx.shadowColor = "#c8a86b";
+        ctx.shadowBlur = 18;
+        ctx.fillStyle = "#c8a86b";
+        roundRect(ctx, paddle.x, paddle.y, paddle.width, paddle.height, 7);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "rgba(11, 11, 15, 0.68)";
+        roundRect(ctx, paddle.x + 12, paddle.y + 4, paddle.width - 24, paddle.height - 8, 4);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawBricklesBall(ctx, ball, now) {
+        var pulse = 1 + Math.sin(now * 0.014) * 0.16;
+        var radius = ball.radius * pulse;
+        var gradient = ctx.createRadialGradient(ball.x, ball.y, 1, ball.x, ball.y, radius * 5);
+        gradient.addColorStop(0, "rgba(230, 226, 217, 1)");
+        gradient.addColorStop(0.35, "rgba(91, 156, 246, 0.82)");
+        gradient.addColorStop(1, "rgba(91, 156, 246, 0)");
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, radius * 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#e6e2d9";
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function drawBricklesPowerUp(ctx, power, now) {
+        ctx.save();
+        ctx.translate(power.x, power.y);
+        ctx.rotate(now * 0.003);
+        ctx.strokeStyle = "#c8a86b";
+        ctx.fillStyle = "rgba(91, 156, 246, 0.38)";
+        ctx.lineWidth = 2;
+        roundRect(ctx, -power.size / 2, -power.size / 2, power.size, power.size, 4);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawBricklesLimiter(ctx, width, height, now) {
+        ctx.save();
+        ctx.strokeStyle = "rgba(126, 227, 178, 0.72)";
+        ctx.lineWidth = 4;
+        ctx.setLineDash([12, 9]);
+        ctx.lineDashOffset = -now * 0.04;
+        ctx.beginPath();
+        ctx.moveTo(12, height - 8);
+        ctx.lineTo(width - 12, height - 8);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawBricklesCombo(ctx) {
+        if (studioBrickles.combo < 4) {
+          return;
+        }
+        ctx.save();
+        ctx.fillStyle = "rgba(200, 168, 107, 0.86)";
+        ctx.font = "13px ui-monospace, monospace";
+        ctx.fillText("Hot Signal x" + studioBrickles.combo, 18, studioBrickles.height - 18);
+        ctx.restore();
+      }
+
+      function createBricklesParticles(x, y, color, count) {
+        for (var i = 0; i < count; i += 1) {
+          studioBrickles.particles.push({
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 170,
+            vy: (Math.random() - 0.5) * 130,
+            life: 0.45 + Math.random() * 0.35,
+            color: color,
+          });
+        }
+      }
+
+      function updateStudioBricklesParticles(delta) {
+        for (var i = studioBrickles.particles.length - 1; i >= 0; i -= 1) {
+          var particle = studioBrickles.particles[i];
+          particle.life -= delta;
+          particle.x += particle.vx * delta;
+          particle.y += particle.vy * delta;
+          if (particle.life <= 0) {
+            studioBrickles.particles.splice(i, 1);
+          }
+        }
+      }
+
+      function drawBricklesParticles(ctx) {
+        studioBrickles.particles.forEach(function (particle) {
+          ctx.globalAlpha = clamp(particle.life / 0.8, 0, 1);
+          ctx.fillStyle = particle.color;
+          ctx.fillRect(particle.x, particle.y, 3, 3);
+          ctx.globalAlpha = 1;
+        });
+      }
+
+      /* ==========================================================================
+       Studio Brickles lifecycle and cleanup
+       ========================================================================== */
+      function toggleStudioBricklesPause() {
+        if (studioBrickles.state === "playing") {
+          pauseStudioBrickles();
+        } else if (studioBrickles.state === "paused") {
+          resumeStudioBrickles();
+        } else {
+          launchStudioBricklesBall();
+        }
+      }
+
+      function pauseStudioBrickles() {
+        if (studioBrickles.state !== "playing") {
+          return;
+        }
+        studioBrickles.state = "paused";
+        updateStudioBricklesOverlay("Paused", "Signal is held. Press Space, tap, or use Pause to resume.");
+        playStudioBricklesTone("pause");
+      }
+
+      function resumeStudioBrickles() {
+        studioBrickles.state = "playing";
+        studioBrickles.lastTime = performance.now();
+        hideStudioBricklesOverlay();
+        resumeAudioContext();
+        playStudioBricklesTone("launch");
+      }
+
+      function stopStudioBrickles() {
+        studioBrickles.running = false;
+        studioBrickles.state = "stopped";
+        if (studioBrickles.animationId) {
+          cancelAnimationFrame(studioBrickles.animationId);
+        }
+        window.removeEventListener("resize", resizeStudioBrickles);
+        window.removeEventListener("orientationchange", resizeStudioBrickles);
+        removeStudioBricklesInput();
+        stopStudioBricklesAudio();
+        clearStudioBricklesPowerUps();
+        studioBrickles.animationId = null;
+        studioBrickles.canvas = null;
+        studioBrickles.ctx = null;
+        studioBrickles.overlay = null;
+        studioBrickles.balls = [];
+        studioBrickles.powerUps = [];
+        studioBrickles.particles = [];
+        studioBrickles.keys.left = false;
+        studioBrickles.keys.right = false;
+      }
+
+      function updateStudioBricklesOverlay(title, text) {
+        if (!studioBrickles.overlay) {
+          return;
+        }
+        studioBrickles.overlay.classList.remove("hidden");
+        document.getElementById("bricklesOverlayTitle").textContent = title;
+        document.getElementById("bricklesOverlayText").textContent = text;
+      }
+
+      function hideStudioBricklesOverlay() {
+        if (studioBrickles.overlay) {
+          studioBrickles.overlay.classList.add("hidden");
+        }
+      }
+
+      function updateStudioBricklesHud() {
+        var score = document.getElementById("bricklesScore");
+        var best = document.getElementById("bricklesBest");
+        var level = document.getElementById("bricklesLevel");
+        var lives = document.getElementById("bricklesLives");
+        if (!score || !best || !level || !lives) {
+          return;
+        }
+        score.textContent = studioBrickles.score;
+        best.textContent = studioBrickles.bestScore;
+        level.textContent = studioBrickles.levelIndex + 1;
+        lives.textContent = studioBrickles.lives;
+        updateStudioBricklesPowerList(performance.now());
+      }
+
+      function updateStudioBricklesPowerList(now) {
+        var list = document.getElementById("bricklesPowerList");
+        if (!list) {
+          return;
+        }
+        var labels = {
+          wideStereo: "Wide Stereo",
+          multiband: "Multiband",
+          limiter: "Limiter",
+          gainBoost: "Gain Boost",
+        };
+        var html = "";
+        Object.keys(studioBrickles.activePowers).forEach(function (key) {
+          var remaining = Math.max(0, Math.ceil((studioBrickles.activePowers[key] - now) / 1000));
+          html += '<span class="brickles-power-chip">' + labels[key] + " " + remaining + "s</span>";
+        });
+        list.innerHTML = html || '<span class="brickles-power-chip">No active power</span>';
+      }
+
+      function updateStudioBricklesBestScore() {
+        if (studioBrickles.score <= studioBrickles.bestScore) {
+          return;
+        }
+        studioBrickles.bestScore = studioBrickles.score;
+        writeNumberToStorage("studioArcadeBricklesBestScore", studioBrickles.bestScore);
+      }
+
+      function rectsOverlap(a, b) {
+        return (
+          a.x < b.x + b.width &&
+          a.x + a.width > b.x &&
+          a.y < b.y + b.height &&
+          a.y + a.height > b.y
+        );
+      }
+
+      /* ==========================================================================
+       Studio Brickles audio
+       ========================================================================== */
+      function playStudioBricklesTone(type) {
+        if (studioAudio.muted) {
+          return;
+        }
+
+        var context = getAudioContext();
+        if (!context) {
+          return;
+        }
+
+        var now = context.currentTime;
+        var oscillator = context.createOscillator();
+        var gain = context.createGain();
+        var filter = context.createBiquadFilter();
+        var frequency = 360;
+        var duration = 0.08;
+        var wave = "triangle";
+
+        if (type === "paddle") {
+          frequency = 520;
+        } else if (type === "break") {
+          frequency = 720;
+          duration = 0.11;
+        } else if (type === "reinforced") {
+          frequency = 260;
+          wave = "square";
+        } else if (type === "power") {
+          frequency = 880;
+          duration = 0.16;
+        } else if (type === "life") {
+          frequency = 130;
+          duration = 0.2;
+          wave = "sawtooth";
+        } else if (type === "level") {
+          frequency = 660;
+          duration = 0.28;
+        } else if (type === "gameover") {
+          frequency = 95;
+          duration = 0.32;
+          wave = "sawtooth";
+        } else if (type === "limiter") {
+          frequency = 410;
+          duration = 0.06;
+        } else if (type === "pause") {
+          frequency = 190;
+          duration = 0.08;
+          wave = "sine";
+        } else if (type === "launch" || type === "restart") {
+          frequency = 610;
+          duration = 0.1;
+        } else if (type === "wall") {
+          frequency = 300;
+          duration = 0.045;
+          wave = "square";
+        }
+
+        oscillator.type = wave;
+        oscillator.frequency.setValueAtTime(frequency, now);
+        oscillator.frequency.exponentialRampToValueAtTime(
+          Math.max(55, frequency * 0.55),
+          now + duration,
+        );
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(2200, now);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.075, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        oscillator.connect(filter);
+        filter.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start(now);
+        oscillator.stop(now + duration + 0.02);
+        studioBrickles.audioNodes.push(oscillator);
+        oscillator.addEventListener("ended", function () {
+          var index = studioBrickles.audioNodes.indexOf(oscillator);
+          if (index >= 0) {
+            studioBrickles.audioNodes.splice(index, 1);
+          }
+        });
+      }
+
+      function stopStudioBricklesAudio() {
+        studioBrickles.audioNodes.forEach(function (node) {
+          try {
+            node.stop();
+          } catch (error) {
+            // Short one-shot tones may already be stopped.
+          }
+        });
+        studioBrickles.audioNodes = [];
+      }
+
+      /* ==========================================================================
        audio utilities
        ========================================================================== */
       var studioAudio = {
         context: null,
+        muted: readNumberFromStorage("studioArcadeMuted", 0) === 1,
       };
+
+      function toggleStudioMute() {
+        studioAudio.muted = !studioAudio.muted;
+        writeNumberToStorage("studioArcadeMuted", studioAudio.muted ? 1 : 0);
+        syncStudioMuteButtons();
+      }
+
+      function getStudioMuteLabel() {
+        return studioAudio.muted ? "Sound: Off" : "Sound: On";
+      }
+
+      function syncStudioMuteButtons() {
+        var buttons = document.querySelectorAll(".studioMuteButton");
+        buttons.forEach(function (button) {
+          button.textContent = getStudioMuteLabel();
+          button.setAttribute("aria-pressed", studioAudio.muted ? "true" : "false");
+        });
+      }
 
       function getAudioContext() {
         if (!studioAudio.context) {
@@ -1636,6 +2992,10 @@
       }
 
       function playPatchPongTone(type) {
+        if (studioAudio.muted) {
+          return;
+        }
+
         var context = getAudioContext();
         if (!context) {
           return;
