@@ -4,10 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Giga-Hertz | Studio Arcade</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
-    <link rel="shortcut icon" href="favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
     <style>
       /* ==========================================================================
        Shared Studio Arcade Theme
@@ -61,11 +61,28 @@
         min-height: 100vh;
         background:
           linear-gradient(rgba(91, 156, 246, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(200, 168, 107, 0.04) 1px, transparent 1px),
-          radial-gradient(circle at 20% 10%, rgba(91, 156, 246, 0.16), transparent 28rem),
-          radial-gradient(circle at 80% 20%, rgba(200, 168, 107, 0.12), transparent 22rem),
+          linear-gradient(
+            90deg,
+            rgba(200, 168, 107, 0.04) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 20% 10%,
+            rgba(91, 156, 246, 0.16),
+            transparent 28rem
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(200, 168, 107, 0.12),
+            transparent 22rem
+          ),
           var(--background);
-        background-size: 32px 32px, 32px 32px, auto, auto, auto;
+        background-size:
+          32px 32px,
+          32px 32px,
+          auto,
+          auto,
+          auto;
       }
 
       /* ==========================================================================
@@ -220,7 +237,11 @@
         place-items: center;
         padding: 18px;
         pointer-events: none;
-        background: radial-gradient(circle, rgba(11, 11, 15, 0.18), rgba(11, 11, 15, 0.7));
+        background: radial-gradient(
+          circle,
+          rgba(11, 11, 15, 0.18),
+          rgba(11, 11, 15, 0.7)
+        );
       }
 
       .game-overlay.hidden {
@@ -324,7 +345,7 @@
         margin: 64px auto 0;
         padding-top: 28px;
         border-top: 1px solid var(--border);
-        font-family: 'IBM Plex Mono', monospace;
+        font-family: "IBM Plex Mono", monospace;
         font-size: 10px;
         letter-spacing: 0.08em;
         color: var(--muted);
@@ -383,7 +404,9 @@
           background:
             linear-gradient(rgba(91, 156, 246, 0.04) 1px, transparent 1px),
             var(--background);
-          background-size: 32px 32px, auto;
+          background-size:
+            32px 32px,
+            auto;
         }
       }
 
@@ -438,26 +461,42 @@
     <main class="app">
       <section class="cabinet" aria-label="Giga-Hertz cabinet">
         <header class="topbar">
-          <a class="back-button button-link" href="index.html">Back to Game Library</a>
+          <a class="back-button button-link" href="index.html"
+            >Back to Game Library</a
+          >
           <div class="title-block">
             <p class="eyebrow">Studio Arcade standalone cabinet</p>
             <h1>Giga-Hertz</h1>
-            <p class="subtitle">Clean the signal. Defeat the noise.</p>
+            <p class="subtitle">Defeat the evil feedback aliens.</p>
           </div>
           <div class="hud" aria-live="polite">
-            <span class="score-pill">Score <strong id="scoreValue">0</strong></span>
-            <span class="score-pill">Best <strong id="bestValue">0</strong></span>
-            <span class="score-pill">Wave <strong id="waveValue">1</strong></span>
-            <span class="score-pill">Lives <strong id="livesValue">3</strong></span>
+            <span class="score-pill"
+              >Score <strong id="scoreValue">0</strong></span
+            >
+            <span class="score-pill"
+              >Best <strong id="bestValue">0</strong></span
+            >
+            <span class="score-pill"
+              >Wave <strong id="waveValue">1</strong></span
+            >
+            <span class="score-pill"
+              >Lives <strong id="livesValue">3</strong></span
+            >
           </div>
         </header>
 
         <div id="arenaWrap" class="arena-wrap">
-          <canvas id="gigaHertzCanvas" aria-label="Giga-Hertz game canvas"></canvas>
+          <canvas
+            id="gigaHertzCanvas"
+            aria-label="Giga-Hertz game canvas"
+          ></canvas>
           <div id="gameOverlay" class="game-overlay">
             <div class="overlay-card">
               <h2 id="overlayTitle">Giga-Hertz</h2>
-              <p id="overlayText">Choose a studio tier, then press Enter or Start to clean the signal.</p>
+              <p id="overlayText">
+                Choose a studio tier, then press Enter or Start to clean the
+                signal.
+              </p>
             </div>
           </div>
         </div>
@@ -465,27 +504,50 @@
         <footer class="controls">
           <div class="control-column">
             <div class="instructions">
-              <span><span class="kbd">A/D</span> or <span class="kbd">Arrows</span> move</span>
+              <span
+                ><span class="kbd">A/D</span> or
+                <span class="kbd">Arrows</span> move</span
+              >
               <span><span class="kbd">Space</span> fire</span>
               <span><span class="kbd">Enter</span> start</span>
               <span><span class="kbd">P</span> pause</span>
               <span><span class="kbd">R</span> restart</span>
             </div>
-            <div id="difficultyRow" class="difficulty-row" aria-label="Difficulty selection"></div>
+            <div
+              id="difficultyRow"
+              class="difficulty-row"
+              aria-label="Difficulty selection"
+            ></div>
             <div id="statusRow" class="status-row" aria-live="polite"></div>
           </div>
           <div class="control-column">
             <div class="control-actions">
-              <button id="startButton" class="small-button" type="button">Start</button>
-              <button id="pauseButton" class="small-button" type="button">Pause</button>
-              <button id="muteButton" class="small-button" type="button">Sound: On</button>
-              <button id="restartButton" class="small-button" type="button">Restart</button>
+              <button id="startButton" class="small-button" type="button">
+                Start
+              </button>
+              <button id="pauseButton" class="small-button" type="button">
+                Pause
+              </button>
+              <button id="muteButton" class="small-button" type="button">
+                Sound: On
+              </button>
+              <button id="restartButton" class="small-button" type="button">
+                Restart
+              </button>
             </div>
             <div class="mobile-pad" aria-label="Giga-Hertz mobile controls">
-              <button class="touch-button" data-action="left" type="button">Left</button>
-              <button class="touch-button" data-action="right" type="button">Right</button>
-              <button class="touch-button" data-action="fire" type="button">Fire</button>
-              <button class="touch-button" data-action="pause" type="button">Pause</button>
+              <button class="touch-button" data-action="left" type="button">
+                Left
+              </button>
+              <button class="touch-button" data-action="right" type="button">
+                Right
+              </button>
+              <button class="touch-button" data-action="fire" type="button">
+                Fire
+              </button>
+              <button class="touch-button" data-action="pause" type="button">
+                Pause
+              </button>
             </div>
           </div>
         </footer>
@@ -493,23 +555,42 @@
 
       <footer class="page-footer">
         <nav class="footer-nav">
-          <a href="https://bradwintersmusic-cloud.github.io/studio-home/">Studio Hub</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-home/"
+            >Studio Hub</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-news/">AET News</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-news/"
+            >AET News</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studioassistant-sync/">Studio Schedule</a>
+          <a
+            href="https://bradwintersmusic-cloud.github.io/studioassistant-sync/"
+            >Studio Schedule</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-videos/">Video Library</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-videos/"
+            >Video Library</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-policies/">Policies</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-policies/"
+            >Policies</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-tools/">Studio Tools</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-tools/"
+            >Studio Tools</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-musicians/">Session Musicians</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-musicians/"
+            >Session Musicians</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-resources/">Resources</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-resources/"
+            >Resources</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-contact/">Contact</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-contact/"
+            >Contact</a
+          >
         </nav>
 
         <div class="footer-meta">
@@ -575,24 +656,102 @@
        Giga-Hertz Wave Data
        ========================================================================== */
       var gigaWaves = [
-        { name: "Calibration", rows: ["hhhhhh", ".ffff."], speed: 24, dive: 4.2, fire: 3.2, background: "scope" },
-        { name: "Hum Floor", rows: ["hhhhhhhh", "hjjjjjjh", ".ffffff."], speed: 29, dive: 3.8, fire: 2.9, background: "meters" },
-        { name: "RF Storm", rows: [".ffffff.", "hhjjjjhh", "ffffffff"], speed: 34, dive: 3.3, fire: 2.55, background: "spectrum" },
-        { name: "Feedback Run", rows: ["ffjjjjff", ".ffffff.", "hhjjjjhh"], speed: 39, dive: 2.9, fire: 2.25, background: "scope" },
-        { name: "Digital Breakdown", rows: ["jjffffffjj", "fjjhhhhjjf", ".ffffffff."], speed: 44, dive: 2.45, fire: 1.95, background: "spectrum" },
-        { name: "The Feedback Loop", boss: true, speed: 40, dive: 2.2, fire: 1.75, background: "boss" },
+        {
+          name: "Calibration",
+          rows: ["hhhhhh", ".ffff."],
+          speed: 24,
+          dive: 4.2,
+          fire: 3.2,
+          background: "scope",
+        },
+        {
+          name: "Hum Floor",
+          rows: ["hhhhhhhh", "hjjjjjjh", ".ffffff."],
+          speed: 29,
+          dive: 3.8,
+          fire: 2.9,
+          background: "meters",
+        },
+        {
+          name: "RF Storm",
+          rows: [".ffffff.", "hhjjjjhh", "ffffffff"],
+          speed: 34,
+          dive: 3.3,
+          fire: 2.55,
+          background: "spectrum",
+        },
+        {
+          name: "Feedback Run",
+          rows: ["ffjjjjff", ".ffffff.", "hhjjjjhh"],
+          speed: 39,
+          dive: 2.9,
+          fire: 2.25,
+          background: "scope",
+        },
+        {
+          name: "Digital Breakdown",
+          rows: ["jjffffffjj", "fjjhhhhjjf", ".ffffffff."],
+          speed: 44,
+          dive: 2.45,
+          fire: 1.95,
+          background: "spectrum",
+        },
+        {
+          name: "The Feedback Loop",
+          boss: true,
+          speed: 40,
+          dive: 2.2,
+          fire: 1.75,
+          background: "boss",
+        },
       ];
 
       var gigaEnemyTypes = {
-        h: { name: "Hum Drone", hp: 1, points: 80, color: "#5b9cf6", radius: 15, fire: 0.8 },
-        f: { name: "Feedback Wasp", hp: 1, points: 140, color: "#c8a86b", radius: 14, fire: 1.15 },
-        j: { name: "Jitter Node", hp: 2, points: 220, color: "#f66f8d", radius: 16, fire: 1 },
+        h: {
+          name: "Hum Drone",
+          hp: 1,
+          points: 80,
+          color: "#5b9cf6",
+          radius: 15,
+          fire: 0.8,
+        },
+        f: {
+          name: "Feedback Wasp",
+          hp: 1,
+          points: 140,
+          color: "#c8a86b",
+          radius: 14,
+          fire: 1.15,
+        },
+        j: {
+          name: "Jitter Node",
+          hp: 2,
+          points: 220,
+          color: "#f66f8d",
+          radius: 16,
+          fire: 1,
+        },
       };
 
       var gigaPowerTypes = [
-        { type: "phantom", label: "Phantom Power", color: "#5b9cf6", duration: 9000 },
-        { type: "stereo", label: "Stereo Mode", color: "#c8a86b", duration: 9500 },
-        { type: "isolation", label: "Isolation", color: "#7ee3b2", duration: 8000 },
+        {
+          type: "phantom",
+          label: "Phantom Power",
+          color: "#5b9cf6",
+          duration: 9000,
+        },
+        {
+          type: "stereo",
+          label: "Stereo Mode",
+          color: "#c8a86b",
+          duration: 9500,
+        },
+        {
+          type: "isolation",
+          label: "Isolation",
+          color: "#7ee3b2",
+          duration: 8000,
+        },
         { type: "gain", label: "Gain Boost", color: "#e6e2d9", duration: 8500 },
       ];
 
@@ -654,7 +813,8 @@
         muted: false,
         audioContext: null,
         audioNodes: [],
-        reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+        reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)")
+          .matches,
       };
 
       /* ==========================================================================
@@ -678,18 +838,34 @@
       }
 
       function loadGigaStorage() {
-        gigaHertzGame.bestScore = readNumberFromStorage("studioArcadeGigaHertzBestScore", 0);
-        gigaHertzGame.bestWave = readNumberFromStorage("studioArcadeGigaHertzBestWave", 1);
-        gigaHertzGame.bossWins = readNumberFromStorage("studioArcadeGigaHertzBossWins", 0);
-        gigaHertzGame.muted = readNumberFromStorage("studioArcadeMuted", 0) === 1;
+        gigaHertzGame.bestScore = readNumberFromStorage(
+          "studioArcadeGigaHertzBestScore",
+          0,
+        );
+        gigaHertzGame.bestWave = readNumberFromStorage(
+          "studioArcadeGigaHertzBestWave",
+          1,
+        );
+        gigaHertzGame.bossWins = readNumberFromStorage(
+          "studioArcadeGigaHertzBossWins",
+          0,
+        );
+        gigaHertzGame.muted =
+          readNumberFromStorage("studioArcadeMuted", 0) === 1;
       }
 
       function saveGigaBestScore() {
         if (gigaHertzGame.score > gigaHertzGame.bestScore) {
           gigaHertzGame.bestScore = gigaHertzGame.score;
-          writeNumberToStorage("studioArcadeGigaHertzBestScore", gigaHertzGame.bestScore);
+          writeNumberToStorage(
+            "studioArcadeGigaHertzBestScore",
+            gigaHertzGame.bestScore,
+          );
         }
-        writeNumberToStorage("studioArcadeGigaHertzBestWave", Math.max(gigaHertzGame.bestWave, gigaHertzGame.waveIndex + 1));
+        writeNumberToStorage(
+          "studioArcadeGigaHertzBestWave",
+          Math.max(gigaHertzGame.bestWave, gigaHertzGame.waveIndex + 1),
+        );
       }
 
       /* ==========================================================================
@@ -707,7 +883,10 @@
           button.className = "difficulty-toggle";
           button.type = "button";
           button.textContent = gigaDifficulties[key].label;
-          button.setAttribute("aria-pressed", key === gigaHertzGame.difficulty ? "true" : "false");
+          button.setAttribute(
+            "aria-pressed",
+            key === gigaHertzGame.difficulty ? "true" : "false",
+          );
           button.addEventListener("click", function () {
             gigaHertzGame.difficulty = key;
             resetGigaGame();
@@ -746,7 +925,10 @@
         resetPlayer();
         buildWave(0);
         updateHud();
-        showOverlay("Giga-Hertz", "Choose a studio tier, then press Enter or Start to clean the signal.");
+        showOverlay(
+          "Giga-Hertz",
+          "Choose a studio tier, then press Enter or Start to clean the signal.",
+        );
       }
 
       function clearGigaTransientState() {
@@ -761,10 +943,17 @@
       }
 
       function startGigaHertz() {
-        if (gigaHertzGame.state === "gameover" || gigaHertzGame.state === "newbest") {
+        if (
+          gigaHertzGame.state === "gameover" ||
+          gigaHertzGame.state === "newbest"
+        ) {
           resetGigaGame();
         }
-        if (gigaHertzGame.state === "attract" || gigaHertzGame.state === "ready" || gigaHertzGame.state === "paused") {
+        if (
+          gigaHertzGame.state === "attract" ||
+          gigaHertzGame.state === "ready" ||
+          gigaHertzGame.state === "paused"
+        ) {
           gigaHertzGame.state = gigaHertzGame.boss ? "bossintro" : "playing";
           gigaHertzGame.bossIntroTimer = gigaHertzGame.boss ? 1.7 : 0;
           hideOverlay();
@@ -774,12 +963,18 @@
       }
 
       function pauseGigaHertz() {
-        if (gigaHertzGame.state !== "playing" && gigaHertzGame.state !== "bossintro") {
+        if (
+          gigaHertzGame.state !== "playing" &&
+          gigaHertzGame.state !== "bossintro"
+        ) {
           return;
         }
         gigaHertzGame.state = "paused";
         clearHeldInput();
-        showOverlay("Paused", "Signal is held. Press P, Start, or Pause to resume.");
+        showOverlay(
+          "Paused",
+          "Signal is held. Press P, Start, or Pause to resume.",
+        );
         playGigaTone("pause");
       }
 
@@ -818,7 +1013,11 @@
         var move = 0;
         if (gigaHertzGame.keys.left || gigaHertzGame.pointer.left) move -= 1;
         if (gigaHertzGame.keys.right || gigaHertzGame.pointer.right) move += 1;
-        player.x = clamp(player.x + move * player.speed * delta, 28, gigaHertzGame.width - 28);
+        player.x = clamp(
+          player.x + move * player.speed * delta,
+          28,
+          gigaHertzGame.width - 28,
+        );
         player.fireCooldown = Math.max(0, player.fireCooldown - delta);
         if (gigaHertzGame.keys.fire || gigaHertzGame.pointer.fire) {
           firePlayerShot(now);
@@ -827,8 +1026,12 @@
 
       function firePlayerShot(now) {
         var player = gigaHertzGame.player;
-        var phantom = gigaHertzGame.activePowers.phantom && gigaHertzGame.activePowers.phantom > now;
-        var stereo = gigaHertzGame.activePowers.stereo && gigaHertzGame.activePowers.stereo > now;
+        var phantom =
+          gigaHertzGame.activePowers.phantom &&
+          gigaHertzGame.activePowers.phantom > now;
+        var stereo =
+          gigaHertzGame.activePowers.stereo &&
+          gigaHertzGame.activePowers.stereo > now;
         var cooldown = phantom ? 0.12 : 0.22;
         if (player.fireCooldown > 0 || gigaHertzGame.playerShots.length > 8) {
           return;
@@ -845,20 +1048,41 @@
       }
 
       function addPlayerShot(x, y, vx) {
-        var gain = gigaHertzGame.activePowers.gain && gigaHertzGame.activePowers.gain > performance.now();
-        gigaHertzGame.playerShots.push({ x: x, y: y, vx: vx, vy: -650, radius: 5, damage: gain ? 2 : 1, hit: false });
+        var gain =
+          gigaHertzGame.activePowers.gain &&
+          gigaHertzGame.activePowers.gain > performance.now();
+        gigaHertzGame.playerShots.push({
+          x: x,
+          y: y,
+          vx: vx,
+          vy: -650,
+          radius: 5,
+          damage: gain ? 2 : 1,
+          hit: false,
+        });
       }
 
       function damagePlayer() {
         var now = performance.now();
-        var shielded = gigaHertzGame.activePowers.isolation && gigaHertzGame.activePowers.isolation > now;
-        if (shielded || now < gigaHertzGame.player.invulnerableUntil || gigaHertzGame.state !== "playing") {
+        var shielded =
+          gigaHertzGame.activePowers.isolation &&
+          gigaHertzGame.activePowers.isolation > now;
+        if (
+          shielded ||
+          now < gigaHertzGame.player.invulnerableUntil ||
+          gigaHertzGame.state !== "playing"
+        ) {
           return;
         }
         gigaHertzGame.lives -= 1;
         gigaHertzGame.combo = 0;
         gigaHertzGame.activePowers = {};
-        createBurst(gigaHertzGame.player.x, gigaHertzGame.player.y, "#f66f8d", 28);
+        createBurst(
+          gigaHertzGame.player.x,
+          gigaHertzGame.player.y,
+          "#f66f8d",
+          28,
+        );
         playGigaTone("playerhit");
         updateHud();
         if (gigaHertzGame.lives <= 0) {
@@ -885,12 +1109,20 @@
         gigaHertzGame.enemies = [];
         if (wave.boss) {
           createBoss();
-          showOverlay("Boss Introduction", "The Feedback Loop is opening. Watch the telegraphs and keep the center clear.");
+          showOverlay(
+            "Boss Introduction",
+            "The Feedback Loop is opening. Watch the telegraphs and keep the center clear.",
+          );
           return;
         }
         var rows = wave.rows;
-        var maxCols = rows.reduce(function (max, row) { return Math.max(max, row.length); }, 0);
-        var spacingX = Math.min(72, Math.max(42, (gigaHertzGame.width - 120) / Math.max(1, maxCols - 1)));
+        var maxCols = rows.reduce(function (max, row) {
+          return Math.max(max, row.length);
+        }, 0);
+        var spacingX = Math.min(
+          72,
+          Math.max(42, (gigaHertzGame.width - 120) / Math.max(1, maxCols - 1)),
+        );
         var spacingY = 48;
         var startX = gigaHertzGame.width / 2 - ((maxCols - 1) * spacingX) / 2;
         rows.forEach(function (row, rowIndex) {
@@ -923,7 +1155,10 @@
             });
           }
         });
-        showOverlay(wave.name, "Wave " + (index + 1) + " loaded. Press Enter or Start.");
+        showOverlay(
+          wave.name,
+          "Wave " + (index + 1) + " loaded. Press Enter or Start.",
+        );
       }
 
       function updateFormation(delta) {
@@ -931,25 +1166,45 @@
         var difficulty = getDifficulty();
         var bounds = getFormationBounds();
         if (bounds.left < 42) gigaHertzGame.formationDir = 1;
-        if (bounds.right > gigaHertzGame.width - 42) gigaHertzGame.formationDir = -1;
-        gigaHertzGame.formationX += gigaHertzGame.formationDir * wave.speed * difficulty.enemySpeed * delta;
+        if (bounds.right > gigaHertzGame.width - 42)
+          gigaHertzGame.formationDir = -1;
+        gigaHertzGame.formationX +=
+          gigaHertzGame.formationDir *
+          wave.speed *
+          difficulty.enemySpeed *
+          delta;
         gigaHertzGame.enemies.forEach(function (enemy) {
           if (enemy.destroyed) return;
           if (enemy.state === "entering") {
             enemy.x += (enemy.targetX - enemy.x) * Math.min(1, delta * 2.6);
             enemy.y += (enemy.targetY - enemy.y) * Math.min(1, delta * 2.6);
-            if (Math.abs(enemy.x - enemy.targetX) < 2 && Math.abs(enemy.y - enemy.targetY) < 2) {
+            if (
+              Math.abs(enemy.x - enemy.targetX) < 2 &&
+              Math.abs(enemy.y - enemy.targetY) < 2
+            ) {
               enemy.state = "formation";
             }
           } else if (enemy.state === "formation") {
-            enemy.x = enemy.baseX + gigaHertzGame.formationX + Math.sin(gigaHertzGame.waveTimer * 1.4 + enemy.baseY) * 5;
-            enemy.y = enemy.baseY + Math.sin(gigaHertzGame.waveTimer * 1.1 + enemy.baseX) * 4;
+            enemy.x =
+              enemy.baseX +
+              gigaHertzGame.formationX +
+              Math.sin(gigaHertzGame.waveTimer * 1.4 + enemy.baseY) * 5;
+            enemy.y =
+              enemy.baseY +
+              Math.sin(gigaHertzGame.waveTimer * 1.1 + enemy.baseX) * 4;
           } else if (enemy.state === "diving") {
             updateDivingEnemy(enemy, delta);
           }
           enemy.fireCooldown -= delta;
-          if (enemy.fireCooldown <= 0 && gigaHertzGame.waveTimer > 1.25 && (enemy.state === "formation" || enemy.state === "diving")) {
-            enemy.fireCooldown = (wave.fire / (difficulty.fireRate * gigaEnemyTypes[enemy.type].fire)) + Math.random() * 0.8;
+          if (
+            enemy.fireCooldown <= 0 &&
+            gigaHertzGame.waveTimer > 1.25 &&
+            (enemy.state === "formation" || enemy.state === "diving")
+          ) {
+            enemy.fireCooldown =
+              wave.fire /
+                (difficulty.fireRate * gigaEnemyTypes[enemy.type].fire) +
+              Math.random() * 0.8;
             fireEnemyShot(enemy);
           }
         });
@@ -960,11 +1215,20 @@
         var right = -Infinity;
         gigaHertzGame.enemies.forEach(function (enemy) {
           if (!enemy.destroyed && enemy.state === "formation") {
-            left = Math.min(left, enemy.baseX + gigaHertzGame.formationX - enemy.radius);
-            right = Math.max(right, enemy.baseX + gigaHertzGame.formationX + enemy.radius);
+            left = Math.min(
+              left,
+              enemy.baseX + gigaHertzGame.formationX - enemy.radius,
+            );
+            right = Math.max(
+              right,
+              enemy.baseX + gigaHertzGame.formationX + enemy.radius,
+            );
           }
         });
-        return { left: left === Infinity ? 80 : left, right: right === -Infinity ? gigaHertzGame.width - 80 : right };
+        return {
+          left: left === Infinity ? 80 : left,
+          right: right === -Infinity ? gigaHertzGame.width - 80 : right,
+        };
       }
 
       /* ==========================================================================
@@ -986,7 +1250,11 @@
         enemy.diveTime = 0;
         enemy.startX = enemy.x;
         enemy.startY = enemy.y;
-        enemy.controlX = clamp(gigaHertzGame.player.x + (Math.random() - 0.5) * 180, 70, gigaHertzGame.width - 70);
+        enemy.controlX = clamp(
+          gigaHertzGame.player.x + (Math.random() - 0.5) * 180,
+          70,
+          gigaHertzGame.width - 70,
+        );
         enemy.controlY = gigaHertzGame.height * 0.52;
         enemy.endX = enemy.baseX + gigaHertzGame.formationX;
         enemy.endY = enemy.baseY;
@@ -998,7 +1266,15 @@
         var t = enemy.diveTime / enemy.diveDuration;
         if (t < 0.72) {
           var u = t / 0.72;
-          var p = quadraticPoint(enemy.startX, enemy.startY, enemy.controlX, enemy.controlY, gigaHertzGame.player.x, gigaHertzGame.height + 40, u);
+          var p = quadraticPoint(
+            enemy.startX,
+            enemy.startY,
+            enemy.controlX,
+            enemy.controlY,
+            gigaHertzGame.player.x,
+            gigaHertzGame.height + 40,
+            u,
+          );
           enemy.x = p.x;
           enemy.y = p.y;
         } else {
@@ -1048,12 +1324,28 @@
       function updateProjectiles(delta) {
         updateShotList(gigaHertzGame.playerShots, delta);
         updateShotList(gigaHertzGame.enemyShots, delta);
-        gigaHertzGame.playerShots = gigaHertzGame.playerShots.filter(function (shot) {
-          return shot.y > -40 && shot.y < gigaHertzGame.height + 40 && shot.x > -40 && shot.x < gigaHertzGame.width + 40 && !shot.hit;
-        });
-        gigaHertzGame.enemyShots = gigaHertzGame.enemyShots.filter(function (shot) {
-          return shot.y > -50 && shot.y < gigaHertzGame.height + 60 && shot.x > -50 && shot.x < gigaHertzGame.width + 50 && !shot.hit;
-        });
+        gigaHertzGame.playerShots = gigaHertzGame.playerShots.filter(
+          function (shot) {
+            return (
+              shot.y > -40 &&
+              shot.y < gigaHertzGame.height + 40 &&
+              shot.x > -40 &&
+              shot.x < gigaHertzGame.width + 40 &&
+              !shot.hit
+            );
+          },
+        );
+        gigaHertzGame.enemyShots = gigaHertzGame.enemyShots.filter(
+          function (shot) {
+            return (
+              shot.y > -50 &&
+              shot.y < gigaHertzGame.height + 60 &&
+              shot.x > -50 &&
+              shot.x < gigaHertzGame.width + 50 &&
+              !shot.hit
+            );
+          },
+        );
       }
 
       function updateShotList(list, delta) {
@@ -1074,7 +1366,11 @@
         var player = gigaHertzGame.player;
         gigaHertzGame.playerShots.forEach(function (shot) {
           if (shot.hit) return;
-          if (gigaHertzGame.boss && !gigaHertzGame.boss.defeated && sweptCircleHit(shot, gigaHertzGame.boss)) {
+          if (
+            gigaHertzGame.boss &&
+            !gigaHertzGame.boss.defeated &&
+            sweptCircleHit(shot, gigaHertzGame.boss)
+          ) {
             shot.hit = true;
             damageBoss(shot.damage);
             return;
@@ -1088,13 +1384,19 @@
           });
         });
         gigaHertzGame.enemyShots.forEach(function (shot) {
-          if (!shot.hit && sweptCircleHit(shot, { x: player.x, y: player.y, radius: 14 })) {
+          if (
+            !shot.hit &&
+            sweptCircleHit(shot, { x: player.x, y: player.y, radius: 14 })
+          ) {
             shot.hit = true;
             damagePlayer();
           }
         });
         gigaHertzGame.enemies.forEach(function (enemy) {
-          if (!enemy.destroyed && circleHit(enemy, { x: player.x, y: player.y, radius: 14 })) {
+          if (
+            !enemy.destroyed &&
+            circleHit(enemy, { x: player.x, y: player.y, radius: 14 })
+          ) {
             enemy.destroyed = true;
             damagePlayer();
           }
@@ -1155,8 +1457,16 @@
         gigaHertzGame.combo += 1;
         gigaHertzGame.comboUntil = performance.now() + 2400;
         var diveBonus = enemy.state === "diving" ? 60 : 0;
-        var gain = gigaHertzGame.activePowers.gain && gigaHertzGame.activePowers.gain > performance.now() ? 1.75 : 1;
-        gigaHertzGame.score += Math.floor((enemy.points + diveBonus + Math.min(250, gigaHertzGame.combo * 12)) * getDifficulty().scoreMultiplier * gain);
+        var gain =
+          gigaHertzGame.activePowers.gain &&
+          gigaHertzGame.activePowers.gain > performance.now()
+            ? 1.75
+            : 1;
+        gigaHertzGame.score += Math.floor(
+          (enemy.points + diveBonus + Math.min(250, gigaHertzGame.combo * 12)) *
+            getDifficulty().scoreMultiplier *
+            gain,
+        );
         maybeDropPowerUp(enemy.x, enemy.y);
         saveGigaBestScore();
         updateHud();
@@ -1168,8 +1478,19 @@
        ========================================================================== */
       function maybeDropPowerUp(x, y) {
         if (Math.random() > 0.18 * getDifficulty().powerRate) return;
-        var power = gigaPowerTypes[(gigaHertzGame.enemiesDestroyed + gigaHertzGame.waveIndex) % gigaPowerTypes.length];
-        gigaHertzGame.powerUps.push({ x: x, y: y, vy: 95, radius: 11, type: power.type, color: power.color });
+        var power =
+          gigaPowerTypes[
+            (gigaHertzGame.enemiesDestroyed + gigaHertzGame.waveIndex) %
+              gigaPowerTypes.length
+          ];
+        gigaHertzGame.powerUps.push({
+          x: x,
+          y: y,
+          vy: 95,
+          radius: 11,
+          type: power.type,
+          color: power.color,
+        });
         playGigaTone("drop");
       }
 
@@ -1177,7 +1498,13 @@
         for (var i = gigaHertzGame.powerUps.length - 1; i >= 0; i -= 1) {
           var power = gigaHertzGame.powerUps[i];
           power.y += power.vy * delta;
-          if (circleHit(power, { x: gigaHertzGame.player.x, y: gigaHertzGame.player.y, radius: 22 })) {
+          if (
+            circleHit(power, {
+              x: gigaHertzGame.player.x,
+              y: gigaHertzGame.player.y,
+              radius: 22,
+            })
+          ) {
             collectPowerUp(power.type, now);
             gigaHertzGame.powerUps.splice(i, 1);
           } else if (power.y > gigaHertzGame.height + 30) {
@@ -1192,7 +1519,9 @@
       }
 
       function collectPowerUp(type, now) {
-        var power = gigaPowerTypes.find(function (entry) { return entry.type === type; });
+        var power = gigaPowerTypes.find(function (entry) {
+          return entry.type === type;
+        });
         gigaHertzGame.activePowers[type] = now + power.duration;
         playGigaTone("power");
         updateHud();
@@ -1222,7 +1551,10 @@
       function updateBoss(delta) {
         var boss = gigaHertzGame.boss;
         if (!boss || boss.defeated) return;
-        boss.x = gigaHertzGame.width / 2 + Math.sin(gigaHertzGame.waveTimer * 0.8) * Math.min(150, gigaHertzGame.width * 0.2);
+        boss.x =
+          gigaHertzGame.width / 2 +
+          Math.sin(gigaHertzGame.waveTimer * 0.8) *
+            Math.min(150, gigaHertzGame.width * 0.2);
         updateBossTelegraphs(delta);
         boss.attackTimer -= delta;
         if (boss.attackTimer <= 0) {
@@ -1265,7 +1597,7 @@
         if (pattern === 0) {
           for (var i = 0; i < 12; i += 1) {
             if (i === 5 || i === 6) continue;
-            var angle = Math.PI * 0.14 + i * (Math.PI * 0.72 / 11);
+            var angle = Math.PI * 0.14 + i * ((Math.PI * 0.72) / 11);
             gigaHertzGame.enemyShots.push({
               x: boss.x,
               y: boss.y,
@@ -1278,11 +1610,25 @@
         } else if (pattern === 1) {
           var target = telegraph.targetX;
           for (var j = -1; j <= 1; j += 1) {
-            gigaHertzGame.enemyShots.push({ x: clamp(target + j * 56, 28, gigaHertzGame.width - 28), y: boss.y + 36, vx: 0, vy: 185, radius: 7, color: "#f66f8d" });
+            gigaHertzGame.enemyShots.push({
+              x: clamp(target + j * 56, 28, gigaHertzGame.width - 28),
+              y: boss.y + 36,
+              vx: 0,
+              vy: 185,
+              radius: 7,
+              color: "#f66f8d",
+            });
           }
         } else {
           for (var k = -2; k <= 2; k += 1) {
-            gigaHertzGame.enemyShots.push({ x: boss.x, y: boss.y + 40, vx: k * 44, vy: 170, radius: 6, color: "#5b9cf6" });
+            gigaHertzGame.enemyShots.push({
+              x: boss.x,
+              y: boss.y + 40,
+              vx: k * 44,
+              vy: 170,
+              radius: 6,
+              color: "#5b9cf6",
+            });
           }
         }
       }
@@ -1295,9 +1641,14 @@
         playGigaTone("bosshit");
         if (boss.hp <= 0 && !boss.defeated) {
           boss.defeated = true;
-          gigaHertzGame.score += Math.floor(2500 * getDifficulty().scoreMultiplier);
+          gigaHertzGame.score += Math.floor(
+            2500 * getDifficulty().scoreMultiplier,
+          );
           gigaHertzGame.bossWins += 1;
-          writeNumberToStorage("studioArcadeGigaHertzBossWins", gigaHertzGame.bossWins);
+          writeNumberToStorage(
+            "studioArcadeGigaHertzBossWins",
+            gigaHertzGame.bossWins,
+          );
           createBurst(boss.x, boss.y, "#e6e2d9", 60);
           playGigaTone("bosswin");
           completeWave();
@@ -1314,8 +1665,12 @@
         ctx.clearRect(0, 0, gigaHertzGame.width, gigaHertzGame.height);
         drawBackground(ctx, now);
         drawBoss(ctx, now);
-        gigaHertzGame.enemies.forEach(function (enemy) { if (!enemy.destroyed) drawEnemy(ctx, enemy, now); });
-        gigaHertzGame.powerUps.forEach(function (power) { drawPowerUp(ctx, power, now); });
+        gigaHertzGame.enemies.forEach(function (enemy) {
+          if (!enemy.destroyed) drawEnemy(ctx, enemy, now);
+        });
+        gigaHertzGame.powerUps.forEach(function (power) {
+          drawPowerUp(ctx, power, now);
+        });
         drawShots(ctx);
         drawBossTelegraphs(ctx);
         drawPlayer(ctx, now);
@@ -1376,7 +1731,10 @@
         ctx.lineTo(-13, -10);
         ctx.closePath();
         ctx.fill();
-        if (gigaHertzGame.activePowers.isolation && gigaHertzGame.activePowers.isolation > now) {
+        if (
+          gigaHertzGame.activePowers.isolation &&
+          gigaHertzGame.activePowers.isolation > now
+        ) {
           ctx.strokeStyle = "rgba(126,227,178,.8)";
           ctx.lineWidth = 3;
           ctx.beginPath();
@@ -1407,7 +1765,14 @@
           ctx.closePath();
           ctx.fill();
         } else {
-          roundRect(ctx, -enemy.radius, -enemy.radius, enemy.radius * 2, enemy.radius * 2, 5);
+          roundRect(
+            ctx,
+            -enemy.radius,
+            -enemy.radius,
+            enemy.radius * 2,
+            enemy.radius * 2,
+            5,
+          );
           ctx.fill();
           if (enemy.hp < enemy.maxHp) {
             ctx.strokeStyle = "#e6e2d9";
@@ -1429,7 +1794,13 @@
         ctx.lineWidth = 5;
         for (var i = 0; i < 3; i += 1) {
           ctx.beginPath();
-          ctx.arc(0, 0, boss.radius - i * 13 + Math.sin(now * 0.005 + i) * 2, 0, Math.PI * 2);
+          ctx.arc(
+            0,
+            0,
+            boss.radius - i * 13 + Math.sin(now * 0.005 + i) * 2,
+            0,
+            Math.PI * 2,
+          );
           ctx.stroke();
         }
         ctx.fillStyle = "rgba(91,156,246,.45)";
@@ -1444,16 +1815,31 @@
           var alpha = clamp(telegraph.timer / telegraph.duration, 0.18, 0.75);
           ctx.save();
           ctx.globalAlpha = alpha;
-          ctx.strokeStyle = telegraph.pattern === 1 ? "#f66f8d" : telegraph.pattern === 2 ? "#5b9cf6" : "#c8a86b";
+          ctx.strokeStyle =
+            telegraph.pattern === 1
+              ? "#f66f8d"
+              : telegraph.pattern === 2
+                ? "#5b9cf6"
+                : "#c8a86b";
           ctx.lineWidth = 3;
           ctx.setLineDash([10, 8]);
           if (telegraph.pattern === 0) {
             ctx.beginPath();
-            ctx.arc(telegraph.x, telegraph.y, 88, Math.PI * 0.12, Math.PI * 0.88);
+            ctx.arc(
+              telegraph.x,
+              telegraph.y,
+              88,
+              Math.PI * 0.12,
+              Math.PI * 0.88,
+            );
             ctx.stroke();
           } else if (telegraph.pattern === 1) {
             for (var j = -2; j <= 2; j += 1) {
-              var x = clamp(telegraph.targetX + j * 44, 28, gigaHertzGame.width - 28);
+              var x = clamp(
+                telegraph.targetX + j * 44,
+                28,
+                gigaHertzGame.width - 28,
+              );
               ctx.beginPath();
               ctx.moveTo(x, telegraph.y + 20);
               ctx.lineTo(x, gigaHertzGame.height - 36);
@@ -1542,7 +1928,8 @@
       function getAudioContext() {
         if (gigaHertzGame.muted) return null;
         if (!gigaHertzGame.audioContext) {
-          var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          var AudioContextClass =
+            window.AudioContext || window.webkitAudioContext;
           if (!AudioContextClass) return null;
           gigaHertzGame.audioContext = new AudioContextClass();
         }
@@ -1562,15 +1949,39 @@
         var duration = 0.07;
         if (type === "shot") frequency = 680;
         if (type === "hit") frequency = 300;
-        if (type === "destroy") { frequency = 760; duration = 0.12; }
-        if (type === "playerhit") { frequency = 120; duration = 0.22; oscillator.type = "sawtooth"; }
-        if (type === "power") { frequency = 920; duration = 0.16; }
+        if (type === "destroy") {
+          frequency = 760;
+          duration = 0.12;
+        }
+        if (type === "playerhit") {
+          frequency = 120;
+          duration = 0.22;
+          oscillator.type = "sawtooth";
+        }
+        if (type === "power") {
+          frequency = 920;
+          duration = 0.16;
+        }
         if (type === "wave") frequency = 560;
-        if (type === "boss") { frequency = 180; duration = 0.28; oscillator.type = "triangle"; }
-        if (type === "bosswin") { frequency = 980; duration = 0.34; }
-        if (type === "gameover") { frequency = 85; duration = 0.35; oscillator.type = "sawtooth"; }
+        if (type === "boss") {
+          frequency = 180;
+          duration = 0.28;
+          oscillator.type = "triangle";
+        }
+        if (type === "bosswin") {
+          frequency = 980;
+          duration = 0.34;
+        }
+        if (type === "gameover") {
+          frequency = 85;
+          duration = 0.35;
+          oscillator.type = "sawtooth";
+        }
         oscillator.frequency.setValueAtTime(frequency, now);
-        oscillator.frequency.exponentialRampToValueAtTime(Math.max(55, frequency * 0.55), now + duration);
+        oscillator.frequency.exponentialRampToValueAtTime(
+          Math.max(55, frequency * 0.55),
+          now + duration,
+        );
         gain.gain.setValueAtTime(0.0001, now);
         gain.gain.exponentialRampToValueAtTime(0.07, now + 0.01);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
@@ -1605,7 +2016,10 @@
       function syncMuteButton() {
         var button = document.getElementById("muteButton");
         button.textContent = gigaHertzGame.muted ? "Sound: Off" : "Sound: On";
-        button.setAttribute("aria-pressed", gigaHertzGame.muted ? "true" : "false");
+        button.setAttribute(
+          "aria-pressed",
+          gigaHertzGame.muted ? "true" : "false",
+        );
       }
 
       /* ==========================================================================
@@ -1627,13 +2041,21 @@
         });
         window.addEventListener("resize", resizeGigaHertz);
         window.addEventListener("orientationchange", resizeGigaHertz);
-        document.getElementById("startButton").addEventListener("click", startGigaHertz);
-        document.getElementById("pauseButton").addEventListener("click", function () {
-          if (gigaHertzGame.state === "paused") resumeGigaHertz();
-          else pauseGigaHertz();
-        });
-        document.getElementById("restartButton").addEventListener("click", resetGigaGame);
-        document.getElementById("muteButton").addEventListener("click", toggleMute);
+        document
+          .getElementById("startButton")
+          .addEventListener("click", startGigaHertz);
+        document
+          .getElementById("pauseButton")
+          .addEventListener("click", function () {
+            if (gigaHertzGame.state === "paused") resumeGigaHertz();
+            else pauseGigaHertz();
+          });
+        document
+          .getElementById("restartButton")
+          .addEventListener("click", resetGigaGame);
+        document
+          .getElementById("muteButton")
+          .addEventListener("click", toggleMute);
         document.querySelectorAll(".touch-button").forEach(function (button) {
           button.addEventListener("pointerdown", onTouchDown);
           button.addEventListener("pointerup", onTouchUp);
@@ -1642,7 +2064,11 @@
         });
         gigaHertzGame.canvas.addEventListener("pointermove", function (event) {
           var rect = gigaHertzGame.canvas.getBoundingClientRect();
-          gigaHertzGame.player.x = clamp((event.clientX - rect.left) / gigaHertzGame.scaleX, 28, gigaHertzGame.width - 28);
+          gigaHertzGame.player.x = clamp(
+            (event.clientX - rect.left) / gigaHertzGame.scaleX,
+            28,
+            gigaHertzGame.width - 28,
+          );
         });
         gigaHertzGame.canvas.addEventListener("pointerdown", function (event) {
           event.preventDefault();
@@ -1656,10 +2082,23 @@
       }
 
       function onKeyDown(event) {
-        var handled = ["ArrowLeft", "ArrowRight", "KeyA", "KeyD", "Space", "Enter", "KeyP", "Escape", "KeyR"].indexOf(event.code) >= 0;
+        var handled =
+          [
+            "ArrowLeft",
+            "ArrowRight",
+            "KeyA",
+            "KeyD",
+            "Space",
+            "Enter",
+            "KeyP",
+            "Escape",
+            "KeyR",
+          ].indexOf(event.code) >= 0;
         if (handled) event.preventDefault();
-        if (event.code === "ArrowLeft" || event.code === "KeyA") gigaHertzGame.keys.left = true;
-        if (event.code === "ArrowRight" || event.code === "KeyD") gigaHertzGame.keys.right = true;
+        if (event.code === "ArrowLeft" || event.code === "KeyA")
+          gigaHertzGame.keys.left = true;
+        if (event.code === "ArrowRight" || event.code === "KeyD")
+          gigaHertzGame.keys.right = true;
         if (event.code === "Space") {
           gigaHertzGame.keys.fire = true;
           startGigaHertz();
@@ -1673,8 +2112,10 @@
       }
 
       function onKeyUp(event) {
-        if (event.code === "ArrowLeft" || event.code === "KeyA") gigaHertzGame.keys.left = false;
-        if (event.code === "ArrowRight" || event.code === "KeyD") gigaHertzGame.keys.right = false;
+        if (event.code === "ArrowLeft" || event.code === "KeyA")
+          gigaHertzGame.keys.left = false;
+        if (event.code === "ArrowRight" || event.code === "KeyD")
+          gigaHertzGame.keys.right = false;
         if (event.code === "Space") gigaHertzGame.keys.fire = false;
       }
 
@@ -1736,9 +2177,14 @@
         }
         if (gigaHertzGame.state === "bossintro") {
           gigaHertzGame.bossIntroTimer -= delta;
-          if (gigaHertzGame.bossIntroTimer <= 0) gigaHertzGame.state = "playing";
+          if (gigaHertzGame.bossIntroTimer <= 0)
+            gigaHertzGame.state = "playing";
         }
-        if (gigaHertzGame.state !== "playing" && gigaHertzGame.state !== "bossintro") return;
+        if (
+          gigaHertzGame.state !== "playing" &&
+          gigaHertzGame.state !== "bossintro"
+        )
+          return;
         gigaHertzGame.waveTimer += delta;
         updatePlayer(delta, now);
         updateFormation(delta);
@@ -1747,34 +2193,55 @@
         updateProjectiles(delta);
         checkCollisions();
         checkWaveDone();
-        if (gigaHertzGame.comboUntil && gigaHertzGame.comboUntil < now) gigaHertzGame.combo = 0;
+        if (gigaHertzGame.comboUntil && gigaHertzGame.comboUntil < now)
+          gigaHertzGame.combo = 0;
         updateHud();
       }
 
       function checkWaveDone() {
         if (gigaHertzGame.boss) return;
-        var remaining = gigaHertzGame.enemies.some(function (enemy) { return !enemy.destroyed; });
+        var remaining = gigaHertzGame.enemies.some(function (enemy) {
+          return !enemy.destroyed;
+        });
         if (!remaining) completeWave();
       }
 
       function completeWave() {
-        gigaHertzGame.score += Math.floor((700 + gigaHertzGame.waveIndex * 150) * getDifficulty().scoreMultiplier);
+        gigaHertzGame.score += Math.floor(
+          (700 + gigaHertzGame.waveIndex * 150) *
+            getDifficulty().scoreMultiplier,
+        );
         saveGigaBestScore();
-        gigaHertzGame.waveIndex = (gigaHertzGame.waveIndex + 1) % gigaWaves.length;
+        gigaHertzGame.waveIndex =
+          (gigaHertzGame.waveIndex + 1) % gigaWaves.length;
         buildWave(gigaHertzGame.waveIndex);
         updateHud();
-        showOverlay("Signal Cleaned", "Wave complete. Press Enter or Start for the next pass.");
+        showOverlay(
+          "Signal Cleaned",
+          "Wave complete. Press Enter or Start for the next pass.",
+        );
         gigaHertzGame.state = "ready";
         playGigaTone("wave");
       }
 
       function endGame() {
-        gigaHertzGame.state = gigaHertzGame.score >= gigaHertzGame.bestScore ? "newbest" : "gameover";
+        gigaHertzGame.state =
+          gigaHertzGame.score >= gigaHertzGame.bestScore
+            ? "newbest"
+            : "gameover";
         saveGigaBestScore();
         if (gigaHertzGame.state === "newbest") {
-          showOverlay("New High Score", "Final score: " + gigaHertzGame.score + ". Press R or Restart for another pass.");
+          showOverlay(
+            "New High Score",
+            "Final score: " +
+              gigaHertzGame.score +
+              ". Press R or Restart for another pass.",
+          );
         } else {
-          showOverlay("Signal Lost", "Noise overwhelmed the chain. Press R or Restart for another pass.");
+          showOverlay(
+            "Signal Lost",
+            "Noise overwhelmed the chain. Press R or Restart for another pass.",
+          );
         }
         clearHeldInput();
         playGigaTone("gameover");
@@ -1782,18 +2249,32 @@
 
       function updateHud() {
         document.getElementById("scoreValue").textContent = gigaHertzGame.score;
-        document.getElementById("bestValue").textContent = gigaHertzGame.bestScore;
-        document.getElementById("waveValue").textContent = gigaHertzGame.waveIndex + 1;
+        document.getElementById("bestValue").textContent =
+          gigaHertzGame.bestScore;
+        document.getElementById("waveValue").textContent =
+          gigaHertzGame.waveIndex + 1;
         document.getElementById("livesValue").textContent = gigaHertzGame.lives;
-        var active = Object.keys(gigaHertzGame.activePowers).map(function (key) {
-          var power = gigaPowerTypes.find(function (entry) { return entry.type === key; });
-          return '<span class="status-chip">' + power.label + "</span>";
-        }).join("");
-        var accuracy = gigaHertzGame.shotsFired ? Math.round((gigaHertzGame.hits / gigaHertzGame.shotsFired) * 100) : 100;
+        var active = Object.keys(gigaHertzGame.activePowers)
+          .map(function (key) {
+            var power = gigaPowerTypes.find(function (entry) {
+              return entry.type === key;
+            });
+            return '<span class="status-chip">' + power.label + "</span>";
+          })
+          .join("");
+        var accuracy = gigaHertzGame.shotsFired
+          ? Math.round((gigaHertzGame.hits / gigaHertzGame.shotsFired) * 100)
+          : 100;
         document.getElementById("statusRow").innerHTML =
-          '<span class="status-chip">Hot Signal x' + gigaHertzGame.combo + "</span>" +
-          '<span class="status-chip">Accuracy ' + accuracy + "%</span>" +
-          '<span class="status-chip">Cleared ' + gigaHertzGame.enemiesDestroyed + "</span>" +
+          '<span class="status-chip">Hot Signal x' +
+          gigaHertzGame.combo +
+          "</span>" +
+          '<span class="status-chip">Accuracy ' +
+          accuracy +
+          "%</span>" +
+          '<span class="status-chip">Cleared ' +
+          gigaHertzGame.enemiesDestroyed +
+          "</span>" +
           (active || '<span class="status-chip">No active power</span>');
       }
 
@@ -1815,7 +2296,10 @@
         var controls = document.querySelector(".controls");
         var compactHeight = window.innerHeight < 520;
         var minCanvasHeight = compactHeight ? 240 : 360;
-        var displayWidth = Math.max(300, Math.floor(Math.min(rect.width, window.innerWidth - 20)));
+        var displayWidth = Math.max(
+          300,
+          Math.floor(Math.min(rect.width, window.innerWidth - 20)),
+        );
         var displayHeight = Math.max(minCanvasHeight, Math.floor(rect.height));
         if (compactHeight) {
           var usedHeight =
@@ -1824,7 +2308,10 @@
             44;
           displayHeight = Math.max(
             minCanvasHeight,
-            Math.min(displayHeight, Math.floor(window.innerHeight - usedHeight)),
+            Math.min(
+              displayHeight,
+              Math.floor(window.innerHeight - usedHeight),
+            ),
           );
         }
         gigaHertzGame.width = displayWidth < 520 ? 640 : 900;
@@ -1835,9 +2322,20 @@
         gigaHertzGame.canvas.height = Math.floor(displayHeight * deviceScale);
         gigaHertzGame.canvas.style.width = displayWidth + "px";
         gigaHertzGame.canvas.style.height = displayHeight + "px";
-        gigaHertzGame.ctx.setTransform(gigaHertzGame.scaleX * deviceScale, 0, 0, gigaHertzGame.scaleY * deviceScale, 0, 0);
+        gigaHertzGame.ctx.setTransform(
+          gigaHertzGame.scaleX * deviceScale,
+          0,
+          0,
+          gigaHertzGame.scaleY * deviceScale,
+          0,
+          0,
+        );
         gigaHertzGame.player.y = gigaHertzGame.height - 58;
-        gigaHertzGame.player.x = clamp(gigaHertzGame.player.x, 28, gigaHertzGame.width - 28);
+        gigaHertzGame.player.x = clamp(
+          gigaHertzGame.player.x,
+          28,
+          gigaHertzGame.width - 28,
+        );
       }
 
       function createBurst(x, y, color, count) {

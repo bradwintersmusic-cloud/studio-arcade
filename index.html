@@ -4,10 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Studio Arcade</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
-    <link rel="shortcut icon" href="favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
     <style>
       /* ==========================================================================
        Studio Arcade styles
@@ -522,7 +522,7 @@
         margin: 64px auto 0;
         padding-top: 28px;
         border-top: 1px solid var(--border);
-        font-family: 'IBM Plex Mono', monospace;
+        font-family: "IBM Plex Mono", monospace;
         font-size: 10px;
         letter-spacing: 0.08em;
         color: var(--muted);
@@ -625,8 +625,8 @@
             <p class="eyebrow">Belmont Recording Studios presents</p>
             <h1 id="libraryTitle">Studio Arcade</h1>
             <p class="library-copy">
-              A tiny browser arcade for studio breaks, signal-flow showdowns,
-              and future audio-themed games. Pick a cartridge to patch in.
+              A tiny browser arcade for studio breaks, fighting boredom, and
+              future audio-themed games. Pick a cartridge to patch in.
             </p>
           </header>
           <div
@@ -645,9 +645,7 @@
             </button>
             <div class="game-title">
               <h2 id="activeGameTitle">Patch Pong</h2>
-              <p id="activeGameSubtitle">
-                Route the signal past the CPU fader.
-              </p>
+              <p id="activeGameSubtitle">Route the signal past the CPU.</p>
             </div>
             <div id="patchPongScoreboard" class="scoreboard" aria-live="polite">
               <span class="score-pill"
@@ -670,23 +668,42 @@
 
       <footer class="page-footer">
         <nav class="footer-nav">
-          <a href="https://bradwintersmusic-cloud.github.io/studio-home/">Studio Hub</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-home/"
+            >Studio Hub</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-news/">AET News</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-news/"
+            >AET News</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studioassistant-sync/">Studio Schedule</a>
+          <a
+            href="https://bradwintersmusic-cloud.github.io/studioassistant-sync/"
+            >Studio Schedule</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-videos/">Video Library</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-videos/"
+            >Video Library</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-policies/">Policies</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-policies/"
+            >Policies</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-tools/">Studio Tools</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-tools/"
+            >Studio Tools</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-musicians/">Session Musicians</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-musicians/"
+            >Session Musicians</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-resources/">Resources</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-resources/"
+            >Resources</a
+          >
           <span>|</span>
-          <a href="https://bradwintersmusic-cloud.github.io/studio-contact/">Contact</a>
+          <a href="https://bradwintersmusic-cloud.github.io/studio-contact/"
+            >Contact</a
+          >
         </nav>
 
         <div class="footer-meta">
@@ -737,7 +754,7 @@
         {
           id: "patch-pong",
           title: "Patch Pong",
-          subtitle: "A glowing signal pulse duel across the patch bay.",
+          subtitle: "A glowing signal duel across the patch bay.",
           cartridgeArt: "patch",
           launch: launchPatchPong,
           stop: stopPatchPong,
@@ -745,7 +762,7 @@
         {
           id: "studio-brickles",
           title: "Studio Brickles",
-          subtitle: "Break the mix. Clear the rack.",
+          subtitle: "Break the boredom. Normal the room.",
           cartridgeArt: "brickles",
           launch: launchStudioBrickles,
           stop: stopStudioBrickles,
@@ -761,7 +778,7 @@
         {
           id: "track-tetris",
           title: "Track Tetris",
-          subtitle: "Build the session. Clear the tracks.",
+          subtitle: "Build the perfect session.",
           cartridgeArt: "tetris",
           launch: launchTrackTetris,
           stop: stopTrackTetris,
@@ -769,7 +786,7 @@
         {
           id: "giga-hertz",
           title: "Giga-Hertz",
-          subtitle: "Clean the signal.",
+          subtitle: "Defeat the evil feedback aliens.",
           cartridgeArt: "giga",
           href: "giga-hertz.html",
         },
@@ -944,8 +961,7 @@
       function getCartridgeMeta(gameId) {
         if (gameId === "studio-brickles") {
           return (
-            "Best " +
-            readNumberFromStorage("studioArcadeBricklesBestScore", 0)
+            "Best " + readNumberFromStorage("studioArcadeBricklesBestScore", 0)
           );
         }
 
@@ -965,8 +981,7 @@
 
         if (gameId === "giga-hertz") {
           return (
-            "Best " +
-            readNumberFromStorage("studioArcadeGigaHertzBestScore", 0)
+            "Best " + readNumberFromStorage("studioArcadeGigaHertzBestScore", 0)
           );
         }
 
@@ -1313,10 +1328,15 @@
         var angleRange = patchPong.orientation === "portrait" ? 0.58 : 0.48;
         var offset = Math.random() * angleRange - angleRange / 2;
         var settings = getPatchPongDifficultySettings();
-        var baseSpeed = isPatchPongMobile() ? settings.mobileSpeed : settings.desktopSpeed;
+        var baseSpeed = isPatchPongMobile()
+          ? settings.mobileSpeed
+          : settings.desktopSpeed;
         var speed =
           baseSpeed +
-          Math.min(settings.accelerationCap, patchPong.rally * settings.acceleration);
+          Math.min(
+            settings.accelerationCap,
+            patchPong.rally * settings.acceleration,
+          );
 
         patchPong.ball.x = width / 2;
         patchPong.ball.y = height / 2;
@@ -1334,7 +1354,9 @@
         var button = document.getElementById("difficultyButton");
         var index = patchPongDifficultyOrder.indexOf(patchPong.difficulty);
         patchPong.difficulty =
-          patchPongDifficultyOrder[(index + 1) % patchPongDifficultyOrder.length];
+          patchPongDifficultyOrder[
+            (index + 1) % patchPongDifficultyOrder.length
+          ];
         button.textContent =
           "Difficulty: " + getPatchPongDifficultySettings().label;
         button.setAttribute("aria-pressed", "true");
@@ -1351,7 +1373,8 @@
       function isPatchPongMobile() {
         return (
           patchPong.orientation === "portrait" ||
-          (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ||
+          (window.matchMedia &&
+            window.matchMedia("(pointer: coarse)").matches) ||
           (patchPong.canvas && patchPong.canvas.clientWidth < 720)
         );
       }
@@ -1637,11 +1660,17 @@
         if (patchPong.orientation === "portrait") {
           handlePortraitWallBounce(width);
 
-          if (ball.vy > 0 && patchPongPaddleCollide(patchPong.player, ball, true)) {
+          if (
+            ball.vy > 0 &&
+            patchPongPaddleCollide(patchPong.player, ball, true)
+          ) {
             bounceBallFromPaddle(patchPong.player, -1);
           }
 
-          if (ball.vy < 0 && patchPongPaddleCollide(patchPong.cpu, ball, false)) {
+          if (
+            ball.vy < 0 &&
+            patchPongPaddleCollide(patchPong.cpu, ball, false)
+          ) {
             bounceBallFromPaddle(patchPong.cpu, 1);
           }
 
@@ -1655,11 +1684,17 @@
         } else {
           handleLandscapeWallBounce(height);
 
-          if (ball.vx < 0 && patchPongPaddleCollide(patchPong.player, ball, true)) {
+          if (
+            ball.vx < 0 &&
+            patchPongPaddleCollide(patchPong.player, ball, true)
+          ) {
             bounceBallFromPaddle(patchPong.player, 1);
           }
 
-          if (ball.vx > 0 && patchPongPaddleCollide(patchPong.cpu, ball, false)) {
+          if (
+            ball.vx > 0 &&
+            patchPongPaddleCollide(patchPong.cpu, ball, false)
+          ) {
             bounceBallFromPaddle(patchPong.cpu, -1);
           }
 
@@ -2115,12 +2150,7 @@
       var bricklesLevels = [
         {
           name: "Rack Rows",
-          rows: [
-            "ssssssssss",
-            "srsrssrsrs",
-            "ssssssssss",
-            "..m....m..",
-          ],
+          rows: ["ssssssssss", "srsrssrsrs", "ssssssssss", "..m....m.."],
         },
         {
           name: "Console Faders",
@@ -2289,11 +2319,13 @@
           78,
           Math.min(bricklesSettings.paddleWidth, width * 0.24),
         );
-        studioBrickles.paddle.width =
-          studioBrickles.activePowers.wideStereo
-            ? studioBrickles.paddle.baseWidth * 1.45
-            : studioBrickles.paddle.baseWidth;
-        studioBrickles.paddle.height = Math.max(12, Math.min(16, height * 0.03));
+        studioBrickles.paddle.width = studioBrickles.activePowers.wideStereo
+          ? studioBrickles.paddle.baseWidth * 1.45
+          : studioBrickles.paddle.baseWidth;
+        studioBrickles.paddle.height = Math.max(
+          12,
+          Math.min(16, height * 0.03),
+        );
         studioBrickles.paddle.y = height - Math.max(34, height * 0.075);
         studioBrickles.paddle.x = clamp(
           studioBrickles.paddle.x || (width - studioBrickles.paddle.width) / 2,
@@ -2307,7 +2339,8 @@
 
       function buildStudioBricklesLevel(preserveProgress) {
         var previousBricks = preserveProgress ? studioBrickles.bricks : [];
-        var level = bricklesLevels[studioBrickles.levelIndex % bricklesLevels.length];
+        var level =
+          bricklesLevels[studioBrickles.levelIndex % bricklesLevels.length];
         var rows = level.rows;
         var columns = rows.reduce(function (max, row) {
           return Math.max(max, row.length);
@@ -2319,7 +2352,10 @@
           22,
           (studioBrickles.width - marginX * 2 - gap * (columns - 1)) / columns,
         );
-        var brickHeight = Math.max(15, Math.min(25, studioBrickles.height * 0.045));
+        var brickHeight = Math.max(
+          15,
+          Math.min(25, studioBrickles.height * 0.045),
+        );
 
         studioBrickles.bricks = [];
         rows.forEach(function (row, rowIndex) {
@@ -2329,7 +2365,12 @@
               continue;
             }
 
-            var type = code === "r" ? "reinforced" : code === "m" ? "master" : "standard";
+            var type =
+              code === "r"
+                ? "reinforced"
+                : code === "m"
+                  ? "master"
+                  : "standard";
             var hp = type === "reinforced" ? 2 : 1;
             var previousBrick = previousBricks[studioBrickles.bricks.length];
             studioBrickles.bricks.push({
@@ -2430,7 +2471,10 @@
         gameMount.removeEventListener("pointerdown", onStudioBricklesPointer);
         gameMount.removeEventListener("pointermove", onStudioBricklesPointer);
         gameMount.removeEventListener("pointerup", onStudioBricklesPointerUp);
-        gameMount.removeEventListener("pointercancel", onStudioBricklesPointerUp);
+        gameMount.removeEventListener(
+          "pointercancel",
+          onStudioBricklesPointerUp,
+        );
         studioBrickles.inputAdded = false;
       }
 
@@ -2474,7 +2518,10 @@
       }
 
       function onStudioBricklesPointer(event) {
-        if (!studioBrickles.canvas || appState.activeGameId !== "studio-brickles") {
+        if (
+          !studioBrickles.canvas ||
+          appState.activeGameId !== "studio-brickles"
+        ) {
           return;
         }
 
@@ -2512,7 +2559,10 @@
         var delta = Math.min(0.033, (now - studioBrickles.lastTime) / 1000);
         studioBrickles.lastTime = now;
 
-        if (studioBrickles.state === "playing" || studioBrickles.state === "ready") {
+        if (
+          studioBrickles.state === "playing" ||
+          studioBrickles.state === "ready"
+        ) {
           updateStudioBrickles(delta, now);
         }
 
@@ -2589,7 +2639,9 @@
       }
 
       function normalizeBricklesBallVelocity(ball) {
-        var speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy) || getStudioBricklesBallSpeed();
+        var speed =
+          Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy) ||
+          getStudioBricklesBallSpeed();
         var minX = speed * 0.18;
         var minY = speed * 0.34;
 
@@ -2618,8 +2670,16 @@
       function keepStudioBricklesBallsValid() {
         studioBrickles.balls.forEach(function (ball) {
           ball.radius = Math.max(7, Math.min(10, studioBrickles.width * 0.014));
-          ball.x = clamp(ball.x, ball.radius, studioBrickles.width - ball.radius);
-          ball.y = clamp(ball.y, ball.radius, studioBrickles.height - ball.radius);
+          ball.x = clamp(
+            ball.x,
+            ball.radius,
+            studioBrickles.width - ball.radius,
+          );
+          ball.y = clamp(
+            ball.y,
+            ball.radius,
+            studioBrickles.height - ball.radius,
+          );
         });
         keepAttachedBricklesBallOnPaddle();
       }
@@ -2690,16 +2750,20 @@
 
           var nearestX = clamp(ball.x, brick.x, brick.x + brick.width);
           var nearestY = clamp(ball.y, brick.y, brick.y + brick.height);
-          var overlapX =
-            ball.radius - Math.abs(ball.x - nearestX);
-          var overlapY =
-            ball.radius - Math.abs(ball.y - nearestY);
+          var overlapX = ball.radius - Math.abs(ball.x - nearestX);
+          var overlapY = ball.radius - Math.abs(ball.y - nearestY);
 
           if (overlapX < overlapY) {
-            ball.vx = ball.x < brick.x + brick.width / 2 ? -Math.abs(ball.vx) : Math.abs(ball.vx);
+            ball.vx =
+              ball.x < brick.x + brick.width / 2
+                ? -Math.abs(ball.vx)
+                : Math.abs(ball.vx);
             ball.x += ball.vx < 0 ? -overlapX - 0.5 : overlapX + 0.5;
           } else {
-            ball.vy = ball.y < brick.y + brick.height / 2 ? -Math.abs(ball.vy) : Math.abs(ball.vy);
+            ball.vy =
+              ball.y < brick.y + brick.height / 2
+                ? -Math.abs(ball.vy)
+                : Math.abs(ball.vy);
             ball.y += ball.vy < 0 ? -overlapY - 0.5 : overlapY + 0.5;
           }
 
@@ -2722,12 +2786,16 @@
 
         if (brick.hp <= 0) {
           var comboBonus = Math.min(150, studioBrickles.combo * 8);
-          var points = Math.floor((brick.points + comboBonus) * studioBrickles.gainMultiplier);
+          var points = Math.floor(
+            (brick.points + comboBonus) * studioBrickles.gainMultiplier,
+          );
           studioBrickles.score += points;
           maybeDropStudioBricklesPowerUp(brick);
           playStudioBricklesTone("break");
         } else {
-          studioBrickles.score += Math.floor(25 * studioBrickles.gainMultiplier);
+          studioBrickles.score += Math.floor(
+            25 * studioBrickles.gainMultiplier,
+          );
           playStudioBricklesTone("reinforced");
         }
 
@@ -2744,14 +2812,20 @@
 
         if (studioBrickles.lives <= 0) {
           studioBrickles.state = "gameover";
-          updateStudioBricklesOverlay("Signal Lost", "The signal chain dropped. Press Space or tap to restart.");
+          updateStudioBricklesOverlay(
+            "Signal Lost",
+            "The signal chain dropped. Press Space or tap to restart.",
+          );
           playStudioBricklesTone("gameover");
           return;
         }
 
         studioBrickles.state = "ready";
         studioBrickles.balls = [createAttachedBricklesBall()];
-        updateStudioBricklesOverlay("Signal Dropped", "One LED went dark. Press Space or tap to relaunch.");
+        updateStudioBricklesOverlay(
+          "Signal Dropped",
+          "One LED went dark. Press Space or tap to relaunch.",
+        );
         playStudioBricklesTone("life");
       }
 
@@ -2790,7 +2864,10 @@
         }
 
         var types = ["wideStereo", "multiband", "limiter", "gainBoost"];
-        var type = types[(studioBrickles.combo + studioBrickles.levelIndex) % types.length];
+        var type =
+          types[
+            (studioBrickles.combo + studioBrickles.levelIndex) % types.length
+          ];
         studioBrickles.powerUps.push({
           x: brick.x + brick.width / 2,
           y: brick.y + brick.height / 2,
@@ -2805,12 +2882,17 @@
           var power = studioBrickles.powerUps[i];
           power.y += power.vy * delta;
 
-          if (rectsOverlap({
-            x: power.x - power.size / 2,
-            y: power.y - power.size / 2,
-            width: power.size,
-            height: power.size,
-          }, studioBrickles.paddle)) {
+          if (
+            rectsOverlap(
+              {
+                x: power.x - power.size / 2,
+                y: power.y - power.size / 2,
+                width: power.size,
+                height: power.size,
+              },
+              studioBrickles.paddle,
+            )
+          ) {
             collectStudioBricklesPowerUp(power.type);
             studioBrickles.powerUps.splice(i, 1);
           } else if (power.y - power.size > studioBrickles.height) {
@@ -2882,7 +2964,10 @@
         }
 
         ["limiter", "multiband"].forEach(function (key) {
-          if (studioBrickles.activePowers[key] && studioBrickles.activePowers[key] <= now) {
+          if (
+            studioBrickles.activePowers[key] &&
+            studioBrickles.activePowers[key] <= now
+          ) {
             delete studioBrickles.activePowers[key];
           }
         });
@@ -2974,7 +3059,12 @@
       }
 
       function drawBricklesBrick(ctx, brick) {
-        var color = brick.type === "master" ? "#c8a86b" : brick.type === "reinforced" ? "#7d8fb8" : "#5b9cf6";
+        var color =
+          brick.type === "master"
+            ? "#c8a86b"
+            : brick.type === "reinforced"
+              ? "#7d8fb8"
+              : "#5b9cf6";
         if (brick.type === "reinforced" && brick.hp < brick.maxHp) {
           color = "#c8a86b";
         }
@@ -2986,7 +3076,14 @@
         ctx.fill();
         ctx.shadowBlur = 0;
         ctx.fillStyle = "rgba(11, 11, 15, 0.42)";
-        roundRect(ctx, brick.x + 4, brick.y + 4, brick.width - 8, brick.height - 8, 3);
+        roundRect(
+          ctx,
+          brick.x + 4,
+          brick.y + 4,
+          brick.width - 8,
+          brick.height - 8,
+          3,
+        );
         ctx.fill();
         ctx.restore();
       }
@@ -3000,7 +3097,14 @@
         ctx.fill();
         ctx.shadowBlur = 0;
         ctx.fillStyle = "rgba(11, 11, 15, 0.68)";
-        roundRect(ctx, paddle.x + 12, paddle.y + 4, paddle.width - 24, paddle.height - 8, 4);
+        roundRect(
+          ctx,
+          paddle.x + 12,
+          paddle.y + 4,
+          paddle.width - 24,
+          paddle.height - 8,
+          4,
+        );
         ctx.fill();
         ctx.restore();
       }
@@ -3008,7 +3112,14 @@
       function drawBricklesBall(ctx, ball, now) {
         var pulse = 1 + Math.sin(now * 0.014) * 0.16;
         var radius = ball.radius * pulse;
-        var gradient = ctx.createRadialGradient(ball.x, ball.y, 1, ball.x, ball.y, radius * 3.6);
+        var gradient = ctx.createRadialGradient(
+          ball.x,
+          ball.y,
+          1,
+          ball.x,
+          ball.y,
+          radius * 3.6,
+        );
         gradient.addColorStop(0, "rgba(230, 226, 217, 1)");
         gradient.addColorStop(0.35, "rgba(91, 156, 246, 0.58)");
         gradient.addColorStop(1, "rgba(91, 156, 246, 0)");
@@ -3029,7 +3140,14 @@
         ctx.strokeStyle = "#c8a86b";
         ctx.fillStyle = "rgba(91, 156, 246, 0.38)";
         ctx.lineWidth = 2;
-        roundRect(ctx, -power.size / 2, -power.size / 2, power.size, power.size, 4);
+        roundRect(
+          ctx,
+          -power.size / 2,
+          -power.size / 2,
+          power.size,
+          power.size,
+          4,
+        );
         ctx.fill();
         ctx.stroke();
         ctx.restore();
@@ -3055,7 +3173,11 @@
         ctx.save();
         ctx.fillStyle = "rgba(200, 168, 107, 0.86)";
         ctx.font = "13px ui-monospace, monospace";
-        ctx.fillText("Hot Signal x" + studioBrickles.combo, 18, studioBrickles.height - 18);
+        ctx.fillText(
+          "Hot Signal x" + studioBrickles.combo,
+          18,
+          studioBrickles.height - 18,
+        );
         ctx.restore();
       }
 
@@ -3111,7 +3233,10 @@
           return;
         }
         studioBrickles.state = "paused";
-        updateStudioBricklesOverlay("Paused", "Signal is held. Press Space, tap, or use Pause to resume.");
+        updateStudioBricklesOverlay(
+          "Paused",
+          "Signal is held. Press Space, tap, or use Pause to resume.",
+        );
         playStudioBricklesTone("pause");
       }
 
@@ -3188,10 +3313,19 @@
         };
         var html = "";
         Object.keys(studioBrickles.activePowers).forEach(function (key) {
-          var remaining = Math.max(0, Math.ceil((studioBrickles.activePowers[key] - now) / 1000));
-          html += '<span class="brickles-power-chip">' + labels[key] + " " + remaining + "s</span>";
+          var remaining = Math.max(
+            0,
+            Math.ceil((studioBrickles.activePowers[key] - now) / 1000),
+          );
+          html +=
+            '<span class="brickles-power-chip">' +
+            labels[key] +
+            " " +
+            remaining +
+            "s</span>";
         });
-        list.innerHTML = html || '<span class="brickles-power-chip">No active power</span>';
+        list.innerHTML =
+          html || '<span class="brickles-power-chip">No active power</span>';
       }
 
       function updateStudioBricklesBestScore() {
@@ -3199,7 +3333,10 @@
           return;
         }
         studioBrickles.bestScore = studioBrickles.score;
-        writeNumberToStorage("studioArcadeBricklesBestScore", studioBrickles.bestScore);
+        writeNumberToStorage(
+          "studioArcadeBricklesBestScore",
+          studioBrickles.bestScore,
+        );
       }
 
       function rectsOverlap(a, b) {
@@ -3340,9 +3477,30 @@
       };
 
       var cableSnakeDifficulties = {
-        chill: { label: "Chill Session", cols: 18, rows: 18, startMs: 220, speedUp: 3, minMs: 110 },
-        tracking: { label: "Tracking Session", cols: 20, rows: 20, startMs: 185, speedUp: 4, minMs: 95 },
-        deadline: { label: "Deadline Mode", cols: 22, rows: 22, startMs: 150, speedUp: 5, minMs: 75 },
+        chill: {
+          label: "Chill Session",
+          cols: 18,
+          rows: 18,
+          startMs: 220,
+          speedUp: 3,
+          minMs: 110,
+        },
+        tracking: {
+          label: "Tracking Session",
+          cols: 20,
+          rows: 20,
+          startMs: 185,
+          speedUp: 4,
+          minMs: 95,
+        },
+        deadline: {
+          label: "Deadline Mode",
+          cols: 22,
+          rows: 22,
+          startMs: 150,
+          speedUp: 5,
+          minMs: 75,
+        },
       };
 
       var cableSnakeCollectibles = [
@@ -3364,7 +3522,10 @@
 
         cableSnakeGame.canvas = document.createElement("canvas");
         cableSnakeGame.canvas.id = "cableSnakeCanvas";
-        cableSnakeGame.canvas.setAttribute("aria-label", "Cable Snake game canvas");
+        cableSnakeGame.canvas.setAttribute(
+          "aria-label",
+          "Cable Snake game canvas",
+        );
         cableSnakeGame.ctx = cableSnakeGame.canvas.getContext("2d");
         cableSnakeGame.overlay = document.createElement("div");
         cableSnakeGame.overlay.className = "game-overlay";
@@ -3387,7 +3548,9 @@
           '<button class="difficulty-toggle snakeDifficultyButton" data-difficulty="deadline" type="button">Deadline Mode</button>' +
           '<button id="startSnakeButton" class="small-button" type="button">Start</button>' +
           '<button id="pauseSnakeButton" class="small-button" type="button">Pause</button>' +
-          '<button class="small-button studioMuteButton" type="button">' + getStudioMuteLabel() + "</button>" +
+          '<button class="small-button studioMuteButton" type="button">' +
+          getStudioMuteLabel() +
+          "</button>" +
           '<button id="restartSnakeButton" class="small-button" type="button">Restart</button>' +
           '<div class="touch-pad" aria-label="Cable Snake touch controls">' +
           '<span></span><button class="touch-button snakePadButton" data-direction="up" type="button">Up</button><span></span>' +
@@ -3396,11 +3559,13 @@
           '<button class="touch-button snakePadButton" data-direction="right" type="button">Right</button>' +
           "</div></div>";
 
-        document.querySelectorAll(".snakeDifficultyButton").forEach(function (button) {
-          button.addEventListener("click", function () {
-            setCableSnakeDifficulty(button.getAttribute("data-difficulty"));
+        document
+          .querySelectorAll(".snakeDifficultyButton")
+          .forEach(function (button) {
+            button.addEventListener("click", function () {
+              setCableSnakeDifficulty(button.getAttribute("data-difficulty"));
+            });
           });
-        });
         document.querySelectorAll(".snakePadButton").forEach(function (button) {
           button.addEventListener("pointerdown", function (event) {
             event.preventDefault();
@@ -3408,12 +3573,23 @@
             startCableSnake();
           });
         });
-        document.getElementById("startSnakeButton").addEventListener("click", startCableSnake);
-        document.getElementById("pauseSnakeButton").addEventListener("click", toggleCableSnakePause);
-        document.getElementById("restartSnakeButton").addEventListener("click", resetCableSnakeGame);
-        document.querySelector(".studioMuteButton").addEventListener("click", toggleStudioMute);
+        document
+          .getElementById("startSnakeButton")
+          .addEventListener("click", startCableSnake);
+        document
+          .getElementById("pauseSnakeButton")
+          .addEventListener("click", toggleCableSnakePause);
+        document
+          .getElementById("restartSnakeButton")
+          .addEventListener("click", resetCableSnakeGame);
+        document
+          .querySelector(".studioMuteButton")
+          .addEventListener("click", toggleStudioMute);
 
-        cableSnakeGame.bestScore = readNumberFromStorage("studioArcadeCableSnakeBestScore", 0);
+        cableSnakeGame.bestScore = readNumberFromStorage(
+          "studioArcadeCableSnakeBestScore",
+          0,
+        );
         cableSnakeGame.running = true;
         cableSnakeGame.lastTime = performance.now();
         resizeCableSnake();
@@ -3465,7 +3641,10 @@
         resizeCableSnake();
         updateCableSnakeHud();
         updateCableSnakeDifficultyButtons();
-        updateCableSnakeOverlay("Cable Snake", "Choose a session, then press Space or tap Start to move the signal.");
+        updateCableSnakeOverlay(
+          "Cable Snake",
+          "Choose a session, then press Space or tap Start to move the signal.",
+        );
       }
 
       function setCableSnakeDifficulty(value) {
@@ -3480,7 +3659,10 @@
         if (cableSnakeGame.state === "gameover") {
           resetCableSnakeGame();
         }
-        if (cableSnakeGame.state === "ready" || cableSnakeGame.state === "paused") {
+        if (
+          cableSnakeGame.state === "ready" ||
+          cableSnakeGame.state === "paused"
+        ) {
           cableSnakeGame.state = "playing";
           cableSnakeGame.lastTime = performance.now();
           hideCableSnakeOverlay();
@@ -3492,7 +3674,10 @@
       function toggleCableSnakePause() {
         if (cableSnakeGame.state === "playing") {
           cableSnakeGame.state = "paused";
-          updateCableSnakeOverlay("Paused", "Signal is held. Press Space, swipe, or use Pause to resume.");
+          updateCableSnakeOverlay(
+            "Paused",
+            "Signal is held. Press Space, swipe, or use Pause to resume.",
+          );
           playCableSnakeTone("pause");
         } else {
           startCableSnake();
@@ -3551,9 +3736,12 @@
         }
         var direction = null;
         if (event.code === "ArrowUp" || event.code === "KeyW") direction = "up";
-        if (event.code === "ArrowDown" || event.code === "KeyS") direction = "down";
-        if (event.code === "ArrowLeft" || event.code === "KeyA") direction = "left";
-        if (event.code === "ArrowRight" || event.code === "KeyD") direction = "right";
+        if (event.code === "ArrowDown" || event.code === "KeyS")
+          direction = "down";
+        if (event.code === "ArrowLeft" || event.code === "KeyA")
+          direction = "left";
+        if (event.code === "ArrowRight" || event.code === "KeyD")
+          direction = "right";
         if (direction) {
           event.preventDefault();
           changeCableSnakeDirection(direction);
@@ -3591,7 +3779,15 @@
           startCableSnake();
           return;
         }
-        changeCableSnakeDirection(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up"));
+        changeCableSnakeDirection(
+          Math.abs(dx) > Math.abs(dy)
+            ? dx > 0
+              ? "right"
+              : "left"
+            : dy > 0
+              ? "down"
+              : "up",
+        );
         startCableSnake();
       }
 
@@ -3606,7 +3802,10 @@
         if (!next) {
           return;
         }
-        if (next.x + cableSnakeGame.direction.x === 0 && next.y + cableSnakeGame.direction.y === 0) {
+        if (
+          next.x + cableSnakeGame.direction.x === 0 &&
+          next.y + cableSnakeGame.direction.y === 0
+        ) {
           return;
         }
         cableSnakeGame.nextDirection = next;
@@ -3636,7 +3835,10 @@
 
       function getCableSnakeStepMs() {
         var settings = cableSnakeDifficulties[cableSnakeGame.difficulty];
-        return Math.max(settings.minMs, settings.startMs - cableSnakeGame.collected * settings.speedUp);
+        return Math.max(
+          settings.minMs,
+          settings.startMs - cableSnakeGame.collected * settings.speedUp,
+        );
       }
 
       function stepCableSnake() {
@@ -3658,14 +3860,19 @@
         }
         if (
           hitWall ||
-          cableSnakeGame.snake.some(function (part) { return part.x === nextHead.x && part.y === nextHead.y; })
+          cableSnakeGame.snake.some(function (part) {
+            return part.x === nextHead.x && part.y === nextHead.y;
+          })
         ) {
           endCableSnakeGame();
           return;
         }
         cableSnakeGame.wallGrace = false;
         cableSnakeGame.snake.unshift(nextHead);
-        if (nextHead.x === cableSnakeGame.food.x && nextHead.y === cableSnakeGame.food.y) {
+        if (
+          nextHead.x === cableSnakeGame.food.x &&
+          nextHead.y === cableSnakeGame.food.y
+        ) {
           collectCableSnakeFood();
         } else {
           cableSnakeGame.snake.pop();
@@ -3673,16 +3880,23 @@
       }
 
       function collectCableSnakeFood() {
-        var item = cableSnakeCollectibles.find(function (entry) {
-          return entry.type === cableSnakeGame.food.type;
-        }) || cableSnakeCollectibles[0];
+        var item =
+          cableSnakeCollectibles.find(function (entry) {
+            return entry.type === cableSnakeGame.food.type;
+          }) || cableSnakeCollectibles[0];
         cableSnakeGame.collected += 1;
         cableSnakeGame.score += item.points + cableSnakeGame.collected * 12;
-        createCableSnakeParticles(cableSnakeGame.food.x, cableSnakeGame.food.y, item.color);
+        createCableSnakeParticles(
+          cableSnakeGame.food.x,
+          cableSnakeGame.food.y,
+          item.color,
+        );
         updateCableSnakeBestScore();
         placeCableSnakeFood();
         updateCableSnakeHud();
-        playCableSnakeTone(cableSnakeGame.collected % 4 === 0 ? "speed" : "collect");
+        playCableSnakeTone(
+          cableSnakeGame.collected % 4 === 0 ? "speed" : "collect",
+        );
       }
 
       function placeCableSnakeFood() {
@@ -3702,21 +3916,30 @@
           return;
         }
         var cell = open[Math.floor(Math.random() * open.length)];
-        var item = cableSnakeCollectibles[cableSnakeGame.collected % cableSnakeCollectibles.length];
+        var item =
+          cableSnakeCollectibles[
+            cableSnakeGame.collected % cableSnakeCollectibles.length
+          ];
         cableSnakeGame.food = { x: cell.x, y: cell.y, type: item.type };
       }
 
       function endCableSnakeGame() {
         cableSnakeGame.state = "gameover";
         updateCableSnakeBestScore();
-        updateCableSnakeOverlay("Signal Lost", "The cable crossed or hit the wall. Press Space or Restart for a fresh take.");
+        updateCableSnakeOverlay(
+          "Signal Lost",
+          "The cable crossed or hit the wall. Press Space or Restart for a fresh take.",
+        );
         playCableSnakeTone("crash");
       }
 
       function updateCableSnakeBestScore() {
         if (cableSnakeGame.score > cableSnakeGame.bestScore) {
           cableSnakeGame.bestScore = cableSnakeGame.score;
-          writeNumberToStorage("studioArcadeCableSnakeBestScore", cableSnakeGame.bestScore);
+          writeNumberToStorage(
+            "studioArcadeCableSnakeBestScore",
+            cableSnakeGame.bestScore,
+          );
           playCableSnakeTone("best");
         }
       }
@@ -3778,20 +4001,29 @@
           }
           ctx.restore();
         });
-        var pulseIndex = Math.floor((now * 0.008) % Math.max(1, cableSnakeGame.snake.length));
+        var pulseIndex = Math.floor(
+          (now * 0.008) % Math.max(1, cableSnakeGame.snake.length),
+        );
         var pulse = cableSnakeGame.snake[pulseIndex];
         if (pulse) {
           ctx.fillStyle = "rgba(230,226,217,.75)";
           ctx.beginPath();
-          ctx.arc(pulse.x * cell + cell / 2, pulse.y * cell + cell / 2, Math.max(2, cell * 0.14), 0, Math.PI * 2);
+          ctx.arc(
+            pulse.x * cell + cell / 2,
+            pulse.y * cell + cell / 2,
+            Math.max(2, cell * 0.14),
+            0,
+            Math.PI * 2,
+          );
           ctx.fill();
         }
       }
 
       function drawCableSnakeFood(ctx, cell, now) {
-        var item = cableSnakeCollectibles.find(function (entry) {
-          return entry.type === cableSnakeGame.food.type;
-        }) || cableSnakeCollectibles[0];
+        var item =
+          cableSnakeCollectibles.find(function (entry) {
+            return entry.type === cableSnakeGame.food.type;
+          }) || cableSnakeCollectibles[0];
         var x = cableSnakeGame.food.x * cell + cell / 2;
         var y = cableSnakeGame.food.y * cell + cell / 2;
         var r = cell * (0.28 + Math.sin(now * 0.009) * 0.04);
@@ -3857,14 +4089,21 @@
         score.textContent = cableSnakeGame.score;
         best.textContent = cableSnakeGame.bestScore;
         length.textContent = cableSnakeGame.snake.length;
-        speed.textContent = Math.max(1, Math.round(200 / getCableSnakeStepMs()));
+        speed.textContent = Math.max(
+          1,
+          Math.round(200 / getCableSnakeStepMs()),
+        );
       }
 
       function updateCableSnakeDifficultyButtons() {
-        document.querySelectorAll(".snakeDifficultyButton").forEach(function (button) {
-          var active = button.getAttribute("data-difficulty") === cableSnakeGame.difficulty;
-          button.setAttribute("aria-pressed", active ? "true" : "false");
-        });
+        document
+          .querySelectorAll(".snakeDifficultyButton")
+          .forEach(function (button) {
+            var active =
+              button.getAttribute("data-difficulty") ===
+              cableSnakeGame.difficulty;
+            button.setAttribute("aria-pressed", active ? "true" : "false");
+          });
       }
 
       function updateCableSnakeOverlay(title, text) {
@@ -3899,12 +4138,25 @@
         var frequency = 360;
         var duration = 0.08;
         if (type === "collect") frequency = 640;
-        if (type === "speed") { frequency = 820; duration = 0.13; }
-        if (type === "crash") { frequency = 110; duration = 0.24; oscillator.type = "sawtooth"; }
+        if (type === "speed") {
+          frequency = 820;
+          duration = 0.13;
+        }
+        if (type === "crash") {
+          frequency = 110;
+          duration = 0.24;
+          oscillator.type = "sawtooth";
+        }
         if (type === "pause") frequency = 190;
-        if (type === "best") { frequency = 960; duration = 0.16; }
+        if (type === "best") {
+          frequency = 960;
+          duration = 0.16;
+        }
         oscillator.frequency.setValueAtTime(frequency, now);
-        oscillator.frequency.exponentialRampToValueAtTime(Math.max(55, frequency * 0.62), now + duration);
+        oscillator.frequency.exponentialRampToValueAtTime(
+          Math.max(55, frequency * 0.62),
+          now + duration,
+        );
         gain.gain.setValueAtTime(0.0001, now);
         gain.gain.exponentialRampToValueAtTime(0.07, now + 0.01);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
@@ -3978,13 +4230,69 @@
       };
 
       var trackTetrisPieces = {
-        I: { color: "#5b9cf6", cells: [[0, 1], [1, 1], [2, 1], [3, 1]] },
-        O: { color: "#c8a86b", cells: [[1, 0], [2, 0], [1, 1], [2, 1]] },
-        T: { color: "#b68cff", cells: [[1, 0], [0, 1], [1, 1], [2, 1]] },
-        S: { color: "#7ee3b2", cells: [[1, 0], [2, 0], [0, 1], [1, 1]] },
-        Z: { color: "#f66f8d", cells: [[0, 0], [1, 0], [1, 1], [2, 1]] },
-        J: { color: "#8f8e9d", cells: [[0, 0], [0, 1], [1, 1], [2, 1]] },
-        L: { color: "#e6e2d9", cells: [[2, 0], [0, 1], [1, 1], [2, 1]] },
+        I: {
+          color: "#5b9cf6",
+          cells: [
+            [0, 1],
+            [1, 1],
+            [2, 1],
+            [3, 1],
+          ],
+        },
+        O: {
+          color: "#c8a86b",
+          cells: [
+            [1, 0],
+            [2, 0],
+            [1, 1],
+            [2, 1],
+          ],
+        },
+        T: {
+          color: "#b68cff",
+          cells: [
+            [1, 0],
+            [0, 1],
+            [1, 1],
+            [2, 1],
+          ],
+        },
+        S: {
+          color: "#7ee3b2",
+          cells: [
+            [1, 0],
+            [2, 0],
+            [0, 1],
+            [1, 1],
+          ],
+        },
+        Z: {
+          color: "#f66f8d",
+          cells: [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [2, 1],
+          ],
+        },
+        J: {
+          color: "#8f8e9d",
+          cells: [
+            [0, 0],
+            [0, 1],
+            [1, 1],
+            [2, 1],
+          ],
+        },
+        L: {
+          color: "#e6e2d9",
+          cells: [
+            [2, 0],
+            [0, 1],
+            [1, 1],
+            [2, 1],
+          ],
+        },
       };
 
       /* ==========================================================================
@@ -3999,7 +4307,10 @@
 
         trackTetrisGame.canvas = document.createElement("canvas");
         trackTetrisGame.canvas.id = "trackTetrisCanvas";
-        trackTetrisGame.canvas.setAttribute("aria-label", "Track Tetris game canvas");
+        trackTetrisGame.canvas.setAttribute(
+          "aria-label",
+          "Track Tetris game canvas",
+        );
         trackTetrisGame.ctx = trackTetrisGame.canvas.getContext("2d");
         trackTetrisGame.overlay = document.createElement("div");
         trackTetrisGame.overlay.className = "game-overlay";
@@ -4021,7 +4332,9 @@
           '</div><div class="control-actions">' +
           '<button id="startTetrisButton" class="small-button" type="button">Start</button>' +
           '<button id="pauseTetrisButton" class="small-button" type="button">Pause</button>' +
-          '<button class="small-button studioMuteButton" type="button">' + getStudioMuteLabel() + "</button>" +
+          '<button class="small-button studioMuteButton" type="button">' +
+          getStudioMuteLabel() +
+          "</button>" +
           '<button id="restartTetrisButton" class="small-button" type="button">Restart</button>' +
           '<div class="touch-pad compact" aria-label="Track Tetris touch controls">' +
           '<button class="touch-button tetrisTouchButton" data-action="left" type="button">Left</button>' +
@@ -4033,17 +4346,30 @@
           '<button class="touch-button tetrisTouchButton" data-action="pause" type="button">Pause</button>' +
           "</div></div>";
 
-        document.getElementById("startTetrisButton").addEventListener("click", startTrackTetris);
-        document.getElementById("pauseTetrisButton").addEventListener("click", toggleTrackTetrisPause);
-        document.getElementById("restartTetrisButton").addEventListener("click", resetTrackTetrisGame);
-        document.querySelector(".studioMuteButton").addEventListener("click", toggleStudioMute);
-        document.querySelectorAll(".tetrisTouchButton").forEach(function (button) {
-          button.addEventListener("pointerdown", onTrackTetrisTouchDown);
-          button.addEventListener("pointerup", onTrackTetrisTouchUp);
-          button.addEventListener("pointercancel", onTrackTetrisTouchUp);
-        });
+        document
+          .getElementById("startTetrisButton")
+          .addEventListener("click", startTrackTetris);
+        document
+          .getElementById("pauseTetrisButton")
+          .addEventListener("click", toggleTrackTetrisPause);
+        document
+          .getElementById("restartTetrisButton")
+          .addEventListener("click", resetTrackTetrisGame);
+        document
+          .querySelector(".studioMuteButton")
+          .addEventListener("click", toggleStudioMute);
+        document
+          .querySelectorAll(".tetrisTouchButton")
+          .forEach(function (button) {
+            button.addEventListener("pointerdown", onTrackTetrisTouchDown);
+            button.addEventListener("pointerup", onTrackTetrisTouchUp);
+            button.addEventListener("pointercancel", onTrackTetrisTouchUp);
+          });
 
-        trackTetrisGame.bestScore = readNumberFromStorage("studioArcadeTrackTetrisBestScore", 0);
+        trackTetrisGame.bestScore = readNumberFromStorage(
+          "studioArcadeTrackTetrisBestScore",
+          0,
+        );
         trackTetrisGame.running = true;
         trackTetrisGame.lastTime = performance.now();
         resizeTrackTetris();
@@ -4075,7 +4401,9 @@
       function resetTrackTetrisGame() {
         trackTetrisGame.board = [];
         for (var y = 0; y < trackTetrisGame.rows; y += 1) {
-          trackTetrisGame.board.push(new Array(trackTetrisGame.cols).fill(null));
+          trackTetrisGame.board.push(
+            new Array(trackTetrisGame.cols).fill(null),
+          );
         }
         trackTetrisGame.bag = [];
         trackTetrisGame.nextQueue = [];
@@ -4091,14 +4419,20 @@
         refillTrackTetrisQueue();
         spawnTrackTetrisPiece();
         updateTrackTetrisHud();
-        updateTrackTetrisOverlay("Track Tetris", "Build the session. Press Space or tap Start to drop the first region.");
+        updateTrackTetrisOverlay(
+          "Track Tetris",
+          "Build the session. Press Space or tap Start to drop the first region.",
+        );
       }
 
       function startTrackTetris() {
         if (trackTetrisGame.state === "gameover") {
           resetTrackTetrisGame();
         }
-        if (trackTetrisGame.state === "ready" || trackTetrisGame.state === "paused") {
+        if (
+          trackTetrisGame.state === "ready" ||
+          trackTetrisGame.state === "paused"
+        ) {
           trackTetrisGame.state = "playing";
           trackTetrisGame.lastTime = performance.now();
           hideTrackTetrisOverlay();
@@ -4110,7 +4444,10 @@
       function toggleTrackTetrisPause() {
         if (trackTetrisGame.state === "playing") {
           trackTetrisGame.state = "paused";
-          updateTrackTetrisOverlay("Paused", "Session is held. Press P, Start, or Pause to resume.");
+          updateTrackTetrisOverlay(
+            "Paused",
+            "Session is held. Press P, Start, or Pause to resume.",
+          );
           playTrackTetrisTone("pause");
         } else {
           startTrackTetris();
@@ -4124,17 +4461,36 @@
         var rect = gameMount.getBoundingClientRect();
         var deviceScale = window.devicePixelRatio || 1;
         var viewportLimit = Math.max(280, window.innerWidth - 20);
-        var width = Math.max(280, Math.floor(Math.min(rect.width, viewportLimit)));
+        var width = Math.max(
+          280,
+          Math.floor(Math.min(rect.width, viewportLimit)),
+        );
         var height = Math.max(360, Math.floor(rect.height));
         trackTetrisGame.width = width;
         trackTetrisGame.height = height;
         var sideReserve = width > 620 ? 190 : 92;
         trackTetrisGame.cellSize = Math.floor(
-          Math.min((width - sideReserve - 24) / trackTetrisGame.cols, (height - 28) / trackTetrisGame.rows),
+          Math.min(
+            (width - sideReserve - 24) / trackTetrisGame.cols,
+            (height - 28) / trackTetrisGame.rows,
+          ),
         );
         trackTetrisGame.cellSize = Math.max(13, trackTetrisGame.cellSize);
-        trackTetrisGame.boardX = Math.max(12, Math.floor((width - sideReserve - trackTetrisGame.cellSize * trackTetrisGame.cols) / 2));
-        trackTetrisGame.boardY = Math.max(12, Math.floor((height - trackTetrisGame.cellSize * trackTetrisGame.rows) / 2));
+        trackTetrisGame.boardX = Math.max(
+          12,
+          Math.floor(
+            (width -
+              sideReserve -
+              trackTetrisGame.cellSize * trackTetrisGame.cols) /
+              2,
+          ),
+        );
+        trackTetrisGame.boardY = Math.max(
+          12,
+          Math.floor(
+            (height - trackTetrisGame.cellSize * trackTetrisGame.rows) / 2,
+          ),
+        );
         trackTetrisGame.canvas.width = Math.floor(width * deviceScale);
         trackTetrisGame.canvas.height = Math.floor(height * deviceScale);
         trackTetrisGame.canvas.style.width = width + "px";
@@ -4148,7 +4504,15 @@
       function refillTrackTetrisQueue() {
         while (trackTetrisGame.nextQueue.length < 5) {
           if (!trackTetrisGame.bag.length) {
-            trackTetrisGame.bag = shuffleTrackTetrisBag(["I", "O", "T", "S", "Z", "J", "L"]);
+            trackTetrisGame.bag = shuffleTrackTetrisBag([
+              "I",
+              "O",
+              "T",
+              "S",
+              "Z",
+              "J",
+              "L",
+            ]);
           }
           trackTetrisGame.nextQueue.push(trackTetrisGame.bag.pop());
         }
@@ -4173,9 +4537,19 @@
         trackTetrisGame.canHold = true;
         trackTetrisGame.lockElapsed = 0;
         trackTetrisGame.lockResets = 0;
-        if (!canPlaceTrackTetris(trackTetrisGame.active, 0, 0, trackTetrisGame.active.cells)) {
+        if (
+          !canPlaceTrackTetris(
+            trackTetrisGame.active,
+            0,
+            0,
+            trackTetrisGame.active.cells,
+          )
+        ) {
           trackTetrisGame.state = "gameover";
-          updateTrackTetrisOverlay("Session Over", "The session is full. Press Restart for a clean board.");
+          updateTrackTetrisOverlay(
+            "Session Over",
+            "The session is full. Press Restart for a clean board.",
+          );
           playTrackTetrisTone("gameover");
         }
       }
@@ -4194,9 +4568,13 @@
 
       function rotateTrackTetrisCells(cells, clockwise) {
         if (!clockwise) {
-          return cells.map(function (cell) { return [cell[1], 3 - cell[0]]; });
+          return cells.map(function (cell) {
+            return [cell[1], 3 - cell[0]];
+          });
         }
-        return cells.map(function (cell) { return [3 - cell[1], cell[0]]; });
+        return cells.map(function (cell) {
+          return [3 - cell[1], cell[0]];
+        });
       }
 
       function canPlaceTrackTetris(piece, dx, dy, cells) {
@@ -4260,7 +4638,14 @@
           return;
         }
         var distance = 0;
-        while (canPlaceTrackTetris(trackTetrisGame.active, 0, 1, trackTetrisGame.active.cells)) {
+        while (
+          canPlaceTrackTetris(
+            trackTetrisGame.active,
+            0,
+            1,
+            trackTetrisGame.active.cells,
+          )
+        ) {
           trackTetrisGame.active.y += 1;
           distance += 1;
         }
@@ -4270,7 +4655,11 @@
       }
 
       function holdTrackTetrisPiece() {
-        if (!trackTetrisGame.active || !trackTetrisGame.canHold || trackTetrisGame.state !== "playing") {
+        if (
+          !trackTetrisGame.active ||
+          !trackTetrisGame.canHold ||
+          trackTetrisGame.state !== "playing"
+        ) {
           return;
         }
         var current = trackTetrisGame.active.type;
@@ -4296,7 +4685,10 @@
           var x = piece.x + cell[0];
           var y = piece.y + cell[1];
           if (y >= 0 && y < trackTetrisGame.rows) {
-            trackTetrisGame.board[y][x] = { type: piece.type, color: piece.color };
+            trackTetrisGame.board[y][x] = {
+              type: piece.type,
+              color: piece.color,
+            };
           }
         });
         clearTrackTetrisRows();
@@ -4311,7 +4703,9 @@
           var full = trackTetrisGame.board[y].every(Boolean);
           if (full) {
             trackTetrisGame.board.splice(y, 1);
-            trackTetrisGame.board.unshift(new Array(trackTetrisGame.cols).fill(null));
+            trackTetrisGame.board.unshift(
+              new Array(trackTetrisGame.cols).fill(null),
+            );
             cleared += 1;
             y += 1;
           }
@@ -4319,7 +4713,8 @@
         if (cleared > 0) {
           trackTetrisGame.lines += cleared;
           trackTetrisGame.level = Math.floor(trackTetrisGame.lines / 10) + 1;
-          trackTetrisGame.score += trackTetrisSettings.scoring[cleared] * trackTetrisGame.level;
+          trackTetrisGame.score +=
+            trackTetrisSettings.scoring[cleared] * trackTetrisGame.level;
           updateTrackTetrisBestScore();
           playTrackTetrisTone(cleared === 4 ? "mixdown" : "clear");
         }
@@ -4330,7 +4725,14 @@
           return 0;
         }
         var y = trackTetrisGame.active.y;
-        while (canPlaceTrackTetris(trackTetrisGame.active, 0, y - trackTetrisGame.active.y + 1, trackTetrisGame.active.cells)) {
+        while (
+          canPlaceTrackTetris(
+            trackTetrisGame.active,
+            0,
+            y - trackTetrisGame.active.y + 1,
+            trackTetrisGame.active.cells,
+          )
+        ) {
           y += 1;
         }
         return y;
@@ -4368,27 +4770,64 @@
         if (appState.activeGameId !== "track-tetris") {
           return;
         }
-        var controlCodes = ["ArrowLeft", "ArrowRight", "ArrowDown", "KeyA", "KeyD", "KeyS", "ArrowUp", "KeyX", "KeyZ", "Space", "KeyC", "ShiftLeft", "ShiftRight", "KeyP", "Escape"];
+        var controlCodes = [
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowDown",
+          "KeyA",
+          "KeyD",
+          "KeyS",
+          "ArrowUp",
+          "KeyX",
+          "KeyZ",
+          "Space",
+          "KeyC",
+          "ShiftLeft",
+          "ShiftRight",
+          "KeyP",
+          "Escape",
+        ];
         if (controlCodes.indexOf(event.code) >= 0) {
           event.preventDefault();
         }
-        if (event.repeat && (event.code === "ArrowLeft" || event.code === "KeyA" || event.code === "ArrowRight" || event.code === "KeyD" || event.code === "ArrowDown" || event.code === "KeyS")) {
+        if (
+          event.repeat &&
+          (event.code === "ArrowLeft" ||
+            event.code === "KeyA" ||
+            event.code === "ArrowRight" ||
+            event.code === "KeyD" ||
+            event.code === "ArrowDown" ||
+            event.code === "KeyS")
+        ) {
           return;
         }
-        if (event.code === "ArrowLeft" || event.code === "KeyA") pressTrackTetrisHeld("left");
-        else if (event.code === "ArrowRight" || event.code === "KeyD") pressTrackTetrisHeld("right");
-        else if (event.code === "ArrowDown" || event.code === "KeyS") pressTrackTetrisHeld("soft");
-        else if (event.code === "ArrowUp" || event.code === "KeyX") rotateTrackTetris(true);
+        if (event.code === "ArrowLeft" || event.code === "KeyA")
+          pressTrackTetrisHeld("left");
+        else if (event.code === "ArrowRight" || event.code === "KeyD")
+          pressTrackTetrisHeld("right");
+        else if (event.code === "ArrowDown" || event.code === "KeyS")
+          pressTrackTetrisHeld("soft");
+        else if (event.code === "ArrowUp" || event.code === "KeyX")
+          rotateTrackTetris(true);
         else if (event.code === "KeyZ") rotateTrackTetris(false);
         else if (event.code === "Space") hardDropTrackTetris();
-        else if (event.code === "KeyC" || event.code === "ShiftLeft" || event.code === "ShiftRight") holdTrackTetrisPiece();
-        else if (event.code === "KeyP" || event.code === "Escape") toggleTrackTetrisPause();
+        else if (
+          event.code === "KeyC" ||
+          event.code === "ShiftLeft" ||
+          event.code === "ShiftRight"
+        )
+          holdTrackTetrisPiece();
+        else if (event.code === "KeyP" || event.code === "Escape")
+          toggleTrackTetrisPause();
       }
 
       function onTrackTetrisKeyUp(event) {
-        if (event.code === "ArrowLeft" || event.code === "KeyA") releaseTrackTetrisHeld("left");
-        if (event.code === "ArrowRight" || event.code === "KeyD") releaseTrackTetrisHeld("right");
-        if (event.code === "ArrowDown" || event.code === "KeyS") releaseTrackTetrisHeld("soft");
+        if (event.code === "ArrowLeft" || event.code === "KeyA")
+          releaseTrackTetrisHeld("left");
+        if (event.code === "ArrowRight" || event.code === "KeyD")
+          releaseTrackTetrisHeld("right");
+        if (event.code === "ArrowDown" || event.code === "KeyS")
+          releaseTrackTetrisHeld("soft");
       }
 
       function pressTrackTetrisHeld(action) {
@@ -4457,7 +4896,14 @@
             trackTetrisGame.lockElapsed += getTrackTetrisFallMs();
           }
         }
-        if (!canPlaceTrackTetris(trackTetrisGame.active, 0, 1, trackTetrisGame.active.cells)) {
+        if (
+          !canPlaceTrackTetris(
+            trackTetrisGame.active,
+            0,
+            1,
+            trackTetrisGame.active.cells,
+          )
+        ) {
           trackTetrisGame.lockElapsed += delta * 1000;
           if (trackTetrisGame.lockElapsed >= trackTetrisSettings.lockDelayMs) {
             lockTrackTetrisPiece();
@@ -4470,7 +4916,10 @@
 
       function updateTrackTetrisHeldKeys(delta) {
         ["left", "right", "soft"].forEach(function (action) {
-          if (!trackTetrisGame.keys[action] || !trackTetrisGame.keyRepeat[action]) {
+          if (
+            !trackTetrisGame.keys[action] ||
+            !trackTetrisGame.keyRepeat[action]
+          ) {
             return;
           }
           var repeat = trackTetrisGame.keyRepeat[action];
@@ -4483,7 +4932,10 @@
       }
 
       function getTrackTetrisFallMs() {
-        return Math.max(trackTetrisSettings.minFallMs, trackTetrisSettings.baseFallMs - (trackTetrisGame.level - 1) * 58);
+        return Math.max(
+          trackTetrisSettings.minFallMs,
+          trackTetrisSettings.baseFallMs - (trackTetrisGame.level - 1) * 58,
+        );
       }
 
       /* ==========================================================================
@@ -4510,7 +4962,12 @@
         ctx.save();
         ctx.strokeStyle = "rgba(230,226,217,.18)";
         ctx.lineWidth = 2;
-        ctx.strokeRect(x0 - 2, y0 - 2, cell * trackTetrisGame.cols + 4, cell * trackTetrisGame.rows + 4);
+        ctx.strokeRect(
+          x0 - 2,
+          y0 - 2,
+          cell * trackTetrisGame.cols + 4,
+          cell * trackTetrisGame.rows + 4,
+        );
         for (var y = 0; y < trackTetrisGame.rows; y += 1) {
           for (var x = 0; x < trackTetrisGame.cols; x += 1) {
             ctx.fillStyle = y % 2 ? "rgba(19,19,27,.82)" : "rgba(27,27,38,.82)";
@@ -4518,7 +4975,13 @@
             ctx.strokeStyle = "rgba(91,156,246,.08)";
             ctx.strokeRect(x0 + x * cell, y0 + y * cell, cell, cell);
             if (trackTetrisGame.board[y][x]) {
-              drawTrackTetrisCell(ctx, x, y, trackTetrisGame.board[y][x].color, 1);
+              drawTrackTetrisCell(
+                ctx,
+                x,
+                y,
+                trackTetrisGame.board[y][x].color,
+                1,
+              );
             }
           }
         }
@@ -4571,21 +5034,36 @@
       }
 
       function drawTrackTetrisSidePanels(ctx, now) {
-        var panelX = trackTetrisGame.boardX + trackTetrisGame.cellSize * trackTetrisGame.cols + 18;
+        var panelX =
+          trackTetrisGame.boardX +
+          trackTetrisGame.cellSize * trackTetrisGame.cols +
+          18;
         var panelY = trackTetrisGame.boardY;
         if (panelX + 120 > trackTetrisGame.width) {
           panelX = 12;
-          panelY = trackTetrisGame.boardY + trackTetrisGame.cellSize * trackTetrisGame.rows + 8;
+          panelY =
+            trackTetrisGame.boardY +
+            trackTetrisGame.cellSize * trackTetrisGame.rows +
+            8;
         }
         ctx.save();
         ctx.fillStyle = "rgba(230,226,217,.78)";
         ctx.font = "12px ui-monospace, monospace";
         ctx.fillText("Next Region", panelX, panelY + 14);
-        drawTrackTetrisMini(ctx, trackTetrisGame.nextQueue[0], panelX, panelY + 24);
+        drawTrackTetrisMini(
+          ctx,
+          trackTetrisGame.nextQueue[0],
+          panelX,
+          panelY + 24,
+        );
         ctx.fillText("Holding Bay", panelX, panelY + 112);
         drawTrackTetrisMini(ctx, trackTetrisGame.hold, panelX, panelY + 122);
         ctx.fillStyle = "rgba(200,168,107,.8)";
-        ctx.fillText("Fall " + Math.round(getTrackTetrisFallMs()) + "ms", panelX, panelY + 210);
+        ctx.fillText(
+          "Fall " + Math.round(getTrackTetrisFallMs()) + "ms",
+          panelX,
+          panelY + 210,
+        );
         ctx.restore();
       }
 
@@ -4620,7 +5098,10 @@
       function updateTrackTetrisBestScore() {
         if (trackTetrisGame.score > trackTetrisGame.bestScore) {
           trackTetrisGame.bestScore = trackTetrisGame.score;
-          writeNumberToStorage("studioArcadeTrackTetrisBestScore", trackTetrisGame.bestScore);
+          writeNumberToStorage(
+            "studioArcadeTrackTetrisBestScore",
+            trackTetrisGame.bestScore,
+          );
           playTrackTetrisTone("best");
         }
       }
@@ -4657,17 +5138,37 @@
         var frequency = 320;
         var duration = 0.055;
         if (type === "rotate") frequency = 510;
-        if (type === "hard") { frequency = 150; duration = 0.12; oscillator.type = "square"; }
+        if (type === "hard") {
+          frequency = 150;
+          duration = 0.12;
+          oscillator.type = "square";
+        }
         if (type === "lock") frequency = 260;
-        if (type === "clear") { frequency = 760; duration = 0.15; }
-        if (type === "mixdown") { frequency = 980; duration = 0.24; }
+        if (type === "clear") {
+          frequency = 760;
+          duration = 0.15;
+        }
+        if (type === "mixdown") {
+          frequency = 980;
+          duration = 0.24;
+        }
         if (type === "hold") frequency = 430;
-        if (type === "gameover") { frequency = 90; duration = 0.28; oscillator.type = "sawtooth"; }
-        if (type === "best") { frequency = 880; duration = 0.14; }
+        if (type === "gameover") {
+          frequency = 90;
+          duration = 0.28;
+          oscillator.type = "sawtooth";
+        }
+        if (type === "best") {
+          frequency = 880;
+          duration = 0.14;
+        }
         if (type === "pause") frequency = 190;
         if (type === "start") frequency = 620;
         oscillator.frequency.setValueAtTime(frequency, now);
-        oscillator.frequency.exponentialRampToValueAtTime(Math.max(55, frequency * 0.6), now + duration);
+        oscillator.frequency.exponentialRampToValueAtTime(
+          Math.max(55, frequency * 0.6),
+          now + duration,
+        );
         gain.gain.setValueAtTime(0.0001, now);
         gain.gain.exponentialRampToValueAtTime(0.065, now + 0.01);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
@@ -4715,7 +5216,10 @@
         var buttons = document.querySelectorAll(".studioMuteButton");
         buttons.forEach(function (button) {
           button.textContent = getStudioMuteLabel();
-          button.setAttribute("aria-pressed", studioAudio.muted ? "true" : "false");
+          button.setAttribute(
+            "aria-pressed",
+            studioAudio.muted ? "true" : "false",
+          );
         });
       }
 
