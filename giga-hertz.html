@@ -1,0 +1,1782 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Giga-Hertz | Studio Arcade</title>
+    <style>
+      /* ==========================================================================
+       Shared Studio Arcade Theme
+       ========================================================================== */
+      :root {
+        --background: #0b0b0f;
+        --surface: #13131b;
+        --surface2: #1b1b26;
+        --border: #252533;
+        --gold: #c8a86b;
+        --text: #e6e2d9;
+        --muted: #8f8e9d;
+        --blue: #5b9cf6;
+        --danger: #f66f8d;
+        --success: #7ee3b2;
+        --shadow: rgba(0, 0, 0, 0.55);
+        --radius: 8px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        background: var(--background);
+        color: var(--text);
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+      }
+
+      body {
+        overflow-x: hidden;
+      }
+
+      button,
+      select {
+        font: inherit;
+      }
+
+      button,
+      a.button-link {
+        cursor: pointer;
+      }
+
+      .app {
+        min-height: 100vh;
+        background:
+          linear-gradient(rgba(91, 156, 246, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(200, 168, 107, 0.04) 1px, transparent 1px),
+          radial-gradient(circle at 20% 10%, rgba(91, 156, 246, 0.16), transparent 28rem),
+          radial-gradient(circle at 80% 20%, rgba(200, 168, 107, 0.12), transparent 22rem),
+          var(--background);
+        background-size: 32px 32px, 32px 32px, auto, auto, auto;
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Page Layout
+       ========================================================================== */
+      .cabinet {
+        width: min(1180px, calc(100vw - 20px));
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 14px 0 24px;
+        display: grid;
+        gap: 12px;
+        grid-template-rows: auto minmax(360px, 1fr) auto;
+      }
+
+      .topbar,
+      .controls {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: rgba(19, 19, 27, 0.88);
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.34);
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        align-items: center;
+        min-width: 0;
+        padding: 10px;
+      }
+
+      .title-block {
+        min-width: 0;
+      }
+
+      .eyebrow {
+        margin: 0 0 2px;
+        color: var(--gold);
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 1px;
+        font-size: clamp(1.2rem, 3.5vw, 1.9rem);
+        line-height: 1;
+        text-transform: uppercase;
+        text-shadow: 0 0 24px rgba(91, 156, 246, 0.22);
+      }
+
+      .subtitle {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .back-button,
+      .small-button,
+      .difficulty-toggle,
+      .touch-button,
+      .button-link {
+        border: 1px solid rgba(200, 168, 107, 0.48);
+        border-radius: 6px;
+        background: rgba(200, 168, 107, 0.08);
+        color: var(--text);
+        padding: 10px 12px;
+        min-height: 42px;
+        text-decoration: none;
+        transition:
+          background 140ms ease,
+          border-color 140ms ease;
+      }
+
+      .back-button:hover,
+      .small-button:hover,
+      .difficulty-toggle:hover,
+      .touch-button:hover,
+      .button-link:hover,
+      .back-button:focus-visible,
+      .small-button:focus-visible,
+      .difficulty-toggle:focus-visible,
+      .touch-button:focus-visible,
+      .button-link:focus-visible {
+        background: rgba(200, 168, 107, 0.16);
+        border-color: var(--gold);
+        outline: none;
+      }
+
+      .difficulty-toggle[aria-pressed="true"] {
+        border-color: var(--blue);
+        background: rgba(91, 156, 246, 0.14);
+      }
+
+      .hud {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        min-width: 0;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .score-pill {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 7px 10px;
+        background: var(--surface2);
+        color: var(--text);
+        min-width: 74px;
+        text-align: center;
+      }
+
+      .score-pill strong {
+        color: var(--blue);
+        font-size: 1.15rem;
+      }
+
+      .arena-wrap {
+        position: relative;
+        min-height: 360px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: #050508;
+        box-shadow: 0 22px 60px rgba(0, 0, 0, 0.55);
+        touch-action: none;
+      }
+
+      #gigaHertzCanvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 360px;
+      }
+
+      .game-overlay {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 18px;
+        pointer-events: none;
+        background: radial-gradient(circle, rgba(11, 11, 15, 0.18), rgba(11, 11, 15, 0.7));
+      }
+
+      .game-overlay.hidden {
+        display: none;
+      }
+
+      .overlay-card {
+        width: min(500px, 100%);
+        border: 1px solid rgba(200, 168, 107, 0.42);
+        border-radius: var(--radius);
+        padding: 20px;
+        background: rgba(19, 19, 27, 0.86);
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.52);
+      }
+
+      .overlay-card h2 {
+        margin-bottom: 8px;
+        color: var(--gold);
+        font-size: clamp(1.4rem, 5vw, 2.4rem);
+        text-transform: uppercase;
+      }
+
+      .overlay-card p {
+        margin-bottom: 0;
+        color: var(--text);
+        line-height: 1.55;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+        min-width: 0;
+        padding: 12px;
+      }
+
+      .instructions,
+      .control-actions,
+      .difficulty-row,
+      .status-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .instructions {
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.5;
+      }
+
+      .kbd {
+        display: inline-block;
+        border: 1px solid var(--border);
+        border-bottom-color: #09090d;
+        border-radius: 4px;
+        padding: 1px 6px;
+        background: var(--surface2);
+        color: var(--text);
+        white-space: nowrap;
+      }
+
+      .control-column {
+        display: grid;
+        gap: 8px;
+      }
+
+      .status-row {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .status-chip {
+        border: 1px solid rgba(91, 156, 246, 0.42);
+        border-radius: 6px;
+        padding: 6px 8px;
+        background: rgba(91, 156, 246, 0.1);
+        color: var(--text);
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Mobile Controls
+       ========================================================================== */
+      .mobile-pad {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(48px, 1fr));
+        gap: 7px;
+        width: 100%;
+        max-width: min(360px, 100%);
+      }
+
+      .touch-button {
+        border-color: rgba(91, 156, 246, 0.48);
+        background: rgba(91, 156, 246, 0.1);
+        touch-action: none;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .app {
+          background:
+            linear-gradient(rgba(91, 156, 246, 0.04) 1px, transparent 1px),
+            var(--background);
+          background-size: 32px 32px, auto;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .cabinet {
+          width: min(100vw - 20px, 560px);
+        }
+
+        .topbar {
+          grid-template-columns: 1fr;
+        }
+
+        .hud {
+          justify-content: stretch;
+          flex-wrap: wrap;
+          white-space: normal;
+        }
+
+        .score-pill {
+          flex: 1;
+        }
+
+        .controls {
+          grid-template-columns: 1fr;
+        }
+
+        .control-actions button,
+        .control-actions a {
+          flex: 1;
+        }
+      }
+
+      @media (max-height: 520px) {
+        .cabinet {
+          min-height: auto;
+          grid-template-rows: auto minmax(240px, 1fr) auto;
+          gap: 8px;
+          padding-top: 8px;
+        }
+
+        #gigaHertzCanvas {
+          min-height: 240px;
+        }
+
+        .controls {
+          padding: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="cabinet" aria-label="Giga-Hertz cabinet">
+        <header class="topbar">
+          <a class="back-button button-link" href="index.html">Back to Game Library</a>
+          <div class="title-block">
+            <p class="eyebrow">Studio Arcade standalone cabinet</p>
+            <h1>Giga-Hertz</h1>
+            <p class="subtitle">Clean the signal. Defeat the noise.</p>
+          </div>
+          <div class="hud" aria-live="polite">
+            <span class="score-pill">Score <strong id="scoreValue">0</strong></span>
+            <span class="score-pill">Best <strong id="bestValue">0</strong></span>
+            <span class="score-pill">Wave <strong id="waveValue">1</strong></span>
+            <span class="score-pill">Lives <strong id="livesValue">3</strong></span>
+          </div>
+        </header>
+
+        <div id="arenaWrap" class="arena-wrap">
+          <canvas id="gigaHertzCanvas" aria-label="Giga-Hertz game canvas"></canvas>
+          <div id="gameOverlay" class="game-overlay">
+            <div class="overlay-card">
+              <h2 id="overlayTitle">Giga-Hertz</h2>
+              <p id="overlayText">Choose a studio tier, then press Enter or Start to clean the signal.</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="controls">
+          <div class="control-column">
+            <div class="instructions">
+              <span><span class="kbd">A/D</span> or <span class="kbd">Arrows</span> move</span>
+              <span><span class="kbd">Space</span> fire</span>
+              <span><span class="kbd">Enter</span> start</span>
+              <span><span class="kbd">P</span> pause</span>
+              <span><span class="kbd">R</span> restart</span>
+            </div>
+            <div id="difficultyRow" class="difficulty-row" aria-label="Difficulty selection"></div>
+            <div id="statusRow" class="status-row" aria-live="polite"></div>
+          </div>
+          <div class="control-column">
+            <div class="control-actions">
+              <button id="startButton" class="small-button" type="button">Start</button>
+              <button id="pauseButton" class="small-button" type="button">Pause</button>
+              <button id="muteButton" class="small-button" type="button">Sound: On</button>
+              <button id="restartButton" class="small-button" type="button">Restart</button>
+            </div>
+            <div class="mobile-pad" aria-label="Giga-Hertz mobile controls">
+              <button class="touch-button" data-action="left" type="button">Left</button>
+              <button class="touch-button" data-action="right" type="button">Right</button>
+              <button class="touch-button" data-action="fire" type="button">Fire</button>
+              <button class="touch-button" data-action="pause" type="button">Pause</button>
+            </div>
+          </div>
+        </footer>
+      </section>
+    </main>
+
+    <script>
+      "use strict";
+
+      /* ==========================================================================
+       Giga-Hertz Configuration
+       ========================================================================== */
+      var gigaDifficulties = {
+        bedroom: {
+          label: "Bedroom Studio",
+          enemySpeed: 0.68,
+          diveRate: 0.58,
+          fireRate: 0.55,
+          bulletSpeed: 0.74,
+          bossHealth: 0.75,
+          powerRate: 1.55,
+          scoreMultiplier: 0.9,
+        },
+        project: {
+          label: "Project Studio",
+          enemySpeed: 0.86,
+          diveRate: 0.78,
+          fireRate: 0.75,
+          bulletSpeed: 0.88,
+          bossHealth: 0.92,
+          powerRate: 1.25,
+          scoreMultiplier: 1,
+        },
+        commercial: {
+          label: "Commercial Studio",
+          enemySpeed: 1.02,
+          diveRate: 0.95,
+          fireRate: 0.95,
+          bulletSpeed: 1,
+          bossHealth: 1.05,
+          powerRate: 1.05,
+          scoreMultiplier: 1.2,
+        },
+        ocean: {
+          label: "Ocean Way",
+          enemySpeed: 1.16,
+          diveRate: 1.12,
+          fireRate: 1.08,
+          bulletSpeed: 1.08,
+          bossHealth: 1.18,
+          powerRate: 0.88,
+          scoreMultiplier: 1.5,
+        },
+      };
+
+      /* ==========================================================================
+       Giga-Hertz Wave Data
+       ========================================================================== */
+      var gigaWaves = [
+        { name: "Calibration", rows: ["hhhhhh", ".ffff."], speed: 24, dive: 4.2, fire: 3.2, background: "scope" },
+        { name: "Hum Floor", rows: ["hhhhhhhh", "hjjjjjjh", ".ffffff."], speed: 29, dive: 3.8, fire: 2.9, background: "meters" },
+        { name: "RF Storm", rows: [".ffffff.", "hhjjjjhh", "ffffffff"], speed: 34, dive: 3.3, fire: 2.55, background: "spectrum" },
+        { name: "Feedback Run", rows: ["ffjjjjff", ".ffffff.", "hhjjjjhh"], speed: 39, dive: 2.9, fire: 2.25, background: "scope" },
+        { name: "Digital Breakdown", rows: ["jjffffffjj", "fjjhhhhjjf", ".ffffffff."], speed: 44, dive: 2.45, fire: 1.95, background: "spectrum" },
+        { name: "The Feedback Loop", boss: true, speed: 40, dive: 2.2, fire: 1.75, background: "boss" },
+      ];
+
+      var gigaEnemyTypes = {
+        h: { name: "Hum Drone", hp: 1, points: 80, color: "#5b9cf6", radius: 15, fire: 0.8 },
+        f: { name: "Feedback Wasp", hp: 1, points: 140, color: "#c8a86b", radius: 14, fire: 1.15 },
+        j: { name: "Jitter Node", hp: 2, points: 220, color: "#f66f8d", radius: 16, fire: 1 },
+      };
+
+      var gigaPowerTypes = [
+        { type: "phantom", label: "Phantom Power", color: "#5b9cf6", duration: 9000 },
+        { type: "stereo", label: "Stereo Mode", color: "#c8a86b", duration: 9500 },
+        { type: "isolation", label: "Isolation", color: "#7ee3b2", duration: 8000 },
+        { type: "gain", label: "Gain Boost", color: "#e6e2d9", duration: 8500 },
+      ];
+
+      /* ==========================================================================
+       Giga-Hertz State
+       ========================================================================== */
+      var gigaHertzGame = {
+        canvas: document.getElementById("gigaHertzCanvas"),
+        ctx: null,
+        overlay: document.getElementById("gameOverlay"),
+        animationId: null,
+        running: false,
+        inputAdded: false,
+        state: "attract",
+        difficulty: "project",
+        width: 900,
+        height: 620,
+        scaleX: 1,
+        scaleY: 1,
+        lastTime: 0,
+        score: 0,
+        bestScore: 0,
+        bestWave: 1,
+        bossWins: 0,
+        lives: 3,
+        waveIndex: 0,
+        combo: 0,
+        comboUntil: 0,
+        shotsFired: 0,
+        hits: 0,
+        enemiesDestroyed: 0,
+        formationX: 0,
+        formationDir: 1,
+        waveTimer: 0,
+        diveTimer: 0,
+        fireTimer: 0,
+        respawnTimer: 0,
+        bossIntroTimer: 0,
+        player: {
+          x: 450,
+          y: 560,
+          width: 40,
+          height: 32,
+          speed: 470,
+          fireCooldown: 0,
+          invulnerableUntil: 0,
+          alive: true,
+        },
+        keys: { left: false, right: false, fire: false },
+        pointer: { left: false, right: false, fire: false },
+        enemies: [],
+        playerShots: [],
+        enemyShots: [],
+        powerUps: [],
+        particles: [],
+        bossTelegraphs: [],
+        activePowers: {},
+        boss: null,
+        muted: false,
+        audioContext: null,
+        audioNodes: [],
+        reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      };
+
+      /* ==========================================================================
+       Giga-Hertz LocalStorage
+       ========================================================================== */
+      function readNumberFromStorage(key, fallback) {
+        try {
+          var value = Number(window.localStorage.getItem(key));
+          return Number.isFinite(value) ? value : fallback;
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function writeNumberToStorage(key, value) {
+        try {
+          window.localStorage.setItem(key, String(value));
+        } catch (error) {
+          // Disabled storage should not stop the game.
+        }
+      }
+
+      function loadGigaStorage() {
+        gigaHertzGame.bestScore = readNumberFromStorage("studioArcadeGigaHertzBestScore", 0);
+        gigaHertzGame.bestWave = readNumberFromStorage("studioArcadeGigaHertzBestWave", 1);
+        gigaHertzGame.bossWins = readNumberFromStorage("studioArcadeGigaHertzBossWins", 0);
+        gigaHertzGame.muted = readNumberFromStorage("studioArcadeMuted", 0) === 1;
+      }
+
+      function saveGigaBestScore() {
+        if (gigaHertzGame.score > gigaHertzGame.bestScore) {
+          gigaHertzGame.bestScore = gigaHertzGame.score;
+          writeNumberToStorage("studioArcadeGigaHertzBestScore", gigaHertzGame.bestScore);
+        }
+        writeNumberToStorage("studioArcadeGigaHertzBestWave", Math.max(gigaHertzGame.bestWave, gigaHertzGame.waveIndex + 1));
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Difficulty
+       ========================================================================== */
+      function getDifficulty() {
+        return gigaDifficulties[gigaHertzGame.difficulty];
+      }
+
+      function renderDifficultyButtons() {
+        var row = document.getElementById("difficultyRow");
+        row.innerHTML = "";
+        Object.keys(gigaDifficulties).forEach(function (key) {
+          var button = document.createElement("button");
+          button.className = "difficulty-toggle";
+          button.type = "button";
+          button.textContent = gigaDifficulties[key].label;
+          button.setAttribute("aria-pressed", key === gigaHertzGame.difficulty ? "true" : "false");
+          button.addEventListener("click", function () {
+            gigaHertzGame.difficulty = key;
+            resetGigaGame();
+            renderDifficultyButtons();
+          });
+          row.appendChild(button);
+        });
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Lifecycle
+       ========================================================================== */
+      function initGigaHertz() {
+        gigaHertzGame.ctx = gigaHertzGame.canvas.getContext("2d");
+        loadGigaStorage();
+        renderDifficultyButtons();
+        bindGigaInput();
+        resizeGigaHertz();
+        resetGigaGame();
+        syncMuteButton();
+        gigaHertzGame.running = true;
+        gigaHertzGame.lastTime = performance.now();
+        gigaHertzGame.animationId = requestAnimationFrame(gigaLoop);
+      }
+
+      function resetGigaGame() {
+        clearGigaTransientState();
+        gigaHertzGame.state = "attract";
+        gigaHertzGame.score = 0;
+        gigaHertzGame.lives = 3;
+        gigaHertzGame.waveIndex = 0;
+        gigaHertzGame.combo = 0;
+        gigaHertzGame.shotsFired = 0;
+        gigaHertzGame.hits = 0;
+        gigaHertzGame.enemiesDestroyed = 0;
+        resetPlayer();
+        buildWave(0);
+        updateHud();
+        showOverlay("Giga-Hertz", "Choose a studio tier, then press Enter or Start to clean the signal.");
+      }
+
+      function clearGigaTransientState() {
+        gigaHertzGame.playerShots = [];
+        gigaHertzGame.enemyShots = [];
+        gigaHertzGame.powerUps = [];
+        gigaHertzGame.particles = [];
+        gigaHertzGame.bossTelegraphs = [];
+        gigaHertzGame.activePowers = {};
+        gigaHertzGame.boss = null;
+        clearHeldInput();
+      }
+
+      function startGigaHertz() {
+        if (gigaHertzGame.state === "gameover" || gigaHertzGame.state === "newbest") {
+          resetGigaGame();
+        }
+        if (gigaHertzGame.state === "attract" || gigaHertzGame.state === "ready" || gigaHertzGame.state === "paused") {
+          gigaHertzGame.state = gigaHertzGame.boss ? "bossintro" : "playing";
+          gigaHertzGame.bossIntroTimer = gigaHertzGame.boss ? 1.7 : 0;
+          hideOverlay();
+          getAudioContext();
+          playGigaTone("wave");
+        }
+      }
+
+      function pauseGigaHertz() {
+        if (gigaHertzGame.state !== "playing" && gigaHertzGame.state !== "bossintro") {
+          return;
+        }
+        gigaHertzGame.state = "paused";
+        clearHeldInput();
+        showOverlay("Paused", "Signal is held. Press P, Start, or Pause to resume.");
+        playGigaTone("pause");
+      }
+
+      function resumeGigaHertz() {
+        if (gigaHertzGame.state !== "paused") {
+          startGigaHertz();
+          return;
+        }
+        gigaHertzGame.state = gigaHertzGame.boss ? "bossintro" : "playing";
+        gigaHertzGame.lastTime = performance.now();
+        hideOverlay();
+      }
+
+      function stopGigaHertz() {
+        gigaHertzGame.running = false;
+        if (gigaHertzGame.animationId) {
+          cancelAnimationFrame(gigaHertzGame.animationId);
+        }
+        clearHeldInput();
+        stopGigaAudio();
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Player
+       ========================================================================== */
+      function resetPlayer() {
+        gigaHertzGame.player.x = gigaHertzGame.width / 2;
+        gigaHertzGame.player.y = gigaHertzGame.height - 58;
+        gigaHertzGame.player.fireCooldown = 0;
+        gigaHertzGame.player.alive = true;
+        gigaHertzGame.player.invulnerableUntil = performance.now() + 2100;
+      }
+
+      function updatePlayer(delta, now) {
+        var player = gigaHertzGame.player;
+        var move = 0;
+        if (gigaHertzGame.keys.left || gigaHertzGame.pointer.left) move -= 1;
+        if (gigaHertzGame.keys.right || gigaHertzGame.pointer.right) move += 1;
+        player.x = clamp(player.x + move * player.speed * delta, 28, gigaHertzGame.width - 28);
+        player.fireCooldown = Math.max(0, player.fireCooldown - delta);
+        if (gigaHertzGame.keys.fire || gigaHertzGame.pointer.fire) {
+          firePlayerShot(now);
+        }
+      }
+
+      function firePlayerShot(now) {
+        var player = gigaHertzGame.player;
+        var phantom = gigaHertzGame.activePowers.phantom && gigaHertzGame.activePowers.phantom > now;
+        var stereo = gigaHertzGame.activePowers.stereo && gigaHertzGame.activePowers.stereo > now;
+        var cooldown = phantom ? 0.12 : 0.22;
+        if (player.fireCooldown > 0 || gigaHertzGame.playerShots.length > 8) {
+          return;
+        }
+        player.fireCooldown = cooldown;
+        gigaHertzGame.shotsFired += stereo ? 2 : 1;
+        if (stereo) {
+          addPlayerShot(player.x - 12, player.y - 18, -44);
+          addPlayerShot(player.x + 12, player.y - 18, 44);
+        } else {
+          addPlayerShot(player.x, player.y - 20, 0);
+        }
+        playGigaTone("shot");
+      }
+
+      function addPlayerShot(x, y, vx) {
+        var gain = gigaHertzGame.activePowers.gain && gigaHertzGame.activePowers.gain > performance.now();
+        gigaHertzGame.playerShots.push({ x: x, y: y, vx: vx, vy: -650, radius: 5, damage: gain ? 2 : 1, hit: false });
+      }
+
+      function damagePlayer() {
+        var now = performance.now();
+        var shielded = gigaHertzGame.activePowers.isolation && gigaHertzGame.activePowers.isolation > now;
+        if (shielded || now < gigaHertzGame.player.invulnerableUntil || gigaHertzGame.state !== "playing") {
+          return;
+        }
+        gigaHertzGame.lives -= 1;
+        gigaHertzGame.combo = 0;
+        gigaHertzGame.activePowers = {};
+        createBurst(gigaHertzGame.player.x, gigaHertzGame.player.y, "#f66f8d", 28);
+        playGigaTone("playerhit");
+        updateHud();
+        if (gigaHertzGame.lives <= 0) {
+          endGame();
+          return;
+        }
+        gigaHertzGame.state = "lifelost";
+        gigaHertzGame.respawnTimer = 1.25;
+        clearHeldInput();
+        hideOverlay();
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Enemy Classes / Formation Logic
+       ========================================================================== */
+      function buildWave(index) {
+        clearGigaTransientState();
+        var wave = gigaWaves[index % gigaWaves.length];
+        gigaHertzGame.formationX = 0;
+        gigaHertzGame.formationDir = 1;
+        gigaHertzGame.waveTimer = 0;
+        gigaHertzGame.diveTimer = 0;
+        gigaHertzGame.fireTimer = 0;
+        gigaHertzGame.enemies = [];
+        if (wave.boss) {
+          createBoss();
+          showOverlay("Boss Introduction", "The Feedback Loop is opening. Watch the telegraphs and keep the center clear.");
+          return;
+        }
+        var rows = wave.rows;
+        var maxCols = rows.reduce(function (max, row) { return Math.max(max, row.length); }, 0);
+        var spacingX = Math.min(72, Math.max(42, (gigaHertzGame.width - 120) / Math.max(1, maxCols - 1)));
+        var spacingY = 48;
+        var startX = gigaHertzGame.width / 2 - ((maxCols - 1) * spacingX) / 2;
+        rows.forEach(function (row, rowIndex) {
+          for (var col = 0; col < row.length; col += 1) {
+            var code = row.charAt(col);
+            if (code === ".") continue;
+            var spec = gigaEnemyTypes[code];
+            var targetX = startX + col * spacingX;
+            var targetY = 86 + rowIndex * spacingY;
+            gigaHertzGame.enemies.push({
+              id: "enemy-" + index + "-" + rowIndex + "-" + col,
+              type: code,
+              name: spec.name,
+              x: targetX + (col % 2 ? -220 : 220),
+              y: -60 - rowIndex * 22,
+              targetX: targetX,
+              targetY: targetY,
+              baseX: targetX,
+              baseY: targetY,
+              hp: spec.hp,
+              maxHp: spec.hp,
+              points: spec.points,
+              color: spec.color,
+              radius: spec.radius,
+              state: "entering",
+              diveTime: 0,
+              diveDuration: 2.4,
+              fireCooldown: 1 + Math.random(),
+              destroyed: false,
+            });
+          }
+        });
+        showOverlay(wave.name, "Wave " + (index + 1) + " loaded. Press Enter or Start.");
+      }
+
+      function updateFormation(delta) {
+        var wave = gigaWaves[gigaHertzGame.waveIndex % gigaWaves.length];
+        var difficulty = getDifficulty();
+        var bounds = getFormationBounds();
+        if (bounds.left < 42) gigaHertzGame.formationDir = 1;
+        if (bounds.right > gigaHertzGame.width - 42) gigaHertzGame.formationDir = -1;
+        gigaHertzGame.formationX += gigaHertzGame.formationDir * wave.speed * difficulty.enemySpeed * delta;
+        gigaHertzGame.enemies.forEach(function (enemy) {
+          if (enemy.destroyed) return;
+          if (enemy.state === "entering") {
+            enemy.x += (enemy.targetX - enemy.x) * Math.min(1, delta * 2.6);
+            enemy.y += (enemy.targetY - enemy.y) * Math.min(1, delta * 2.6);
+            if (Math.abs(enemy.x - enemy.targetX) < 2 && Math.abs(enemy.y - enemy.targetY) < 2) {
+              enemy.state = "formation";
+            }
+          } else if (enemy.state === "formation") {
+            enemy.x = enemy.baseX + gigaHertzGame.formationX + Math.sin(gigaHertzGame.waveTimer * 1.4 + enemy.baseY) * 5;
+            enemy.y = enemy.baseY + Math.sin(gigaHertzGame.waveTimer * 1.1 + enemy.baseX) * 4;
+          } else if (enemy.state === "diving") {
+            updateDivingEnemy(enemy, delta);
+          }
+          enemy.fireCooldown -= delta;
+          if (enemy.fireCooldown <= 0 && gigaHertzGame.waveTimer > 1.25 && (enemy.state === "formation" || enemy.state === "diving")) {
+            enemy.fireCooldown = (wave.fire / (difficulty.fireRate * gigaEnemyTypes[enemy.type].fire)) + Math.random() * 0.8;
+            fireEnemyShot(enemy);
+          }
+        });
+      }
+
+      function getFormationBounds() {
+        var left = Infinity;
+        var right = -Infinity;
+        gigaHertzGame.enemies.forEach(function (enemy) {
+          if (!enemy.destroyed && enemy.state === "formation") {
+            left = Math.min(left, enemy.baseX + gigaHertzGame.formationX - enemy.radius);
+            right = Math.max(right, enemy.baseX + gigaHertzGame.formationX + enemy.radius);
+          }
+        });
+        return { left: left === Infinity ? 80 : left, right: right === -Infinity ? gigaHertzGame.width - 80 : right };
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Dive Logic
+       ========================================================================== */
+      function maybeStartDive(delta) {
+        var wave = gigaWaves[gigaHertzGame.waveIndex % gigaWaves.length];
+        var difficulty = getDifficulty();
+        gigaHertzGame.diveTimer += delta;
+        if (gigaHertzGame.waveTimer < 1.4) return;
+        if (gigaHertzGame.diveTimer < wave.dive / difficulty.diveRate) return;
+        gigaHertzGame.diveTimer = 0;
+        var candidates = gigaHertzGame.enemies.filter(function (enemy) {
+          return enemy.state === "formation" && !enemy.destroyed;
+        });
+        if (!candidates.length) return;
+        var enemy = candidates[Math.floor(Math.random() * candidates.length)];
+        enemy.state = "diving";
+        enemy.diveTime = 0;
+        enemy.startX = enemy.x;
+        enemy.startY = enemy.y;
+        enemy.controlX = clamp(gigaHertzGame.player.x + (Math.random() - 0.5) * 180, 70, gigaHertzGame.width - 70);
+        enemy.controlY = gigaHertzGame.height * 0.52;
+        enemy.endX = enemy.baseX + gigaHertzGame.formationX;
+        enemy.endY = enemy.baseY;
+        enemy.diveDuration = enemy.type === "f" ? 2.15 : 2.65;
+      }
+
+      function updateDivingEnemy(enemy, delta) {
+        enemy.diveTime += delta;
+        var t = enemy.diveTime / enemy.diveDuration;
+        if (t < 0.72) {
+          var u = t / 0.72;
+          var p = quadraticPoint(enemy.startX, enemy.startY, enemy.controlX, enemy.controlY, gigaHertzGame.player.x, gigaHertzGame.height + 40, u);
+          enemy.x = p.x;
+          enemy.y = p.y;
+        } else {
+          var r = (t - 0.72) / 0.28;
+          enemy.x += (enemy.endX - enemy.x) * Math.min(1, r * 0.16 + delta * 3);
+          enemy.y += (enemy.endY - enemy.y) * Math.min(1, r * 0.16 + delta * 3);
+        }
+        if (t >= 1 || enemy.y > gigaHertzGame.height + 60) {
+          enemy.state = "formation";
+          enemy.x = enemy.endX;
+          enemy.y = enemy.endY;
+        }
+      }
+
+      function quadraticPoint(x0, y0, x1, y1, x2, y2, t) {
+        var inv = 1 - t;
+        return {
+          x: inv * inv * x0 + 2 * inv * t * x1 + t * t * x2,
+          y: inv * inv * y0 + 2 * inv * t * y1 + t * t * y2,
+        };
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Projectiles / Collision
+       ========================================================================== */
+      function fireEnemyShot(enemy) {
+        if (gigaHertzGame.enemyShots.length > 28) {
+          return;
+        }
+
+        var difficulty = getDifficulty();
+        var dx = gigaHertzGame.player.x - enemy.x;
+        var dy = gigaHertzGame.player.y - enemy.y;
+        var length = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+        var speed = 185 * difficulty.bulletSpeed;
+        gigaHertzGame.enemyShots.push({
+          x: enemy.x,
+          y: enemy.y + enemy.radius,
+          vx: (dx / length) * speed,
+          vy: (dy / length) * speed,
+          radius: enemy.type === "j" ? 6 : 5,
+          color: enemy.color,
+          owner: "enemy",
+        });
+      }
+
+      function updateProjectiles(delta) {
+        updateShotList(gigaHertzGame.playerShots, delta);
+        updateShotList(gigaHertzGame.enemyShots, delta);
+        gigaHertzGame.playerShots = gigaHertzGame.playerShots.filter(function (shot) {
+          return shot.y > -40 && shot.y < gigaHertzGame.height + 40 && shot.x > -40 && shot.x < gigaHertzGame.width + 40 && !shot.hit;
+        });
+        gigaHertzGame.enemyShots = gigaHertzGame.enemyShots.filter(function (shot) {
+          return shot.y > -50 && shot.y < gigaHertzGame.height + 60 && shot.x > -50 && shot.x < gigaHertzGame.width + 50 && !shot.hit;
+        });
+      }
+
+      function updateShotList(list, delta) {
+        list.forEach(function (shot) {
+          shot.prevX = shot.x;
+          shot.prevY = shot.y;
+          var speed = Math.sqrt(shot.vx * shot.vx + shot.vy * shot.vy);
+          var steps = Math.max(1, Math.ceil((speed * delta) / 9));
+          var step = delta / steps;
+          for (var i = 0; i < steps; i += 1) {
+            shot.x += shot.vx * step;
+            shot.y += shot.vy * step;
+          }
+        });
+      }
+
+      function checkCollisions() {
+        var player = gigaHertzGame.player;
+        gigaHertzGame.playerShots.forEach(function (shot) {
+          if (shot.hit) return;
+          if (gigaHertzGame.boss && !gigaHertzGame.boss.defeated && sweptCircleHit(shot, gigaHertzGame.boss)) {
+            shot.hit = true;
+            damageBoss(shot.damage);
+            return;
+          }
+          gigaHertzGame.enemies.forEach(function (enemy) {
+            if (shot.hit || enemy.destroyed) return;
+            if (sweptCircleHit(shot, enemy)) {
+              shot.hit = true;
+              damageEnemy(enemy, shot.damage);
+            }
+          });
+        });
+        gigaHertzGame.enemyShots.forEach(function (shot) {
+          if (!shot.hit && sweptCircleHit(shot, { x: player.x, y: player.y, radius: 14 })) {
+            shot.hit = true;
+            damagePlayer();
+          }
+        });
+        gigaHertzGame.enemies.forEach(function (enemy) {
+          if (!enemy.destroyed && circleHit(enemy, { x: player.x, y: player.y, radius: 14 })) {
+            enemy.destroyed = true;
+            damagePlayer();
+          }
+        });
+      }
+
+      function circleHit(a, b) {
+        var dx = a.x - b.x;
+        var dy = a.y - b.y;
+        var radius = (a.radius || 6) + (b.radius || 16);
+        return dx * dx + dy * dy <= radius * radius;
+      }
+
+      function sweptCircleHit(shot, target) {
+        if (circleHit(shot, target)) {
+          return true;
+        }
+
+        if (typeof shot.prevX !== "number" || typeof shot.prevY !== "number") {
+          return false;
+        }
+
+        var ax = shot.prevX;
+        var ay = shot.prevY;
+        var bx = shot.x;
+        var by = shot.y;
+        var dx = bx - ax;
+        var dy = by - ay;
+        var lengthSq = dx * dx + dy * dy;
+        if (lengthSq <= 0) {
+          return false;
+        }
+
+        var t = ((target.x - ax) * dx + (target.y - ay) * dy) / lengthSq;
+        t = clamp(t, 0, 1);
+        var closestX = ax + dx * t;
+        var closestY = ay + dy * t;
+        var hitRadius = (shot.radius || 5) + (target.radius || 16);
+        var hitDx = target.x - closestX;
+        var hitDy = target.y - closestY;
+        return hitDx * hitDx + hitDy * hitDy <= hitRadius * hitRadius;
+      }
+
+      function damageEnemy(enemy, amount) {
+        enemy.hp -= amount;
+        gigaHertzGame.hits += 1;
+        createBurst(enemy.x, enemy.y, enemy.color, enemy.hp <= 0 ? 14 : 6);
+        if (enemy.hp <= 0 && !enemy.destroyed) {
+          destroyEnemy(enemy);
+        } else {
+          playGigaTone("hit");
+        }
+      }
+
+      function destroyEnemy(enemy) {
+        enemy.destroyed = true;
+        gigaHertzGame.enemiesDestroyed += 1;
+        gigaHertzGame.combo += 1;
+        gigaHertzGame.comboUntil = performance.now() + 2400;
+        var diveBonus = enemy.state === "diving" ? 60 : 0;
+        var gain = gigaHertzGame.activePowers.gain && gigaHertzGame.activePowers.gain > performance.now() ? 1.75 : 1;
+        gigaHertzGame.score += Math.floor((enemy.points + diveBonus + Math.min(250, gigaHertzGame.combo * 12)) * getDifficulty().scoreMultiplier * gain);
+        maybeDropPowerUp(enemy.x, enemy.y);
+        saveGigaBestScore();
+        updateHud();
+        playGigaTone("destroy");
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Power-Ups
+       ========================================================================== */
+      function maybeDropPowerUp(x, y) {
+        if (Math.random() > 0.18 * getDifficulty().powerRate) return;
+        var power = gigaPowerTypes[(gigaHertzGame.enemiesDestroyed + gigaHertzGame.waveIndex) % gigaPowerTypes.length];
+        gigaHertzGame.powerUps.push({ x: x, y: y, vy: 95, radius: 11, type: power.type, color: power.color });
+        playGigaTone("drop");
+      }
+
+      function updatePowerUps(delta, now) {
+        for (var i = gigaHertzGame.powerUps.length - 1; i >= 0; i -= 1) {
+          var power = gigaHertzGame.powerUps[i];
+          power.y += power.vy * delta;
+          if (circleHit(power, { x: gigaHertzGame.player.x, y: gigaHertzGame.player.y, radius: 22 })) {
+            collectPowerUp(power.type, now);
+            gigaHertzGame.powerUps.splice(i, 1);
+          } else if (power.y > gigaHertzGame.height + 30) {
+            gigaHertzGame.powerUps.splice(i, 1);
+          }
+        }
+        Object.keys(gigaHertzGame.activePowers).forEach(function (key) {
+          if (gigaHertzGame.activePowers[key] <= now) {
+            delete gigaHertzGame.activePowers[key];
+          }
+        });
+      }
+
+      function collectPowerUp(type, now) {
+        var power = gigaPowerTypes.find(function (entry) { return entry.type === type; });
+        gigaHertzGame.activePowers[type] = now + power.duration;
+        playGigaTone("power");
+        updateHud();
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Boss
+       ========================================================================== */
+      function createBoss() {
+        var hp = Math.round(120 * getDifficulty().bossHealth);
+        gigaHertzGame.boss = {
+          x: gigaHertzGame.width / 2,
+          y: 112,
+          radius: 54,
+          hp: hp,
+          maxHp: hp,
+          attackTimer: 1.4,
+          pattern: 0,
+          defeated: false,
+          sweepX: 0,
+          color: "#c8a86b",
+        };
+        gigaHertzGame.enemies = [];
+        playGigaTone("boss");
+      }
+
+      function updateBoss(delta) {
+        var boss = gigaHertzGame.boss;
+        if (!boss || boss.defeated) return;
+        boss.x = gigaHertzGame.width / 2 + Math.sin(gigaHertzGame.waveTimer * 0.8) * Math.min(150, gigaHertzGame.width * 0.2);
+        updateBossTelegraphs(delta);
+        boss.attackTimer -= delta;
+        if (boss.attackTimer <= 0) {
+          boss.pattern = (boss.pattern + 1) % 3;
+          boss.attackTimer = boss.hp < boss.maxHp * 0.45 ? 1.25 : 1.75;
+          runBossAttack(boss.pattern);
+        }
+      }
+
+      function runBossAttack(pattern) {
+        var boss = gigaHertzGame.boss;
+        gigaHertzGame.bossTelegraphs.push({
+          pattern: pattern,
+          x: boss.x,
+          y: boss.y,
+          targetX: gigaHertzGame.player.x,
+          timer: 0.55,
+          duration: 0.55,
+        });
+      }
+
+      function updateBossTelegraphs(delta) {
+        for (var i = gigaHertzGame.bossTelegraphs.length - 1; i >= 0; i -= 1) {
+          var telegraph = gigaHertzGame.bossTelegraphs[i];
+          telegraph.timer -= delta;
+          if (telegraph.timer <= 0) {
+            releaseBossAttack(telegraph);
+            gigaHertzGame.bossTelegraphs.splice(i, 1);
+          }
+        }
+      }
+
+      function releaseBossAttack(telegraph) {
+        if (!gigaHertzGame.boss || gigaHertzGame.boss.defeated) {
+          return;
+        }
+
+        var pattern = telegraph.pattern;
+        var boss = gigaHertzGame.boss;
+        if (pattern === 0) {
+          for (var i = 0; i < 12; i += 1) {
+            if (i === 5 || i === 6) continue;
+            var angle = Math.PI * 0.14 + i * (Math.PI * 0.72 / 11);
+            gigaHertzGame.enemyShots.push({
+              x: boss.x,
+              y: boss.y,
+              vx: Math.cos(angle) * 145,
+              vy: Math.sin(angle) * 145,
+              radius: 6,
+              color: "#c8a86b",
+            });
+          }
+        } else if (pattern === 1) {
+          var target = telegraph.targetX;
+          for (var j = -1; j <= 1; j += 1) {
+            gigaHertzGame.enemyShots.push({ x: clamp(target + j * 56, 28, gigaHertzGame.width - 28), y: boss.y + 36, vx: 0, vy: 185, radius: 7, color: "#f66f8d" });
+          }
+        } else {
+          for (var k = -2; k <= 2; k += 1) {
+            gigaHertzGame.enemyShots.push({ x: boss.x, y: boss.y + 40, vx: k * 44, vy: 170, radius: 6, color: "#5b9cf6" });
+          }
+        }
+      }
+
+      function damageBoss(amount) {
+        var boss = gigaHertzGame.boss;
+        boss.hp -= amount;
+        gigaHertzGame.hits += 1;
+        createBurst(boss.x, boss.y, "#c8a86b", 8);
+        playGigaTone("bosshit");
+        if (boss.hp <= 0 && !boss.defeated) {
+          boss.defeated = true;
+          gigaHertzGame.score += Math.floor(2500 * getDifficulty().scoreMultiplier);
+          gigaHertzGame.bossWins += 1;
+          writeNumberToStorage("studioArcadeGigaHertzBossWins", gigaHertzGame.bossWins);
+          createBurst(boss.x, boss.y, "#e6e2d9", 60);
+          playGigaTone("bosswin");
+          completeWave();
+        }
+        saveGigaBestScore();
+        updateHud();
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Rendering
+       ========================================================================== */
+      function render(now) {
+        var ctx = gigaHertzGame.ctx;
+        ctx.clearRect(0, 0, gigaHertzGame.width, gigaHertzGame.height);
+        drawBackground(ctx, now);
+        drawBoss(ctx, now);
+        gigaHertzGame.enemies.forEach(function (enemy) { if (!enemy.destroyed) drawEnemy(ctx, enemy, now); });
+        gigaHertzGame.powerUps.forEach(function (power) { drawPowerUp(ctx, power, now); });
+        drawShots(ctx);
+        drawBossTelegraphs(ctx);
+        drawPlayer(ctx, now);
+        drawParticles(ctx);
+        drawBossMeter(ctx);
+      }
+
+      function drawBackground(ctx, now) {
+        ctx.fillStyle = "#050508";
+        ctx.fillRect(0, 0, gigaHertzGame.width, gigaHertzGame.height);
+        ctx.strokeStyle = "rgba(91,156,246,.08)";
+        ctx.lineWidth = 1;
+        for (var x = 0; x < gigaHertzGame.width; x += 32) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, gigaHertzGame.height);
+          ctx.stroke();
+        }
+        for (var y = 0; y < gigaHertzGame.height; y += 32) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(gigaHertzGame.width, y);
+          ctx.stroke();
+        }
+        ctx.strokeStyle = "rgba(200,168,107,.18)";
+        ctx.beginPath();
+        for (var i = 0; i < gigaHertzGame.width; i += 8) {
+          var wave = Math.sin(i * 0.035 + now * 0.004) * 10;
+          if (i === 0) ctx.moveTo(i, gigaHertzGame.height * 0.72 + wave);
+          else ctx.lineTo(i, gigaHertzGame.height * 0.72 + wave);
+        }
+        ctx.stroke();
+        ctx.fillStyle = "rgba(91,156,246,.08)";
+        for (var b = 0; b < 22; b += 1) {
+          var h = 18 + Math.sin(now * 0.003 + b) * 12;
+          ctx.fillRect(18 + b * 18, gigaHertzGame.height - h - 12, 8, h);
+        }
+      }
+
+      function drawPlayer(ctx, now) {
+        var p = gigaHertzGame.player;
+        if (gigaHertzGame.state === "lifelost") return;
+        var blink = now < p.invulnerableUntil && Math.floor(now / 90) % 2 === 0;
+        if (blink) return;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.shadowColor = "#5b9cf6";
+        ctx.shadowBlur = 18;
+        ctx.fillStyle = "#c8a86b";
+        roundRect(ctx, -22, -12, 44, 24, 7);
+        ctx.fill();
+        ctx.fillStyle = "#1b1b26";
+        ctx.fillRect(-14, -6, 28, 12);
+        ctx.fillStyle = "#e6e2d9";
+        ctx.beginPath();
+        ctx.moveTo(0, -25);
+        ctx.lineTo(13, -10);
+        ctx.lineTo(-13, -10);
+        ctx.closePath();
+        ctx.fill();
+        if (gigaHertzGame.activePowers.isolation && gigaHertzGame.activePowers.isolation > now) {
+          ctx.strokeStyle = "rgba(126,227,178,.8)";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(0, 0, 30, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function drawEnemy(ctx, enemy, now) {
+        ctx.save();
+        ctx.translate(enemy.x, enemy.y);
+        ctx.shadowColor = enemy.color;
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = enemy.color;
+        if (enemy.type === "h") {
+          ctx.beginPath();
+          ctx.arc(0, 0, enemy.radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#0b0b0f";
+          ctx.fillRect(-9, -3, 18, 6);
+        } else if (enemy.type === "f") {
+          ctx.beginPath();
+          ctx.moveTo(0, -enemy.radius);
+          ctx.lineTo(enemy.radius + 5, 8);
+          ctx.lineTo(0, enemy.radius);
+          ctx.lineTo(-enemy.radius - 5, 8);
+          ctx.closePath();
+          ctx.fill();
+        } else {
+          roundRect(ctx, -enemy.radius, -enemy.radius, enemy.radius * 2, enemy.radius * 2, 5);
+          ctx.fill();
+          if (enemy.hp < enemy.maxHp) {
+            ctx.strokeStyle = "#e6e2d9";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-8, -8, 16, 16);
+          }
+        }
+        ctx.restore();
+      }
+
+      function drawBoss(ctx, now) {
+        var boss = gigaHertzGame.boss;
+        if (!boss || boss.defeated) return;
+        ctx.save();
+        ctx.translate(boss.x, boss.y);
+        ctx.shadowColor = "#c8a86b";
+        ctx.shadowBlur = 26;
+        ctx.strokeStyle = "#c8a86b";
+        ctx.lineWidth = 5;
+        for (var i = 0; i < 3; i += 1) {
+          ctx.beginPath();
+          ctx.arc(0, 0, boss.radius - i * 13 + Math.sin(now * 0.005 + i) * 2, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.fillStyle = "rgba(91,156,246,.45)";
+        ctx.beginPath();
+        ctx.arc(0, 0, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawBossTelegraphs(ctx) {
+        gigaHertzGame.bossTelegraphs.forEach(function (telegraph) {
+          var alpha = clamp(telegraph.timer / telegraph.duration, 0.18, 0.75);
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.strokeStyle = telegraph.pattern === 1 ? "#f66f8d" : telegraph.pattern === 2 ? "#5b9cf6" : "#c8a86b";
+          ctx.lineWidth = 3;
+          ctx.setLineDash([10, 8]);
+          if (telegraph.pattern === 0) {
+            ctx.beginPath();
+            ctx.arc(telegraph.x, telegraph.y, 88, Math.PI * 0.12, Math.PI * 0.88);
+            ctx.stroke();
+          } else if (telegraph.pattern === 1) {
+            for (var j = -2; j <= 2; j += 1) {
+              var x = clamp(telegraph.targetX + j * 44, 28, gigaHertzGame.width - 28);
+              ctx.beginPath();
+              ctx.moveTo(x, telegraph.y + 20);
+              ctx.lineTo(x, gigaHertzGame.height - 36);
+              ctx.stroke();
+            }
+          } else {
+            for (var k = -3; k <= 3; k += 1) {
+              ctx.beginPath();
+              ctx.moveTo(telegraph.x, telegraph.y + 34);
+              ctx.lineTo(telegraph.x + k * 90, gigaHertzGame.height - 48);
+              ctx.stroke();
+            }
+          }
+          ctx.restore();
+        });
+      }
+
+      function drawShots(ctx) {
+        gigaHertzGame.playerShots.forEach(function (shot) {
+          ctx.fillStyle = "#e6e2d9";
+          ctx.shadowColor = "#5b9cf6";
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.arc(shot.x, shot.y, shot.radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
+        gigaHertzGame.enemyShots.forEach(function (shot) {
+          ctx.fillStyle = shot.color || "#f66f8d";
+          ctx.beginPath();
+          ctx.arc(shot.x, shot.y, shot.radius, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      function drawPowerUp(ctx, power, now) {
+        ctx.save();
+        ctx.translate(power.x, power.y);
+        ctx.rotate(now * 0.003);
+        ctx.fillStyle = power.color;
+        ctx.strokeStyle = "#0b0b0f";
+        roundRect(ctx, -10, -10, 20, 20, 5);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawParticles(ctx) {
+        gigaHertzGame.particles.forEach(function (particle) {
+          ctx.globalAlpha = clamp(particle.life / 0.7, 0, 1);
+          ctx.fillStyle = particle.color;
+          ctx.fillRect(particle.x, particle.y, 3, 3);
+          ctx.globalAlpha = 1;
+        });
+      }
+
+      function drawBossMeter(ctx) {
+        var boss = gigaHertzGame.boss;
+        if (!boss || boss.defeated) return;
+        var w = gigaHertzGame.width * 0.6;
+        var x = (gigaHertzGame.width - w) / 2;
+        ctx.fillStyle = "rgba(19,19,27,.9)";
+        ctx.fillRect(x, 16, w, 10);
+        ctx.fillStyle = "#c8a86b";
+        ctx.fillRect(x, 16, w * clamp(boss.hp / boss.maxHp, 0, 1), 10);
+      }
+
+      function roundRect(ctx, x, y, width, height, radius) {
+        var r = Math.min(radius, width / 2, height / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + width - r, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+        ctx.lineTo(x + width, y + height - r);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+        ctx.lineTo(x + r, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Audio
+       ========================================================================== */
+      function getAudioContext() {
+        if (gigaHertzGame.muted) return null;
+        if (!gigaHertzGame.audioContext) {
+          var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return null;
+          gigaHertzGame.audioContext = new AudioContextClass();
+        }
+        if (gigaHertzGame.audioContext.state === "suspended") {
+          gigaHertzGame.audioContext.resume();
+        }
+        return gigaHertzGame.audioContext;
+      }
+
+      function playGigaTone(type) {
+        var context = getAudioContext();
+        if (!context) return;
+        var now = context.currentTime;
+        var oscillator = context.createOscillator();
+        var gain = context.createGain();
+        var frequency = 420;
+        var duration = 0.07;
+        if (type === "shot") frequency = 680;
+        if (type === "hit") frequency = 300;
+        if (type === "destroy") { frequency = 760; duration = 0.12; }
+        if (type === "playerhit") { frequency = 120; duration = 0.22; oscillator.type = "sawtooth"; }
+        if (type === "power") { frequency = 920; duration = 0.16; }
+        if (type === "wave") frequency = 560;
+        if (type === "boss") { frequency = 180; duration = 0.28; oscillator.type = "triangle"; }
+        if (type === "bosswin") { frequency = 980; duration = 0.34; }
+        if (type === "gameover") { frequency = 85; duration = 0.35; oscillator.type = "sawtooth"; }
+        oscillator.frequency.setValueAtTime(frequency, now);
+        oscillator.frequency.exponentialRampToValueAtTime(Math.max(55, frequency * 0.55), now + duration);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.07, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start(now);
+        oscillator.stop(now + duration + 0.02);
+        gigaHertzGame.audioNodes.push(oscillator);
+        oscillator.addEventListener("ended", function () {
+          var index = gigaHertzGame.audioNodes.indexOf(oscillator);
+          if (index >= 0) gigaHertzGame.audioNodes.splice(index, 1);
+        });
+      }
+
+      function stopGigaAudio() {
+        gigaHertzGame.audioNodes.forEach(function (node) {
+          try {
+            node.stop();
+          } catch (error) {
+            // One-shot oscillator may already be finished.
+          }
+        });
+        gigaHertzGame.audioNodes = [];
+      }
+
+      function toggleMute() {
+        gigaHertzGame.muted = !gigaHertzGame.muted;
+        writeNumberToStorage("studioArcadeMuted", gigaHertzGame.muted ? 1 : 0);
+        syncMuteButton();
+      }
+
+      function syncMuteButton() {
+        var button = document.getElementById("muteButton");
+        button.textContent = gigaHertzGame.muted ? "Sound: Off" : "Sound: On";
+        button.setAttribute("aria-pressed", gigaHertzGame.muted ? "true" : "false");
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Input
+       ========================================================================== */
+      function bindGigaInput() {
+        if (gigaHertzGame.inputAdded) return;
+        document.addEventListener("keydown", onKeyDown);
+        document.addEventListener("keyup", onKeyUp);
+        window.addEventListener("blur", clearHeldInput);
+        window.addEventListener("pointerup", clearHeldInput);
+        window.addEventListener("pointercancel", clearHeldInput);
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden) pauseGigaHertz();
+        });
+        window.addEventListener("beforeunload", function () {
+          saveGigaBestScore();
+          stopGigaHertz();
+        });
+        window.addEventListener("resize", resizeGigaHertz);
+        window.addEventListener("orientationchange", resizeGigaHertz);
+        document.getElementById("startButton").addEventListener("click", startGigaHertz);
+        document.getElementById("pauseButton").addEventListener("click", function () {
+          if (gigaHertzGame.state === "paused") resumeGigaHertz();
+          else pauseGigaHertz();
+        });
+        document.getElementById("restartButton").addEventListener("click", resetGigaGame);
+        document.getElementById("muteButton").addEventListener("click", toggleMute);
+        document.querySelectorAll(".touch-button").forEach(function (button) {
+          button.addEventListener("pointerdown", onTouchDown);
+          button.addEventListener("pointerup", onTouchUp);
+          button.addEventListener("pointercancel", onTouchUp);
+          button.addEventListener("pointerleave", onTouchUp);
+        });
+        gigaHertzGame.canvas.addEventListener("pointermove", function (event) {
+          var rect = gigaHertzGame.canvas.getBoundingClientRect();
+          gigaHertzGame.player.x = clamp((event.clientX - rect.left) / gigaHertzGame.scaleX, 28, gigaHertzGame.width - 28);
+        });
+        gigaHertzGame.canvas.addEventListener("pointerdown", function (event) {
+          event.preventDefault();
+          gigaHertzGame.pointer.fire = true;
+          startGigaHertz();
+        });
+        gigaHertzGame.canvas.addEventListener("pointerup", function () {
+          gigaHertzGame.pointer.fire = false;
+        });
+        gigaHertzGame.inputAdded = true;
+      }
+
+      function onKeyDown(event) {
+        var handled = ["ArrowLeft", "ArrowRight", "KeyA", "KeyD", "Space", "Enter", "KeyP", "Escape", "KeyR"].indexOf(event.code) >= 0;
+        if (handled) event.preventDefault();
+        if (event.code === "ArrowLeft" || event.code === "KeyA") gigaHertzGame.keys.left = true;
+        if (event.code === "ArrowRight" || event.code === "KeyD") gigaHertzGame.keys.right = true;
+        if (event.code === "Space") {
+          gigaHertzGame.keys.fire = true;
+          startGigaHertz();
+        }
+        if (event.code === "Enter") startGigaHertz();
+        if (event.code === "KeyP" || event.code === "Escape") {
+          if (gigaHertzGame.state === "paused") resumeGigaHertz();
+          else pauseGigaHertz();
+        }
+        if (event.code === "KeyR") resetGigaGame();
+      }
+
+      function onKeyUp(event) {
+        if (event.code === "ArrowLeft" || event.code === "KeyA") gigaHertzGame.keys.left = false;
+        if (event.code === "ArrowRight" || event.code === "KeyD") gigaHertzGame.keys.right = false;
+        if (event.code === "Space") gigaHertzGame.keys.fire = false;
+      }
+
+      function onTouchDown(event) {
+        event.preventDefault();
+        var action = event.currentTarget.getAttribute("data-action");
+        if (action === "left") gigaHertzGame.pointer.left = true;
+        if (action === "right") gigaHertzGame.pointer.right = true;
+        if (action === "fire") {
+          gigaHertzGame.pointer.fire = true;
+          startGigaHertz();
+        }
+        if (action === "pause") {
+          if (gigaHertzGame.state === "paused") resumeGigaHertz();
+          else pauseGigaHertz();
+        }
+      }
+
+      function onTouchUp(event) {
+        event.preventDefault();
+        var action = event.currentTarget.getAttribute("data-action");
+        if (action === "left") gigaHertzGame.pointer.left = false;
+        if (action === "right") gigaHertzGame.pointer.right = false;
+        if (action === "fire") gigaHertzGame.pointer.fire = false;
+      }
+
+      function clearHeldInput() {
+        gigaHertzGame.keys.left = false;
+        gigaHertzGame.keys.right = false;
+        gigaHertzGame.keys.fire = false;
+        gigaHertzGame.pointer.left = false;
+        gigaHertzGame.pointer.right = false;
+        gigaHertzGame.pointer.fire = false;
+      }
+
+      /* ==========================================================================
+       Giga-Hertz Initialization
+       ========================================================================== */
+      function gigaLoop(now) {
+        if (!gigaHertzGame.running) return;
+        var delta = Math.min(0.033, (now - gigaHertzGame.lastTime) / 1000);
+        gigaHertzGame.lastTime = now;
+        update(delta, now);
+        render(now);
+        gigaHertzGame.animationId = requestAnimationFrame(gigaLoop);
+      }
+
+      function update(delta, now) {
+        updatePowerUps(delta, now);
+        updateParticles(delta);
+        if (gigaHertzGame.state === "lifelost") {
+          gigaHertzGame.respawnTimer -= delta;
+          if (gigaHertzGame.respawnTimer <= 0) {
+            resetPlayer();
+            gigaHertzGame.state = "playing";
+            hideOverlay();
+          }
+          return;
+        }
+        if (gigaHertzGame.state === "bossintro") {
+          gigaHertzGame.bossIntroTimer -= delta;
+          if (gigaHertzGame.bossIntroTimer <= 0) gigaHertzGame.state = "playing";
+        }
+        if (gigaHertzGame.state !== "playing" && gigaHertzGame.state !== "bossintro") return;
+        gigaHertzGame.waveTimer += delta;
+        updatePlayer(delta, now);
+        updateFormation(delta);
+        maybeStartDive(delta);
+        updateBoss(delta);
+        updateProjectiles(delta);
+        checkCollisions();
+        checkWaveDone();
+        if (gigaHertzGame.comboUntil && gigaHertzGame.comboUntil < now) gigaHertzGame.combo = 0;
+        updateHud();
+      }
+
+      function checkWaveDone() {
+        if (gigaHertzGame.boss) return;
+        var remaining = gigaHertzGame.enemies.some(function (enemy) { return !enemy.destroyed; });
+        if (!remaining) completeWave();
+      }
+
+      function completeWave() {
+        gigaHertzGame.score += Math.floor((700 + gigaHertzGame.waveIndex * 150) * getDifficulty().scoreMultiplier);
+        saveGigaBestScore();
+        gigaHertzGame.waveIndex = (gigaHertzGame.waveIndex + 1) % gigaWaves.length;
+        buildWave(gigaHertzGame.waveIndex);
+        updateHud();
+        showOverlay("Signal Cleaned", "Wave complete. Press Enter or Start for the next pass.");
+        gigaHertzGame.state = "ready";
+        playGigaTone("wave");
+      }
+
+      function endGame() {
+        gigaHertzGame.state = gigaHertzGame.score >= gigaHertzGame.bestScore ? "newbest" : "gameover";
+        saveGigaBestScore();
+        if (gigaHertzGame.state === "newbest") {
+          showOverlay("New High Score", "Final score: " + gigaHertzGame.score + ". Press R or Restart for another pass.");
+        } else {
+          showOverlay("Signal Lost", "Noise overwhelmed the chain. Press R or Restart for another pass.");
+        }
+        clearHeldInput();
+        playGigaTone("gameover");
+      }
+
+      function updateHud() {
+        document.getElementById("scoreValue").textContent = gigaHertzGame.score;
+        document.getElementById("bestValue").textContent = gigaHertzGame.bestScore;
+        document.getElementById("waveValue").textContent = gigaHertzGame.waveIndex + 1;
+        document.getElementById("livesValue").textContent = gigaHertzGame.lives;
+        var active = Object.keys(gigaHertzGame.activePowers).map(function (key) {
+          var power = gigaPowerTypes.find(function (entry) { return entry.type === key; });
+          return '<span class="status-chip">' + power.label + "</span>";
+        }).join("");
+        var accuracy = gigaHertzGame.shotsFired ? Math.round((gigaHertzGame.hits / gigaHertzGame.shotsFired) * 100) : 100;
+        document.getElementById("statusRow").innerHTML =
+          '<span class="status-chip">Hot Signal x' + gigaHertzGame.combo + "</span>" +
+          '<span class="status-chip">Accuracy ' + accuracy + "%</span>" +
+          '<span class="status-chip">Cleared ' + gigaHertzGame.enemiesDestroyed + "</span>" +
+          (active || '<span class="status-chip">No active power</span>');
+      }
+
+      function showOverlay(title, text) {
+        gigaHertzGame.overlay.classList.remove("hidden");
+        document.getElementById("overlayTitle").textContent = title;
+        document.getElementById("overlayText").textContent = text;
+      }
+
+      function hideOverlay() {
+        gigaHertzGame.overlay.classList.add("hidden");
+      }
+
+      function resizeGigaHertz() {
+        var wrap = document.getElementById("arenaWrap");
+        var rect = wrap.getBoundingClientRect();
+        var deviceScale = window.devicePixelRatio || 1;
+        var topbar = document.querySelector(".topbar");
+        var controls = document.querySelector(".controls");
+        var compactHeight = window.innerHeight < 520;
+        var minCanvasHeight = compactHeight ? 240 : 360;
+        var displayWidth = Math.max(300, Math.floor(Math.min(rect.width, window.innerWidth - 20)));
+        var displayHeight = Math.max(minCanvasHeight, Math.floor(rect.height));
+        if (compactHeight) {
+          var usedHeight =
+            (topbar ? topbar.getBoundingClientRect().height : 0) +
+            (controls ? controls.getBoundingClientRect().height : 0) +
+            44;
+          displayHeight = Math.max(
+            minCanvasHeight,
+            Math.min(displayHeight, Math.floor(window.innerHeight - usedHeight)),
+          );
+        }
+        gigaHertzGame.width = displayWidth < 520 ? 640 : 900;
+        gigaHertzGame.height = 620;
+        gigaHertzGame.scaleX = displayWidth / gigaHertzGame.width;
+        gigaHertzGame.scaleY = displayHeight / gigaHertzGame.height;
+        gigaHertzGame.canvas.width = Math.floor(displayWidth * deviceScale);
+        gigaHertzGame.canvas.height = Math.floor(displayHeight * deviceScale);
+        gigaHertzGame.canvas.style.width = displayWidth + "px";
+        gigaHertzGame.canvas.style.height = displayHeight + "px";
+        gigaHertzGame.ctx.setTransform(gigaHertzGame.scaleX * deviceScale, 0, 0, gigaHertzGame.scaleY * deviceScale, 0, 0);
+        gigaHertzGame.player.y = gigaHertzGame.height - 58;
+        gigaHertzGame.player.x = clamp(gigaHertzGame.player.x, 28, gigaHertzGame.width - 28);
+      }
+
+      function createBurst(x, y, color, count) {
+        if (gigaHertzGame.reducedMotion) count = Math.min(8, count);
+        for (var i = 0; i < count; i += 1) {
+          gigaHertzGame.particles.push({
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 220,
+            vy: (Math.random() - 0.5) * 180,
+            life: 0.35 + Math.random() * 0.35,
+            color: color,
+          });
+        }
+      }
+
+      function updateParticles(delta) {
+        for (var i = gigaHertzGame.particles.length - 1; i >= 0; i -= 1) {
+          var particle = gigaHertzGame.particles[i];
+          particle.life -= delta;
+          particle.x += particle.vx * delta;
+          particle.y += particle.vy * delta;
+          if (particle.life <= 0) gigaHertzGame.particles.splice(i, 1);
+        }
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      initGigaHertz();
+    </script>
+  </body>
+</html>

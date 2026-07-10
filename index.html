@@ -142,12 +142,14 @@
 
       .cartridge {
         position: relative;
+        display: block;
         min-height: 310px;
         border: 1px solid var(--border);
         border-radius: var(--radius);
         padding: 18px 16px 22px;
         overflow: hidden;
         color: var(--text);
+        text-decoration: none;
         background:
           linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 36%),
           linear-gradient(180deg, #222230 0%, #14141d 52%, #0f0f15 100%);
@@ -672,6 +674,13 @@
           launch: launchTrackTetris,
           stop: stopTrackTetris,
         },
+        {
+          id: "giga-hertz",
+          title: "Giga-Hertz",
+          subtitle: "Clean the signal.",
+          cartridgeArt: "giga",
+          href: "giga-hertz.html",
+        },
       ];
 
       /* ==========================================================================
@@ -681,9 +690,13 @@
         cartridgeGrid.innerHTML = "";
 
         gameRegistry.forEach(function (game) {
-          var cartridge = document.createElement("button");
+          var cartridge = document.createElement(game.href ? "a" : "button");
           cartridge.className = "cartridge";
-          cartridge.type = "button";
+          if (game.href) {
+            cartridge.href = game.href;
+          } else {
+            cartridge.type = "button";
+          }
           cartridge.setAttribute("aria-label", "Launch " + game.title);
           cartridge.innerHTML =
             '<div class="cartridge-top" aria-hidden="true"></div>' +
@@ -700,9 +713,11 @@
             getCartridgeMeta(game.id) +
             "</span></div>";
 
-          cartridge.addEventListener("click", function () {
-            launchGame(game.id);
-          });
+          if (!game.href) {
+            cartridge.addEventListener("click", function () {
+              launchGame(game.id);
+            });
+          }
 
           cartridgeGrid.appendChild(cartridge);
         });
@@ -802,6 +817,27 @@
           );
         }
 
+        if (type === "giga") {
+          return (
+            "" +
+            '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Spectrum waveform cleaning interference">' +
+            "<defs>" +
+            '<filter id="gigaGlow"><feGaussianBlur stdDeviation="2.5" result="blur"><\/feGaussianBlur><feMerge><feMergeNode in="blur"><\/feMergeNode><feMergeNode in="SourceGraphic"><\/feMergeNode><\/feMerge><\/filter>' +
+            "</defs>" +
+            '<rect x="18" y="18" width="84" height="84" rx="8" fill="#13131b" stroke="#252533" stroke-width="3"><\/rect>' +
+            '<path d="M24 70 C34 42, 44 88, 54 54 S74 38, 96 58" fill="none" stroke="#5b9cf6" stroke-width="4" stroke-linecap="round" filter="url(#gigaGlow)"><\/path>' +
+            '<path d="M26 82 H94" stroke="#c8a86b" stroke-width="3" stroke-linecap="round"><\/path>' +
+            '<rect x="30" y="62" width="6" height="18" rx="2" fill="#c8a86b"><\/rect>' +
+            '<rect x="43" y="48" width="6" height="32" rx="2" fill="#5b9cf6"><\/rect>' +
+            '<rect x="56" y="38" width="6" height="42" rx="2" fill="#c8a86b"><\/rect>' +
+            '<rect x="69" y="52" width="6" height="28" rx="2" fill="#5b9cf6"><\/rect>' +
+            '<rect x="82" y="43" width="6" height="37" rx="2" fill="#c8a86b"><\/rect>' +
+            '<circle cx="60" cy="30" r="8" fill="#e6e2d9" filter="url(#gigaGlow)"><\/circle>' +
+            '<path d="M52 30 H68 M60 22 V38" stroke="#0b0b0f" stroke-width="2"><\/path>' +
+            "</svg>"
+          );
+        }
+
         return (
           "" +
           '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Empty cartridge slot">' +
@@ -832,6 +868,13 @@
           return (
             "Best " +
             readNumberFromStorage("studioArcadeTrackTetrisBestScore", 0)
+          );
+        }
+
+        if (gameId === "giga-hertz") {
+          return (
+            "Best " +
+            readNumberFromStorage("studioArcadeGigaHertzBestScore", 0)
           );
         }
 
@@ -905,12 +948,13 @@
         paused: false,
         gameOver: false,
         orientation: "landscape",
-        difficulty: "normal",
+        difficulty: "chill",
         scoreToWin: 7,
         playerScore: 0,
         cpuScore: 0,
         playerWins: 0,
         rally: 0,
+        pointReadyAt: 0,
         pointerActive: false,
         keys: {
           up: false,
@@ -939,6 +983,62 @@
           width: 14,
           height: 96,
           speed: 390,
+        },
+      };
+
+      var patchPongDifficultyOrder = ["chill", "easy", "medium", "hard"];
+      var patchPongDifficultySettings = {
+        chill: {
+          label: "Chill",
+          desktopSpeed: 360,
+          mobileSpeed: 300,
+          acceleration: 3.5,
+          accelerationCap: 70,
+          cpuSpeed: 230,
+          cpuRallyBonus: 3,
+          missBias: 64,
+          missTempo: 420,
+          paddlePadding: 7,
+          pointDelay: 420,
+        },
+        easy: {
+          label: "Easy",
+          desktopSpeed: 410,
+          mobileSpeed: 335,
+          acceleration: 5,
+          accelerationCap: 90,
+          cpuSpeed: 285,
+          cpuRallyBonus: 4,
+          missBias: 48,
+          missTempo: 500,
+          paddlePadding: 5,
+          pointDelay: 260,
+        },
+        medium: {
+          label: "Medium",
+          desktopSpeed: 460,
+          mobileSpeed: 365,
+          acceleration: 7,
+          accelerationCap: 110,
+          cpuSpeed: 365,
+          cpuRallyBonus: 5,
+          missBias: 30,
+          missTempo: 720,
+          paddlePadding: 3,
+          pointDelay: 160,
+        },
+        hard: {
+          label: "Hard",
+          desktopSpeed: 500,
+          mobileSpeed: 410,
+          acceleration: 8.5,
+          accelerationCap: 125,
+          cpuSpeed: 435,
+          cpuRallyBonus: 6,
+          missBias: 18,
+          missTempo: 820,
+          paddlePadding: 1,
+          pointDelay: 80,
         },
       };
 
@@ -972,7 +1072,7 @@
           '<span><span class="kbd">Arrows</span> keyboard control</span>' +
           "</div>" +
           '<div class="control-actions">' +
-          '<button id="difficultyButton" class="difficulty-toggle" type="button" aria-pressed="false">Difficulty: Normal</button>' +
+          '<button id="difficultyButton" class="difficulty-toggle" type="button" aria-pressed="true">Difficulty: Chill</button>' +
           '<button class="small-button studioMuteButton" type="button">' +
           getStudioMuteLabel() +
           "</button>" +
@@ -1000,6 +1100,7 @@
         patchPong.playerScore = 0;
         patchPong.cpuScore = 0;
         patchPong.rally = 0;
+        patchPong.pointReadyAt = 0;
 
         addPatchPongInput();
         resizePatchPong();
@@ -1119,7 +1220,11 @@
         var height = patchPong.canvas ? patchPong.canvas.clientHeight : 460;
         var angleRange = patchPong.orientation === "portrait" ? 0.58 : 0.48;
         var offset = Math.random() * angleRange - angleRange / 2;
-        var speed = patchPong.ball.speed + Math.min(110, patchPong.rally * 7);
+        var settings = getPatchPongDifficultySettings();
+        var baseSpeed = isPatchPongMobile() ? settings.mobileSpeed : settings.desktopSpeed;
+        var speed =
+          baseSpeed +
+          Math.min(settings.accelerationCap, patchPong.rally * settings.acceleration);
 
         patchPong.ball.x = width / 2;
         patchPong.ball.y = height / 2;
@@ -1135,17 +1240,28 @@
 
       function togglePatchPongDifficulty() {
         var button = document.getElementById("difficultyButton");
+        var index = patchPongDifficultyOrder.indexOf(patchPong.difficulty);
         patchPong.difficulty =
-          patchPong.difficulty === "normal" ? "easy" : "normal";
+          patchPongDifficultyOrder[(index + 1) % patchPongDifficultyOrder.length];
         button.textContent =
-          patchPong.difficulty === "easy"
-            ? "Difficulty: Easy"
-            : "Difficulty: Normal";
-        button.setAttribute(
-          "aria-pressed",
-          patchPong.difficulty === "easy" ? "true" : "false",
-        );
+          "Difficulty: " + getPatchPongDifficultySettings().label;
+        button.setAttribute("aria-pressed", "true");
         playPatchPongTone("toggle");
+      }
+
+      function getPatchPongDifficultySettings() {
+        return (
+          patchPongDifficultySettings[patchPong.difficulty] ||
+          patchPongDifficultySettings.medium
+        );
+      }
+
+      function isPatchPongMobile() {
+        return (
+          patchPong.orientation === "portrait" ||
+          (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ||
+          (patchPong.canvas && patchPong.canvas.clientWidth < 720)
+        );
       }
 
       /* ==========================================================================
@@ -1269,6 +1385,10 @@
       }
 
       function startPatchPong() {
+        if (performance.now() < patchPong.pointReadyAt) {
+          return;
+        }
+
         patchPong.started = true;
         patchPong.paused = false;
         patchPong.gameOver = false;
@@ -1291,6 +1411,10 @@
       }
 
       function resumePatchPong() {
+        if (performance.now() < patchPong.pointReadyAt) {
+          return;
+        }
+
         patchPong.paused = false;
         hidePatchPongOverlay();
         resumeAudioContext();
@@ -1376,11 +1500,12 @@
       function updatePatchPongCpu(delta) {
         var width = patchPong.canvas.clientWidth;
         var height = patchPong.canvas.clientHeight;
-        var isEasy = patchPong.difficulty === "easy";
-        var maxSpeed = (isEasy ? 295 : 390) + Math.min(80, patchPong.rally * 5);
+        var settings = getPatchPongDifficultySettings();
+        var maxSpeed =
+          settings.cpuSpeed +
+          Math.min(80, patchPong.rally * settings.cpuRallyBonus);
         var missBias =
-          Math.sin(performance.now() / (isEasy ? 460 : 720)) *
-          (isEasy ? 46 : 28);
+          Math.sin(performance.now() / settings.missTempo) * settings.missBias;
 
         if (patchPong.orientation === "portrait") {
           var targetX = patchPong.ball.x - patchPong.cpu.width / 2 + missBias;
@@ -1420,11 +1545,11 @@
         if (patchPong.orientation === "portrait") {
           handlePortraitWallBounce(width);
 
-          if (ball.vy > 0 && rectCircleCollide(patchPong.player, ball)) {
+          if (ball.vy > 0 && patchPongPaddleCollide(patchPong.player, ball, true)) {
             bounceBallFromPaddle(patchPong.player, -1);
           }
 
-          if (ball.vy < 0 && rectCircleCollide(patchPong.cpu, ball)) {
+          if (ball.vy < 0 && patchPongPaddleCollide(patchPong.cpu, ball, false)) {
             bounceBallFromPaddle(patchPong.cpu, 1);
           }
 
@@ -1438,11 +1563,11 @@
         } else {
           handleLandscapeWallBounce(height);
 
-          if (ball.vx < 0 && rectCircleCollide(patchPong.player, ball)) {
+          if (ball.vx < 0 && patchPongPaddleCollide(patchPong.player, ball, true)) {
             bounceBallFromPaddle(patchPong.player, 1);
           }
 
-          if (ball.vx > 0 && rectCircleCollide(patchPong.cpu, ball)) {
+          if (ball.vx > 0 && patchPongPaddleCollide(patchPong.cpu, ball, false)) {
             bounceBallFromPaddle(patchPong.cpu, -1);
           }
 
@@ -1521,6 +1646,30 @@
         playPatchPongTone("paddle");
       }
 
+      function patchPongPaddleCollide(paddle, ball, isPlayer) {
+        if (!isPlayer) {
+          return rectCircleCollide(paddle, ball);
+        }
+
+        var padding = getPatchPongDifficultySettings().paddlePadding;
+        var forgivingPaddle =
+          patchPong.orientation === "portrait"
+            ? {
+                x: paddle.x - padding,
+                y: paddle.y - 2,
+                width: paddle.width + padding * 2,
+                height: paddle.height + 4,
+              }
+            : {
+                x: paddle.x - 2,
+                y: paddle.y - padding,
+                width: paddle.width + 4,
+                height: paddle.height + padding * 2,
+              };
+
+        return rectCircleCollide(forgivingPaddle, ball);
+      }
+
       function scorePatchPongPoint(winner) {
         var serveDirection;
 
@@ -1546,6 +1695,8 @@
         }
 
         patchPong.paused = true;
+        patchPong.pointReadyAt =
+          performance.now() + getPatchPongDifficultySettings().pointDelay;
         resetPatchPongPoint(serveDirection);
         updatePatchPongOverlay(
           winner === "player" ? "Signal Routed" : "CPU Captured It",
@@ -1721,16 +1872,16 @@
           1,
           ball.x,
           ball.y,
-          radius * 5,
+          radius * 3.6,
         );
         gradient.addColorStop(0, "rgba(230, 226, 217, 1)");
-        gradient.addColorStop(0.28, "rgba(91, 156, 246, 0.82)");
+        gradient.addColorStop(0.28, "rgba(91, 156, 246, 0.58)");
         gradient.addColorStop(1, "rgba(91, 156, 246, 0)");
 
         ctx.save();
         ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(ball.x, ball.y, radius * 5, 0, Math.PI * 2);
+        ctx.arc(ball.x, ball.y, radius * 3.6, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = "#e6e2d9";
@@ -2765,13 +2916,13 @@
       function drawBricklesBall(ctx, ball, now) {
         var pulse = 1 + Math.sin(now * 0.014) * 0.16;
         var radius = ball.radius * pulse;
-        var gradient = ctx.createRadialGradient(ball.x, ball.y, 1, ball.x, ball.y, radius * 5);
+        var gradient = ctx.createRadialGradient(ball.x, ball.y, 1, ball.x, ball.y, radius * 3.6);
         gradient.addColorStop(0, "rgba(230, 226, 217, 1)");
-        gradient.addColorStop(0.35, "rgba(91, 156, 246, 0.82)");
+        gradient.addColorStop(0.35, "rgba(91, 156, 246, 0.58)");
         gradient.addColorStop(1, "rgba(91, 156, 246, 0)");
         ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(ball.x, ball.y, radius * 5, 0, Math.PI * 2);
+        ctx.arc(ball.x, ball.y, radius * 3.6, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = "#e6e2d9";
         ctx.beginPath();
@@ -3093,12 +3244,13 @@
         keys: {},
         swipeStart: null,
         audioNodes: [],
+        wallGrace: false,
       };
 
       var cableSnakeDifficulties = {
-        chill: { label: "Chill Session", cols: 18, rows: 18, startMs: 175, speedUp: 6, minMs: 88 },
-        tracking: { label: "Tracking Session", cols: 20, rows: 20, startMs: 145, speedUp: 7, minMs: 74 },
-        deadline: { label: "Deadline Mode", cols: 22, rows: 22, startMs: 118, speedUp: 8, minMs: 58 },
+        chill: { label: "Chill Session", cols: 18, rows: 18, startMs: 220, speedUp: 3, minMs: 110 },
+        tracking: { label: "Tracking Session", cols: 20, rows: 20, startMs: 185, speedUp: 4, minMs: 95 },
+        deadline: { label: "Deadline Mode", cols: 22, rows: 22, startMs: 150, speedUp: 5, minMs: 75 },
       };
 
       var cableSnakeCollectibles = [
@@ -3207,6 +3359,7 @@
         cableSnakeGame.collected = 0;
         cableSnakeGame.stepElapsed = 0;
         cableSnakeGame.state = "ready";
+        cableSnakeGame.wallGrace = false;
         cableSnakeGame.direction = { x: 1, y: 0 };
         cableSnakeGame.nextDirection = { x: 1, y: 0 };
         var startX = Math.floor(cableSnakeGame.cols / 2);
@@ -3401,16 +3554,24 @@
           x: head.x + cableSnakeGame.direction.x,
           y: head.y + cableSnakeGame.direction.y,
         };
-        if (
+        var hitWall =
           nextHead.x < 0 ||
           nextHead.y < 0 ||
           nextHead.x >= cableSnakeGame.cols ||
-          nextHead.y >= cableSnakeGame.rows ||
+          nextHead.y >= cableSnakeGame.rows;
+        if (hitWall && !cableSnakeGame.wallGrace) {
+          cableSnakeGame.wallGrace = true;
+          cableSnakeGame.stepElapsed = 0;
+          return;
+        }
+        if (
+          hitWall ||
           cableSnakeGame.snake.some(function (part) { return part.x === nextHead.x && part.y === nextHead.y; })
         ) {
           endCableSnakeGame();
           return;
         }
+        cableSnakeGame.wallGrace = false;
         cableSnakeGame.snake.unshift(nextHead);
         if (nextHead.x === cableSnakeGame.food.x && nextHead.y === cableSnakeGame.food.y) {
           collectCableSnakeFood();
@@ -3481,7 +3642,7 @@
         ctx.clearRect(0, 0, size, size);
         ctx.fillStyle = "#050508";
         ctx.fillRect(0, 0, size, size);
-        ctx.strokeStyle = "rgba(91,156,246,.09)";
+        ctx.strokeStyle = "rgba(91,156,246,.16)";
         ctx.lineWidth = 1;
         for (var i = 0; i <= cableSnakeGame.cols; i += 1) {
           ctx.beginPath();
