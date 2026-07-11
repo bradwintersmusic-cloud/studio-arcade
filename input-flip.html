@@ -1,0 +1,2284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Input Flip | Studio Arcade</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <style>
+      /* ==========================================================================
+       Shared Studio Arcade Theme
+       ========================================================================== */
+      :root {
+        --background: #0b0b0f;
+        --surface: #13131b;
+        --surface2: #1b1b26;
+        --border: #252533;
+        --gold: #c8a86b;
+        --accent: var(--gold);
+        --text: #e6e2d9;
+        --muted: #8f8e9d;
+        --blue: #5b9cf6;
+        --danger: #f66f8d;
+        --success: #7ee3b2;
+        --shadow: rgba(0, 0, 0, 0.55);
+        --radius: 8px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        background: var(--background);
+        color: var(--text);
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+      }
+      body {
+        overflow-x: hidden;
+      }
+      button,
+      select {
+        font: inherit;
+      }
+      button,
+      a.button-link {
+        cursor: pointer;
+      }
+      .app {
+        min-height: 100vh;
+        background:
+          linear-gradient(rgba(91, 156, 246, 0.05) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(200, 168, 107, 0.04) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 20% 10%,
+            rgba(91, 156, 246, 0.16),
+            transparent 28rem
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(200, 168, 107, 0.12),
+            transparent 22rem
+          ),
+          var(--background);
+        background-size:
+          32px 32px,
+          32px 32px,
+          auto,
+          auto,
+          auto;
+      }
+
+      /* ==========================================================================
+       Input Flip Page Layout / HUD
+       ========================================================================== */
+      .cabinet {
+        width: min(1180px, calc(100vw - 20px));
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 14px 0 24px;
+        display: grid;
+        gap: 12px;
+        grid-template-rows: auto 1fr auto;
+      }
+      .topbar,
+      .controls,
+      .side-panel {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: rgba(19, 19, 27, 0.88);
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.34);
+      }
+      .topbar {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        align-items: center;
+        min-width: 0;
+        padding: 10px;
+      }
+      .title-block {
+        min-width: 0;
+      }
+      .eyebrow {
+        margin: 0 0 2px;
+        color: var(--gold);
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+      h1 {
+        margin-bottom: 1px;
+        font-size: clamp(1.2rem, 3.5vw, 1.9rem);
+        line-height: 1;
+        text-transform: uppercase;
+        text-shadow: 0 0 24px rgba(91, 156, 246, 0.22);
+      }
+      .subtitle {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .button-link,
+      .small-button,
+      .difficulty-button,
+      .level-button {
+        border: 1px solid rgba(200, 168, 107, 0.48);
+        border-radius: 6px;
+        background: rgba(200, 168, 107, 0.08);
+        color: var(--text);
+        padding: 10px 12px;
+        min-height: 42px;
+        text-decoration: none;
+        transition:
+          background 140ms ease,
+          border-color 140ms ease;
+      }
+      .button-link:hover,
+      .small-button:hover,
+      .difficulty-button:hover,
+      .level-button:hover,
+      .button-link:focus-visible,
+      .small-button:focus-visible,
+      .difficulty-button:focus-visible,
+      .level-button:focus-visible {
+        background: rgba(200, 168, 107, 0.16);
+        border-color: var(--gold);
+        outline: none;
+      }
+      .difficulty-button[aria-pressed="true"],
+      .level-button[aria-pressed="true"] {
+        border-color: var(--blue);
+        background: rgba(91, 156, 246, 0.14);
+      }
+      .hud {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        min-width: 0;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .score-pill {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 7px 10px;
+        background: var(--surface2);
+        color: var(--text);
+        min-width: 74px;
+        text-align: center;
+      }
+      .score-pill strong {
+        display: block;
+        color: var(--blue);
+        font-size: 1.15rem;
+      }
+      .game-layout {
+        display: grid;
+        grid-template-columns: minmax(250px, 1fr) minmax(280px, 680px) minmax(
+            220px,
+            1fr
+          );
+        gap: 12px;
+        align-items: start;
+      }
+      .side-panel {
+        padding: 14px;
+        display: grid;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+      .side-panel h2 {
+        margin-bottom: 0;
+        color: var(--gold);
+        font-size: 1rem;
+        text-transform: uppercase;
+      }
+      .meter {
+        height: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: #09090d;
+      }
+      .meter-fill {
+        width: 0;
+        height: 100%;
+        background: linear-gradient(90deg, var(--blue), var(--gold));
+        box-shadow: 0 0 12px rgba(91, 156, 246, 0.45);
+        transition: width 180ms ease;
+      }
+      .goal-list {
+        display: grid;
+        gap: 7px;
+      }
+      .goal-chip {
+        border: 1px solid rgba(91, 156, 246, 0.3);
+        border-radius: 6px;
+        padding: 8px;
+        background: rgba(91, 156, 246, 0.08);
+        color: var(--text);
+      }
+      .legend {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+      .legend span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* ==========================================================================
+       Input Flip Board Styles
+       ========================================================================== */
+      .board-shell {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1;
+        padding: 8px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        background:
+          linear-gradient(rgba(91, 156, 246, 0.05) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(200, 168, 107, 0.04) 1px,
+            transparent 1px
+          ),
+          #050508;
+        background-size: 16px 16px;
+        box-shadow:
+          0 22px 60px rgba(0, 0, 0, 0.55),
+          inset 0 0 38px rgba(0, 0, 0, 0.62);
+        touch-action: none;
+        user-select: none;
+      }
+      .board-shell::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          180deg,
+          transparent 0 3px,
+          rgba(255, 255, 255, 0.018) 3px 4px
+        );
+      }
+      .board {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(8, 1fr);
+        gap: 4px;
+        width: 100%;
+        height: 100%;
+      }
+      .tile {
+        position: relative;
+        display: grid;
+        place-items: center;
+        min-width: 0;
+        min-height: 0;
+        border: 1px solid rgba(230, 226, 217, 0.16);
+        border-radius: 7px;
+        background: var(--surface2);
+        color: var(--tile-color);
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+          0 3px 8px rgba(0, 0, 0, 0.35);
+        transition:
+          transform 140ms ease,
+          opacity 140ms ease,
+          border-color 140ms ease,
+          filter 140ms ease;
+        touch-action: none;
+      }
+      .tile:hover {
+        border-color: rgba(200, 168, 107, 0.48);
+      }
+      .tile:focus-visible,
+      .tile.selected,
+      .tile.cursor {
+        outline: none;
+        border-color: var(--gold);
+        box-shadow:
+          0 0 16px rgba(200, 168, 107, 0.36),
+          inset 0 0 0 1px var(--gold);
+        transform: translateY(-1px);
+      }
+      .tile.hint {
+        animation: hint-pulse 0.72s ease-in-out 2;
+      }
+      .tile.clearing {
+        opacity: 0;
+        transform: scale(0.36) rotate(8deg);
+      }
+      .tile.invalid {
+        animation: invalid-shake 180ms ease-in-out 2;
+      }
+      .tile-icon {
+        position: relative;
+        width: 58%;
+        height: 58%;
+        filter: drop-shadow(0 0 5px currentColor);
+      }
+      .tile-label {
+        position: absolute;
+        right: 4px;
+        bottom: 2px;
+        font-size: clamp(7px, 1vw, 10px);
+        color: var(--muted);
+      }
+      .type-mic {
+        --tile-color: #5b9cf6;
+      }
+      .type-cue {
+        --tile-color: #c8a86b;
+      }
+      .type-fader {
+        --tile-color: #7ee3b2;
+      }
+      .type-wave {
+        --tile-color: #f66f8d;
+      }
+      .type-patch {
+        --tile-color: #b58cf6;
+      }
+      .type-monitor {
+        --tile-color: #f3a45f;
+      }
+      .icon-mic {
+        border: 3px solid currentColor;
+        border-radius: 50% 50% 42% 42%;
+      }
+      .icon-mic::after {
+        content: "";
+        position: absolute;
+        left: 45%;
+        top: 70%;
+        width: 3px;
+        height: 38%;
+        background: currentColor;
+      }
+      .icon-cue {
+        border: 4px solid currentColor;
+        border-bottom: 0;
+        border-radius: 50% 50% 0 0;
+      }
+      .icon-cue::after {
+        content: "";
+        position: absolute;
+        inset: 48% -8% 0;
+        border-left: 5px solid currentColor;
+        border-right: 5px solid currentColor;
+      }
+      .icon-fader::before {
+        content: "";
+        position: absolute;
+        left: 46%;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: currentColor;
+      }
+      .icon-fader::after {
+        content: "";
+        position: absolute;
+        left: 18%;
+        top: 42%;
+        width: 68%;
+        height: 22%;
+        border-radius: 4px;
+        background: currentColor;
+      }
+      .icon-wave::after {
+        content: "⌁";
+        position: absolute;
+        inset: -18% 0 0;
+        font-size: clamp(24px, 5vw, 48px);
+        line-height: 1;
+        text-align: center;
+      }
+      .icon-patch {
+        border: 5px solid currentColor;
+        border-radius: 50%;
+        box-shadow: inset 0 0 0 5px var(--surface2);
+        background: currentColor;
+      }
+      .icon-monitor {
+        border: 4px solid currentColor;
+        border-radius: 5px;
+      }
+      .icon-monitor::after {
+        content: "";
+        position: absolute;
+        inset: 22%;
+        border: 4px solid currentColor;
+        border-radius: 50%;
+      }
+      .special-row::before,
+      .special-column::before,
+      .special-burst::before,
+      .special-master::before {
+        position: absolute;
+        z-index: 2;
+        left: 3px;
+        top: 2px;
+        padding: 1px 3px;
+        border-radius: 3px;
+        background: #0b0b0f;
+        color: var(--gold);
+        font-size: 9px;
+        box-shadow: 0 0 8px currentColor;
+      }
+      .special-row::before {
+        content: "ST";
+      }
+      .special-column::before {
+        content: "PH";
+        color: var(--blue);
+      }
+      .special-burst::before {
+        content: "FB";
+        color: var(--danger);
+      }
+      .special-master::before {
+        content: "MB";
+        color: var(--success);
+      }
+      .special-row,
+      .special-column,
+      .special-burst,
+      .special-master {
+        animation: special-glow 1.4s ease-in-out infinite alternate;
+      }
+      .modifier-muted::after {
+        content: "MUTE";
+        position: absolute;
+        inset: 4px;
+        display: grid;
+        place-items: center;
+        border: 1px dashed var(--muted);
+        border-radius: 5px;
+        background: rgba(11, 11, 15, 0.66);
+        color: var(--muted);
+        font-size: 9px;
+      }
+      .modifier-lock::after {
+        content: "LOCK";
+        position: absolute;
+        inset: 3px;
+        display: grid;
+        place-items: end center;
+        border: 2px solid var(--gold);
+        border-radius: 5px;
+        color: var(--gold);
+        font-size: 8px;
+        pointer-events: none;
+      }
+      .modifier-noise {
+        background: repeating-linear-gradient(
+          45deg,
+          #181821 0 4px,
+          #292936 4px 8px
+        );
+      }
+      .modifier-noise .tile-icon {
+        opacity: 0.18;
+      }
+      .modifier-core::after {
+        content: "CORE";
+        position: absolute;
+        inset: 12%;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #0b0b0f;
+        border: 3px solid var(--success);
+        color: var(--success);
+        font-size: 8px;
+        box-shadow: 0 0 12px rgba(126, 227, 178, 0.45);
+      }
+      .board-message {
+        position: absolute;
+        z-index: 4;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        padding: 9px 13px;
+        border: 1px solid rgba(200, 168, 107, 0.52);
+        border-radius: 6px;
+        background: rgba(19, 19, 27, 0.94);
+        color: var(--gold);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 140ms ease;
+      }
+      .board-message.show {
+        opacity: 1;
+      }
+
+      /* ==========================================================================
+       Input Flip Mobile Controls / Overlay
+       ========================================================================== */
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+        min-width: 0;
+        padding: 12px;
+      }
+      .instructions,
+      .control-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-width: 0;
+        align-items: center;
+      }
+      .instructions {
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.5;
+      }
+      .kbd {
+        display: inline-block;
+        border: 1px solid var(--border);
+        border-bottom-color: #09090d;
+        border-radius: 4px;
+        padding: 1px 6px;
+        background: var(--surface2);
+        color: var(--text);
+        white-space: nowrap;
+      }
+      .overlay {
+        position: fixed;
+        z-index: 10;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 18px;
+        background: radial-gradient(
+          circle,
+          rgba(11, 11, 15, 0.42),
+          rgba(11, 11, 15, 0.88)
+        );
+      }
+      .overlay.hidden {
+        display: none;
+      }
+      .overlay-card {
+        width: min(650px, 100%);
+        max-height: min(90vh, 760px);
+        overflow: auto;
+        border: 1px solid rgba(200, 168, 107, 0.42);
+        border-radius: var(--radius);
+        padding: 20px;
+        background: rgba(19, 19, 27, 0.96);
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.52);
+      }
+      .overlay-card h2 {
+        margin-bottom: 8px;
+        color: var(--gold);
+        font-size: clamp(1.4rem, 5vw, 2.4rem);
+        text-transform: uppercase;
+      }
+      .difficulty-row,
+      .level-grid,
+      .overlay-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin: 14px 0;
+      }
+      .level-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .level-button:disabled {
+        opacity: 0.38;
+        cursor: not-allowed;
+      }
+      .stars {
+        color: var(--gold);
+        font-size: 1.3rem;
+        letter-spacing: 0.14em;
+      }
+      .page-footer {
+        max-width: 920px;
+        margin: 64px auto 0;
+        padding-top: 28px;
+        border-top: 1px solid var(--border);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        z-index: 1;
+      }
+      .footer-nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px 4px;
+        align-items: center;
+      }
+      .footer-nav a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+      .footer-nav a:hover,
+      .footer-nav a:focus-visible {
+        color: var(--blue);
+        outline: none;
+      }
+      .footer-nav span {
+        opacity: 0.4;
+      }
+      .footer-meta {
+        opacity: 0.5;
+      }
+      .page-footer a {
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+      .page-footer a:hover,
+      .page-footer a:focus-visible {
+        color: var(--accent);
+        outline: none;
+      }
+      @keyframes hint-pulse {
+        50% {
+          transform: translateY(-3px);
+          border-color: var(--blue);
+          box-shadow: 0 0 20px rgba(91, 156, 246, 0.5);
+        }
+      }
+      @keyframes invalid-shake {
+        25% {
+          transform: translateX(-4px);
+        }
+        75% {
+          transform: translateX(4px);
+        }
+      }
+      @keyframes special-glow {
+        to {
+          filter: brightness(1.16);
+          box-shadow: 0 0 14px rgba(200, 168, 107, 0.35);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .app {
+          background:
+            linear-gradient(rgba(91, 156, 246, 0.04) 1px, transparent 1px),
+            var(--background);
+          background-size:
+            32px 32px,
+            auto;
+        }
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+      @media (max-width: 900px) {
+        .game-layout {
+          grid-template-columns: minmax(0, 1fr);
+          max-width: 680px;
+          width: 100%;
+          margin: 0 auto;
+        }
+        .side-panel {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .side-panel.secondary {
+          display: none;
+        }
+      }
+      @media (max-width: 720px) {
+        .cabinet {
+          width: min(calc(100% - 12px), 560px);
+          padding-top: 6px;
+        }
+        .topbar {
+          grid-template-columns: 1fr;
+        }
+        .hud {
+          justify-content: stretch;
+          flex-wrap: wrap;
+          white-space: normal;
+        }
+        .score-pill {
+          flex: 1;
+          min-width: 65px;
+        }
+        .score-pill:nth-child(n + 5) {
+          display: none;
+        }
+        .controls {
+          grid-template-columns: 1fr;
+        }
+        .control-actions button {
+          flex: 1;
+          min-height: 48px;
+        }
+        .instructions {
+          display: none;
+        }
+        .side-panel {
+          padding: 9px;
+          grid-template-columns: 1fr 1fr;
+        }
+        .board-shell {
+          padding: 5px;
+        }
+        .board {
+          gap: 3px;
+        }
+        .tile {
+          border-radius: 5px;
+        }
+        .page-footer {
+          margin-top: 36px;
+          padding-inline: 8px;
+        }
+      }
+      @media (max-height: 520px) and (orientation: landscape) {
+        .cabinet {
+          min-height: auto;
+        }
+        .topbar .subtitle,
+        .eyebrow {
+          display: none;
+        }
+        .game-layout {
+          grid-template-columns: 220px min(55vw, 440px);
+          justify-content: center;
+        }
+        .side-panel {
+          display: grid;
+          width: 220px;
+          grid-template-columns: 1fr;
+        }
+        .side-panel.secondary {
+          display: none;
+        }
+        .controls {
+          padding: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="cabinet" aria-label="Input Flip cabinet">
+        <header class="topbar">
+          <a id="backLink" class="button-link" href="index.html"
+            >Back to Game Library</a
+          >
+          <div class="title-block">
+            <p class="eyebrow">Studio Arcade standalone cabinet</p>
+            <h1>Input Flip</h1>
+            <p class="subtitle">Route the signal. Build the mix.</p>
+          </div>
+          <div class="hud" aria-live="polite">
+            <span class="score-pill"
+              >Score<strong id="scoreValue">0</strong></span
+            >
+            <span class="score-pill"
+              >Best<strong id="bestValue">0</strong></span
+            >
+            <span class="score-pill"
+              >Moves<strong id="movesValue">0</strong></span
+            >
+            <span class="score-pill"
+              >Combo<strong id="comboValue">x1</strong></span
+            >
+            <span class="score-pill"
+              >Level<strong id="levelValue">1</strong></span
+            >
+          </div>
+        </header>
+        <div class="game-layout">
+          <aside class="side-panel">
+            <h2 id="levelName">Line Check</h2>
+            <div id="goalText">Reach the score target.</div>
+            <div id="goalList" class="goal-list"></div>
+            <div>
+              <span>Star Signal</span>
+              <div class="meter">
+                <div id="starMeter" class="meter-fill"></div>
+              </div>
+            </div>
+            <div id="starText" class="stars">☆ ☆ ☆</div>
+            <div id="timerText"></div>
+          </aside>
+          <section
+            id="boardShell"
+            class="board-shell"
+            aria-label="Input Flip routing board"
+          >
+            <div
+              id="board"
+              class="board"
+              role="grid"
+              aria-label="8 by 8 signal tile board"
+            ></div>
+            <div
+              id="boardMessage"
+              class="board-message"
+              aria-live="polite"
+            ></div>
+          </section>
+          <aside class="side-panel secondary">
+            <h2>Signal Legend</h2>
+            <div class="legend">
+              <span>◯ Mic</span><span>∩ Cue</span><span>↕ Fader</span
+              ><span>⌁ Wave</span><span>⊙ Patch</span><span>▣ Monitor</span>
+            </div>
+            <p>
+              Four tiles create a line clearer. Five create a Master Bus. T and
+              L matches create a Feedback Burst.
+            </p>
+            <p id="hintStatus">Hints: On</p>
+          </aside>
+        </div>
+        <footer class="controls">
+          <div class="instructions">
+            <span><span class="kbd">Click / Tap</span> select</span
+            ><span><span class="kbd">Drag / Swipe</span> swap</span
+            ><span><span class="kbd">Arrows</span> move cursor</span
+            ><span><span class="kbd">Enter</span> select</span
+            ><span><span class="kbd">P / Esc</span> pause</span>
+          </div>
+          <div class="control-actions">
+            <button id="pauseButton" class="small-button" type="button">
+              Pause</button
+            ><button id="hintButton" class="small-button" type="button">
+              Hints: On</button
+            ><button id="muteButton" class="small-button" type="button">
+              Sound: On</button
+            ><button id="restartButton" class="small-button" type="button">
+              Restart
+            </button>
+          </div>
+        </footer>
+      </section>
+      <footer class="page-footer">
+        <nav class="footer-nav">
+          <a href="https://bradwintersmusic-cloud.github.io/studio-home/"
+            >Studio Hub</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-news/"
+            >AET News</a
+          ><span>|</span
+          ><a
+            href="https://bradwintersmusic-cloud.github.io/studioassistant-sync/"
+            >Studio Schedule</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-videos/"
+            >Video Library</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-policies/"
+            >Policies</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-tools/"
+            >Studio Tools</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-musicians/"
+            >Session Musicians</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-resources/"
+            >Resources</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-contact/"
+            >Contact</a
+          >
+        </nav>
+        <div class="footer-meta">
+          Belmont University &middot; Audio Engineering Technology &middot; CEMB
+        </div>
+        <div class="footer-meta">
+          <a href="mailto:brad.winters@belmont.edu">brad.winters@belmont.edu</a>
+        </div>
+      </footer>
+    </main>
+    <div id="overlay" class="overlay">
+      <div class="overlay-card">
+        <h2 id="overlayTitle">Input Flip</h2>
+        <div id="overlayBody"></div>
+      </div>
+    </div>
+    <script>
+      "use strict";
+
+      /* ==========================================================================
+       Input Flip Configuration / Level Data
+       ========================================================================== */
+      const BOARD_SIZE = 8;
+      const TILE_TYPES = ["mic", "cue", "fader", "wave", "patch", "monitor"];
+      const TILE_NAMES = {
+        mic: "Mic Input",
+        cue: "Headphone Send",
+        fader: "Fader",
+        wave: "Waveform",
+        patch: "Patch Point",
+        monitor: "Monitor",
+      };
+      const DIFFICULTIES = {
+        chill: {
+          label: "Chill Mix",
+          moves: 1.3,
+          target: 0.82,
+          time: 1.25,
+          score: 1,
+        },
+        studio: {
+          label: "Studio Session",
+          moves: 1,
+          target: 1,
+          time: 1,
+          score: 1.15,
+        },
+        tight: {
+          label: "Tight Deadline",
+          moves: 0.86,
+          target: 1.14,
+          time: 0.84,
+          score: 1.4,
+        },
+      };
+      const LEVELS = [
+        {
+          id: 1,
+          name: "Line Check",
+          goal: "score",
+          target: 1800,
+          moves: 24,
+          stars: [1800, 2700, 3800],
+        },
+        {
+          id: 2,
+          name: "Patch the Inputs",
+          goal: "collect",
+          tile: "mic",
+          target: 18,
+          moves: 25,
+          stars: [2000, 3100, 4300],
+        },
+        {
+          id: 3,
+          name: "Cue Mix",
+          goal: "collect",
+          tile: "cue",
+          target: 22,
+          moves: 25,
+          stars: [2400, 3500, 4800],
+        },
+        {
+          id: 4,
+          name: "Gain Staging",
+          goal: "muted",
+          target: 10,
+          moves: 27,
+          muted: 10,
+          stars: [2800, 4000, 5400],
+        },
+        {
+          id: 5,
+          name: "Track Setup",
+          goal: "locks",
+          target: 8,
+          moves: 28,
+          locks: 8,
+          stars: [3200, 4600, 6100],
+        },
+        {
+          id: 6,
+          name: "Signal Flow",
+          goal: "collect",
+          tile: "patch",
+          target: 28,
+          moves: 26,
+          noise: 4,
+          stars: [3600, 5100, 6800],
+        },
+        {
+          id: 7,
+          name: "Overdub Pass",
+          goal: "cores",
+          target: 2,
+          moves: 30,
+          cores: 2,
+          stars: [4000, 5700, 7500],
+        },
+        {
+          id: 8,
+          name: "Mix Prep",
+          goal: "score",
+          target: 6500,
+          moves: 27,
+          muted: 8,
+          locks: 6,
+          stars: [6500, 8000, 9800],
+        },
+        {
+          id: 9,
+          name: "Master Bus",
+          goal: "timed",
+          target: 6200,
+          time: 95,
+          stars: [6200, 7800, 9600],
+        },
+        {
+          id: 10,
+          name: "Final Print",
+          goal: "score",
+          target: 9000,
+          moves: 32,
+          muted: 8,
+          locks: 6,
+          noise: 5,
+          cores: 2,
+          stars: [9000, 11000, 13500],
+        },
+      ];
+
+      /* ==========================================================================
+       Input Flip State / LocalStorage
+       ========================================================================== */
+      const inputFlipGame = {
+        state: "title",
+        difficulty: "studio",
+        levelIndex: 0,
+        board: [],
+        selected: null,
+        cursor: { r: 0, c: 0 },
+        locked: true,
+        moves: 0,
+        score: 0,
+        combo: 1,
+        progress: 0,
+        timeLeft: 0,
+        lastTick: 0,
+        frameId: 0,
+        pointer: null,
+        hints: true,
+        hintAt: 0,
+        hintPair: null,
+        audio: null,
+        muted: false,
+        bestScore: 0,
+        highestLevel: 0,
+        totalStars: 0,
+        levelBest: {},
+        levelStars: {},
+        stopped: false,
+      };
+      const $ = (id) => document.getElementById(id);
+      function readNumber(key, fallback = 0) {
+        try {
+          const n = Number(localStorage.getItem(key));
+          return Number.isFinite(n) && n >= 0 ? n : fallback;
+        } catch (e) {
+          return fallback;
+        }
+      }
+      function writeNumber(key, value) {
+        try {
+          localStorage.setItem(key, String(Math.max(0, Math.floor(value))));
+        } catch (e) {}
+      }
+      function loadProgress() {
+        inputFlipGame.bestScore = readNumber("studioArcadeInputFlipBestScore");
+        inputFlipGame.highestLevel = Math.max(
+          0,
+          Math.min(
+            LEVELS.length,
+            readNumber("studioArcadeInputFlipHighestLevel", 0),
+          ),
+        );
+        inputFlipGame.totalStars = readNumber(
+          "studioArcadeInputFlipTotalStars",
+        );
+        inputFlipGame.muted = readNumber("studioArcadeMuted") === 1;
+        try {
+          const p = JSON.parse(
+            localStorage.getItem("studioArcadeInputFlipProgress") || "{}",
+          );
+          if (p && typeof p === "object") {
+            inputFlipGame.levelBest = p.levelBest || {};
+            inputFlipGame.levelStars = p.levelStars || {};
+          }
+        } catch (e) {}
+      }
+      function saveProgress() {
+        writeNumber("studioArcadeInputFlipBestScore", inputFlipGame.bestScore);
+        writeNumber(
+          "studioArcadeInputFlipHighestLevel",
+          inputFlipGame.highestLevel,
+        );
+        writeNumber(
+          "studioArcadeInputFlipTotalStars",
+          inputFlipGame.totalStars,
+        );
+        try {
+          localStorage.setItem(
+            "studioArcadeInputFlipProgress",
+            JSON.stringify({
+              levelBest: inputFlipGame.levelBest,
+              levelStars: inputFlipGame.levelStars,
+            }),
+          );
+        } catch (e) {}
+      }
+
+      /* ==========================================================================
+       Input Flip Board Generation / Match Detection
+       ========================================================================== */
+      function tile(type) {
+        return {
+          type:
+            type || TILE_TYPES[Math.floor(Math.random() * TILE_TYPES.length)],
+          special: null,
+          modifier: null,
+          hits: 0,
+        };
+      }
+      function inBounds(r, c) {
+        return r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE;
+      }
+      function adjacent(a, b) {
+        return Math.abs(a.r - b.r) + Math.abs(a.c - b.c) === 1;
+      }
+      function swapCells(board, a, b) {
+        const t = board[a.r][a.c];
+        board[a.r][a.c] = board[b.r][b.c];
+        board[b.r][b.c] = t;
+      }
+      function findMatches(board) {
+        const groups = [];
+        for (let r = 0; r < BOARD_SIZE; r++) {
+          let c = 0;
+          while (c < BOARD_SIZE) {
+            const start = c,
+              t = board[r][c];
+            while (
+              c < BOARD_SIZE &&
+              board[r][c] &&
+              t &&
+              t.modifier !== "noise" &&
+              board[r][c].modifier !== "noise" &&
+              board[r][c].type === t.type
+            )
+              c++;
+            if (t && c - start >= 3)
+              groups.push({
+                orientation: "row",
+                cells: Array.from({ length: c - start }, (_, i) => ({
+                  r,
+                  c: start + i,
+                })),
+              });
+            if (c === start) c++;
+          }
+        }
+        for (let c = 0; c < BOARD_SIZE; c++) {
+          let r = 0;
+          while (r < BOARD_SIZE) {
+            const start = r,
+              t = board[r][c];
+            while (
+              r < BOARD_SIZE &&
+              board[r][c] &&
+              t &&
+              t.modifier !== "noise" &&
+              board[r][c].modifier !== "noise" &&
+              board[r][c].type === t.type
+            )
+              r++;
+            if (t && r - start >= 3)
+              groups.push({
+                orientation: "column",
+                cells: Array.from({ length: r - start }, (_, i) => ({
+                  r: start + i,
+                  c,
+                })),
+              });
+            if (r === start) r++;
+          }
+        }
+        return groups;
+      }
+      function matchSet(groups) {
+        const map = new Map();
+        groups.forEach((g) =>
+          g.cells.forEach((p) => map.set(p.r + "," + p.c, p)),
+        );
+        return map;
+      }
+      function hasValidMove(board) {
+        return !!findValidMove(board);
+      }
+      function findValidMove(board) {
+        for (let r = 0; r < BOARD_SIZE; r++)
+          for (let c = 0; c < BOARD_SIZE; c++)
+            for (const d of [
+              [0, 1],
+              [1, 0],
+            ]) {
+              const b = { r: r + d[0], c: c + d[1] };
+              if (!inBounds(b.r, b.c)) continue;
+              const a = { r, c };
+              const first = board[a.r][a.c],
+                second = board[b.r][b.c];
+              if (
+                first.modifier === "noise" ||
+                first.modifier === "lock" ||
+                second.modifier === "noise" ||
+                second.modifier === "lock"
+              )
+                continue;
+              swapCells(board, a, b);
+              const valid = findMatches(board).length > 0;
+              swapCells(board, a, b);
+              if (valid) return [a, b];
+            }
+        return null;
+      }
+      function generateBoard() {
+        for (let attempt = 0; attempt < 120; attempt++) {
+          const board = [];
+          for (let r = 0; r < BOARD_SIZE; r++) {
+            board[r] = [];
+            for (let c = 0; c < BOARD_SIZE; c++) {
+              let choices = TILE_TYPES.filter(
+                (type) =>
+                  !(
+                    c >= 2 &&
+                    board[r][c - 1].type === type &&
+                    board[r][c - 2].type === type
+                  ) &&
+                  !(
+                    r >= 2 &&
+                    board[r - 1][c].type === type &&
+                    board[r - 2][c].type === type
+                  ),
+              );
+              board[r][c] = tile(
+                choices[Math.floor(Math.random() * choices.length)],
+              );
+            }
+          }
+          if (hasValidMove(board)) return board;
+        }
+        return generateKnownBoard();
+      }
+      function generateKnownBoard() {
+        const board = [];
+        for (let r = 0; r < BOARD_SIZE; r++) {
+          board[r] = [];
+          for (let c = 0; c < BOARD_SIZE; c++)
+            board[r][c] = tile(TILE_TYPES[(r * 2 + c) % TILE_TYPES.length]);
+        }
+        board[0][0] = tile("mic");
+        board[0][1] = tile("cue");
+        board[0][2] = tile("mic");
+        board[1][1] = tile("mic");
+        return board;
+      }
+
+      /* ==========================================================================
+       Input Flip Tile Rendering / Board Modifiers
+       ========================================================================== */
+      function iconClass(type) {
+        return "icon-" + type;
+      }
+      function renderBoard() {
+        const board = $("board");
+        board.innerHTML = "";
+        for (let r = 0; r < BOARD_SIZE; r++)
+          for (let c = 0; c < BOARD_SIZE; c++) {
+            const t = inputFlipGame.board[r][c],
+              el = document.createElement("button");
+            el.type = "button";
+            el.className =
+              "tile type-" +
+              t.type +
+              (t.special ? " special-" + t.special : "") +
+              (t.modifier ? " modifier-" + t.modifier : "");
+            el.dataset.row = r;
+            el.dataset.col = c;
+            el.setAttribute("role", "gridcell");
+            el.setAttribute(
+              "aria-label",
+              TILE_NAMES[t.type] +
+                (t.special ? ", " + t.special + " special" : "") +
+                (t.modifier ? ", " + t.modifier : ""),
+            );
+            if (
+              inputFlipGame.selected &&
+              inputFlipGame.selected.r === r &&
+              inputFlipGame.selected.c === c
+            )
+              el.classList.add("selected");
+            if (inputFlipGame.cursor.r === r && inputFlipGame.cursor.c === c)
+              el.classList.add("cursor");
+            if (
+              inputFlipGame.hintPair &&
+              inputFlipGame.hintPair.some((p) => p.r === r && p.c === c)
+            )
+              el.classList.add("hint");
+            el.innerHTML =
+              '<span class="tile-icon ' +
+              iconClass(t.type) +
+              '"></span><span class="tile-label">' +
+              TILE_NAMES[t.type].split(" ")[0] +
+              "</span>";
+            board.appendChild(el);
+          }
+      }
+      function applyModifiers(level) {
+        const cells = [];
+        for (let r = 0; r < BOARD_SIZE; r++)
+          for (let c = 0; c < BOARD_SIZE; c++) cells.push({ r, c });
+        shuffleArray(cells);
+        let i = 0;
+        for (let n = 0; n < (level.muted || 0); n++) {
+          let p = cells[i++];
+          inputFlipGame.board[p.r][p.c].modifier = "muted";
+          inputFlipGame.board[p.r][p.c].hits = 1;
+        }
+        for (let n = 0; n < (level.locks || 0); n++) {
+          let p = cells[i++];
+          inputFlipGame.board[p.r][p.c].modifier = "lock";
+          inputFlipGame.board[p.r][p.c].hits = 1;
+        }
+        for (let n = 0; n < (level.noise || 0); n++) {
+          let p = cells[i++];
+          inputFlipGame.board[p.r][p.c].modifier = "noise";
+        }
+        for (let n = 0; n < (level.cores || 0); n++) {
+          let placed = false;
+          for (let r = 0; r < 2 && !placed; r++) {
+            for (let c = 0; c < BOARD_SIZE && !placed; c++) {
+              if (!inputFlipGame.board[r][c].modifier) {
+                inputFlipGame.board[r][c].modifier = "core";
+                placed = true;
+              }
+            }
+          }
+        }
+      }
+      function buildLevelBoard(level) {
+        for (let attempt = 0; attempt < 400; attempt++) {
+          inputFlipGame.board = generateBoard();
+          applyModifiers(level);
+          if (
+            findMatches(inputFlipGame.board).length === 0 &&
+            hasValidMove(inputFlipGame.board)
+          )
+            return;
+        }
+        inputFlipGame.board = generateBoard();
+      }
+      function shuffleArray(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      /* ==========================================================================
+       Input Flip Swap Logic / Cascades / Special Tiles
+       ========================================================================== */
+      async function attemptSwap(a, b) {
+        const g = inputFlipGame;
+        if (g.locked || !adjacent(a, b) || !inBounds(b.r, b.c)) return;
+        const ta = g.board[a.r][a.c],
+          tb = g.board[b.r][b.c];
+        if (
+          ta.modifier === "noise" ||
+          tb.modifier === "noise" ||
+          ta.modifier === "lock" ||
+          tb.modifier === "lock"
+        ) {
+          invalidSwap(a, b);
+          return;
+        }
+        g.locked = true;
+        g.hintPair = null;
+        g.hintAt = performance.now() + 6500;
+        swapCells(g.board, a, b);
+        renderBoard();
+        sound("swap");
+        await delay(145);
+        if (ta.special && tb.special) {
+          g.moves--;
+          await activateCombination(a, b, ta, tb);
+          await resolveBoard(null);
+          return;
+        }
+        if (ta.special === "master" || tb.special === "master") {
+          g.moves--;
+          await activateMasterNormal(a, b, ta, tb);
+          await resolveBoard(null);
+          return;
+        }
+        let groups = findMatches(g.board);
+        if (!groups.length) {
+          swapCells(g.board, a, b);
+          renderBoard();
+          invalidSwap(a, b);
+          await delay(190);
+          g.locked = false;
+          return;
+        }
+        g.moves--;
+        await resolveBoard(b);
+      }
+      function invalidSwap(a, b) {
+        sound("invalid");
+        requestAnimationFrame(() => {
+          [a, b].forEach((p) => {
+            const el = tileElement(p);
+            if (el) el.classList.add("invalid");
+          });
+        });
+      }
+      function chooseSpecial(groups, preferred) {
+        let all = matchSet(groups),
+          special = null;
+        if (groups.some((g) => g.cells.length >= 5)) special = "master";
+        else {
+          const cross = [...all.values()].find(
+            (p) =>
+              groups.filter((g) =>
+                g.cells.some((x) => x.r === p.r && x.c === p.c),
+              ).length > 1,
+          );
+          if (cross) special = "burst";
+          else {
+            const four = groups.find((g) => g.cells.length >= 4);
+            if (four) special = four.orientation === "row" ? "row" : "column";
+          }
+        }
+        if (!special) return null;
+        let pos =
+          preferred && all.has(preferred.r + "," + preferred.c)
+            ? preferred
+            : [...all.values()][0];
+        return { pos, special, type: inputFlipGame.board[pos.r][pos.c].type };
+      }
+      async function resolveBoard(preferred) {
+        const g = inputFlipGame;
+        g.state = "resolving";
+        g.combo = 1;
+        let guard = 0;
+        while (guard++ < 30) {
+          let groups = findMatches(g.board);
+          if (!groups.length) break;
+          const special = chooseSpecial(groups, preferred),
+            cleared = expandSpecialEffects(matchSet(groups));
+          await animateClear(cleared);
+          applyClear(cleared, special);
+          g.score +=
+            cleared.size * 60 * g.combo * DIFFICULTIES[g.difficulty].score;
+          g.combo++;
+          updateHud();
+          sound(g.combo > 2 ? "cascade" : "match");
+          await delay(110);
+          applyGravity();
+          renderBoard();
+          await delay(150);
+          preferred = null;
+        }
+        if (findMatches(g.board).length) {
+          await repatchBoard();
+        }
+        g.combo = 1;
+        dropCores();
+        updateGoal();
+        if (goalComplete()) return completeLevel();
+        if (levelFailed()) return failLevel();
+        if (!hasValidMove(g.board)) await repatchBoard();
+        g.state = "active";
+        g.locked = false;
+        g.hintAt = performance.now() + 6500;
+        renderBoard();
+        updateHud();
+      }
+      function expandSpecialEffects(map) {
+        const queue = [...map.values()],
+          seen = new Set(map.keys());
+        while (queue.length) {
+          const p = queue.shift(),
+            t = inputFlipGame.board[p.r][p.c];
+          if (!t || !t.special) continue;
+          const add = [];
+          if (t.special === "row")
+            for (let c = 0; c < BOARD_SIZE; c++) add.push({ r: p.r, c });
+          if (t.special === "column")
+            for (let r = 0; r < BOARD_SIZE; r++) add.push({ r, c: p.c });
+          if (t.special === "burst")
+            for (let dr = -1; dr <= 1; dr++)
+              for (let dc = -1; dc <= 1; dc++)
+                if (inBounds(p.r + dr, p.c + dc))
+                  add.push({ r: p.r + dr, c: p.c + dc });
+          if (t.special === "master")
+            for (let r = 0; r < BOARD_SIZE; r++)
+              for (let c = 0; c < BOARD_SIZE; c++)
+                if (inputFlipGame.board[r][c].type === t.type)
+                  add.push({ r, c });
+          add.forEach((x) => {
+            const k = x.r + "," + x.c;
+            if (!seen.has(k)) {
+              seen.add(k);
+              queue.push(x);
+            }
+          });
+        }
+        return new Map(
+          [...seen].map((k) => {
+            const [r, c] = k.split(",").map(Number);
+            return [k, { r, c }];
+          }),
+        );
+      }
+      async function activateCombination(a, b, ta, tb) {
+        const map = new Map(),
+          add = (r, c) => inBounds(r, c) && map.set(r + "," + c, { r, c });
+        const taPosition = b,
+          tbPosition = a;
+        if (ta.special === "master" || tb.special === "master") {
+          const target = ta.special === "master" ? tb : ta;
+          for (let r = 0; r < BOARD_SIZE; r++)
+            for (let c = 0; c < BOARD_SIZE; c++)
+              if (gTile(r, c).type === target.type || gTile(r, c).special)
+                add(r, c);
+        } else if (ta.special === "burst" || tb.special === "burst") {
+          const burstPosition = ta.special === "burst" ? taPosition : tbPosition;
+          const lineSpecial = ta.special === "burst" ? tb.special : ta.special;
+          if (lineSpecial === "row") {
+            for (let r = burstPosition.r - 1; r <= burstPosition.r + 1; r++)
+              for (let c = 0; c < BOARD_SIZE; c++) add(r, c);
+          } else if (lineSpecial === "column") {
+            for (let c = burstPosition.c - 1; c <= burstPosition.c + 1; c++)
+              for (let r = 0; r < BOARD_SIZE; r++) add(r, c);
+          } else {
+            for (let r = burstPosition.r - 2; r <= burstPosition.r + 2; r++)
+              for (let c = burstPosition.c - 2; c <= burstPosition.c + 2; c++)
+                add(r, c);
+          }
+        } else if (ta.special === "row" && tb.special === "row") {
+          const centerRow = taPosition.r;
+          for (let r = centerRow - 1; r <= centerRow + 1; r++)
+            for (let c = 0; c < BOARD_SIZE; c++) add(r, c);
+        } else if (ta.special === "column" && tb.special === "column") {
+          const centerColumn = taPosition.c;
+          for (let c = centerColumn - 1; c <= centerColumn + 1; c++)
+            for (let r = 0; r < BOARD_SIZE; r++) add(r, c);
+        } else {
+          const rowPosition = ta.special === "row" ? taPosition : tbPosition;
+          const columnPosition =
+            ta.special === "column" ? taPosition : tbPosition;
+          for (let c = 0; c < BOARD_SIZE; c++) add(rowPosition.r, c);
+          for (let r = 0; r < BOARD_SIZE; r++) add(r, columnPosition.c);
+        }
+        await animateClear(map);
+        applyClear(map, null);
+        inputFlipGame.score += map.size * 90;
+        applyGravity();
+        renderBoard();
+        sound("special");
+      }
+      async function activateMasterNormal(a, b, ta, tb) {
+        const target = ta.special === "master" ? tb.type : ta.type,
+          map = new Map();
+        for (let r = 0; r < BOARD_SIZE; r++)
+          for (let c = 0; c < BOARD_SIZE; c++)
+            if (gTile(r, c).type === target || gTile(r, c).special === "master")
+              map.set(r + "," + c, { r, c });
+        await animateClear(map);
+        applyClear(map, null);
+        inputFlipGame.score += map.size * 90;
+        applyGravity();
+        renderBoard();
+        sound("special");
+      }
+      function gTile(r, c) {
+        return inputFlipGame.board[r][c];
+      }
+      async function animateClear(map) {
+        map.forEach((p) => {
+          const el = tileElement(p);
+          if (el) el.classList.add("clearing");
+        });
+        await delay(150);
+      }
+      function applyClear(map, special) {
+        const adjacentLocks = new Map();
+        map.forEach((p) => {
+          for (const [dr, dc] of [
+            [-1, 0],
+            [1, 0],
+            [0, -1],
+            [0, 1],
+          ]) {
+            const r = p.r + dr,
+              c = p.c + dc;
+            if (
+              inBounds(r, c) &&
+              gTile(r, c).modifier === "lock" &&
+              !map.has(r + "," + c)
+            ) {
+              adjacentLocks.set(r + "," + c, { r, c });
+            }
+          }
+        });
+        adjacentLocks.forEach((p) => {
+          const lockedTile = gTile(p.r, p.c);
+          lockedTile.hits--;
+          if (lockedTile.hits <= 0) {
+            lockedTile.modifier = null;
+            inputFlipGame.progress++;
+          }
+        });
+        map.forEach((p) => {
+          const t = gTile(p.r, p.c);
+          if (t.modifier === "muted" || t.modifier === "lock") {
+            t.hits--;
+            if (t.hits <= 0) {
+              t.modifier = null;
+              inputFlipGame.progress++;
+            }
+          } else if (t.modifier === "noise") {
+            t.modifier = null;
+            inputFlipGame.progress++;
+          }
+          if (
+            currentLevel().goal === "collect" &&
+            t.type === currentLevel().tile
+          )
+            inputFlipGame.progress++;
+          inputFlipGame.board[p.r][p.c] = null;
+        });
+        if (special) {
+          inputFlipGame.board[special.pos.r][special.pos.c] = tile(
+            special.type,
+          );
+          inputFlipGame.board[special.pos.r][special.pos.c].special =
+            special.special;
+          sound("create");
+        }
+      }
+      function applyGravity() {
+        for (let c = 0; c < BOARD_SIZE; c++) {
+          let segmentBottom = BOARD_SIZE - 1;
+          for (let barrier = BOARD_SIZE - 1; barrier >= -1; barrier--) {
+            const isBarrier =
+              barrier === -1 ||
+              inputFlipGame.board[barrier][c]?.modifier === "noise";
+            if (!isBarrier) continue;
+            const segmentTop = barrier + 1;
+            const kept = [];
+            for (let r = segmentBottom; r >= segmentTop; r--) {
+              if (inputFlipGame.board[r][c])
+                kept.push(inputFlipGame.board[r][c]);
+            }
+            for (let r = segmentBottom; r >= segmentTop; r--) {
+              inputFlipGame.board[r][c] =
+                kept[segmentBottom - r] || tile();
+            }
+            segmentBottom = barrier - 1;
+          }
+        }
+      }
+      function dropCores() {
+        for (let c = 0; c < BOARD_SIZE; c++) {
+          if (gTile(BOARD_SIZE - 1, c).modifier === "core") {
+            gTile(BOARD_SIZE - 1, c).modifier = null;
+            inputFlipGame.progress++;
+            inputFlipGame.board[BOARD_SIZE - 1][c] = tile();
+          }
+        }
+      }
+      async function repatchBoard() {
+        inputFlipGame.state = "shuffle";
+        showMessage("Repatching");
+        sound("shuffle");
+        await delay(400);
+        const modifiers = [];
+        for (let r = 0; r < BOARD_SIZE; r++)
+          for (let c = 0; c < BOARD_SIZE; c++)
+            if (gTile(r, c).modifier)
+              modifiers.push({
+                r,
+                c,
+                modifier: gTile(r, c).modifier,
+                hits: gTile(r, c).hits,
+              });
+        for (let attempt = 0; attempt < 400; attempt++) {
+          inputFlipGame.board = generateBoard();
+          modifiers.forEach((m) =>
+            Object.assign(gTile(m.r, m.c), {
+              modifier: m.modifier,
+              hits: m.hits,
+            }),
+          );
+          if (
+            findMatches(inputFlipGame.board).length === 0 &&
+            hasValidMove(inputFlipGame.board)
+          )
+            break;
+        }
+        renderBoard();
+        await delay(250);
+        $("boardMessage").classList.remove("show");
+      }
+
+      /* ==========================================================================
+       Input Flip Goals / Scoring / Hint System
+       ========================================================================== */
+      function currentLevel() {
+        return LEVELS[inputFlipGame.levelIndex];
+      }
+      function adjustedTarget() {
+        const level = currentLevel();
+        return Math.ceil(
+          level.target *
+            (["score", "collect", "timed"].includes(level.goal)
+              ? DIFFICULTIES[inputFlipGame.difficulty].target
+              : 1),
+        );
+      }
+      function goalComplete() {
+        const l = currentLevel();
+        return l.goal === "score" || l.goal === "timed"
+          ? inputFlipGame.score >= adjustedTarget()
+          : inputFlipGame.progress >= adjustedTarget();
+      }
+      function levelFailed() {
+        const l = currentLevel();
+        return l.goal === "timed"
+          ? inputFlipGame.timeLeft <= 0
+          : inputFlipGame.moves <= 0;
+      }
+      function updateGoal() {
+        const l = currentLevel();
+        if (l.goal === "score" || l.goal === "timed")
+          inputFlipGame.progress = inputFlipGame.score;
+      }
+      function starsEarned() {
+        const s = currentLevel().stars;
+        return inputFlipGame.score >= s[2]
+          ? 3
+          : inputFlipGame.score >= s[1]
+            ? 2
+            : inputFlipGame.score >= s[0]
+              ? 1
+              : 0;
+      }
+      function updateHud() {
+        const g = inputFlipGame,
+          l = currentLevel();
+        $("scoreValue").textContent = Math.floor(g.score);
+        $("bestValue").textContent = g.bestScore;
+        $("movesValue").textContent =
+          l.goal === "timed" ? Math.ceil(g.timeLeft) + "s" : g.moves;
+        $("comboValue").textContent = "x" + g.combo;
+        $("levelValue").textContent = l.id;
+        $("levelName").textContent = l.name;
+        $("goalText").textContent = goalDescription(l);
+        $("goalList").innerHTML =
+          '<div class="goal-chip">Progress: ' +
+          Math.min(adjustedTarget(), Math.floor(g.progress)) +
+          " / " +
+          adjustedTarget() +
+          "</div>";
+        const pct = Math.min(100, (g.score / l.stars[2]) * 100);
+        $("starMeter").style.width = pct + "%";
+        $("starText").textContent = [1, 2, 3]
+          .map((n) => (starsEarned() >= n ? "★" : "☆"))
+          .join(" ");
+        $("timerText").textContent =
+          l.goal === "timed"
+            ? "Session clock: " + Math.ceil(g.timeLeft) + "s"
+            : "";
+      }
+      function goalDescription(l) {
+        if (l.goal === "score") return "Reach the score target.";
+        if (l.goal === "collect")
+          return "Clear " + TILE_NAMES[l.tile] + " tiles.";
+        if (l.goal === "muted") return "Remove every muted layer.";
+        if (l.goal === "locks") return "Clear the patch locks.";
+        if (l.goal === "cores") return "Drop Signal Cores to the bottom.";
+        return "Reach the target before time expires.";
+      }
+      function maybeHint(now) {
+        const g = inputFlipGame;
+        if (!g.hints || g.locked || g.state !== "active" || now < g.hintAt)
+          return;
+        g.hintPair = findValidMove(g.board);
+        g.hintAt = now + 7000;
+        renderBoard();
+      }
+      function clearHint() {
+        inputFlipGame.hintPair = null;
+        inputFlipGame.hintAt = performance.now() + 6500;
+      }
+
+      /* ==========================================================================
+       Input Flip Audio
+       ========================================================================== */
+      function audio() {
+        if (inputFlipGame.muted) return null;
+        if (!inputFlipGame.audio) {
+          const A = window.AudioContext || window.webkitAudioContext;
+          if (A) inputFlipGame.audio = new A();
+        }
+        if (inputFlipGame.audio && inputFlipGame.audio.state === "suspended")
+          inputFlipGame.audio.resume();
+        return inputFlipGame.audio;
+      }
+      function sound(type) {
+        const a = audio();
+        if (!a) return;
+        const map = {
+            select: [300, 0.04],
+            swap: [430, 0.07],
+            invalid: [110, 0.12],
+            match: [620, 0.12],
+            cascade: [780, 0.15],
+            create: [520, 0.22],
+            special: [260, 0.3],
+            shuffle: [180, 0.28],
+            star: [880, 0.3],
+            complete: [660, 0.55],
+            failed: [90, 0.5],
+          },
+          m = map[type] || map.select,
+          now = a.currentTime,
+          o = a.createOscillator(),
+          g = a.createGain();
+        o.type = type === "failed" ? "sawtooth" : "sine";
+        o.frequency.setValueAtTime(m[0], now);
+        o.frequency.exponentialRampToValueAtTime(
+          Math.max(55, m[0] * 1.35),
+          now + m[1],
+        );
+        g.gain.setValueAtTime(0.05, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + m[1]);
+        o.connect(g).connect(a.destination);
+        o.start(now);
+        o.stop(now + m[1]);
+      }
+      function updateMute() {
+        $("muteButton").textContent = inputFlipGame.muted
+          ? "Sound: Off"
+          : "Sound: On";
+        $("muteButton").setAttribute(
+          "aria-pressed",
+          String(inputFlipGame.muted),
+        );
+      }
+
+      /* ==========================================================================
+       Input Flip Lifecycle
+       ========================================================================== */
+      function startLevel(index = inputFlipGame.levelIndex) {
+        const g = inputFlipGame,
+          l = LEVELS[index],
+          d = DIFFICULTIES[g.difficulty];
+        g.levelIndex = index;
+        g.score = 0;
+        g.progress = 0;
+        g.combo = 1;
+        g.moves = Math.max(1, Math.ceil((l.moves || 0) * d.moves));
+        g.timeLeft = (l.time || 0) * d.time;
+        g.selected = null;
+        g.cursor = { r: 0, c: 0 };
+        g.locked = false;
+        g.state = "active";
+        g.stopped = false;
+        g.hintAt = performance.now() + 6500;
+        g.lastTick = performance.now();
+        buildLevelBoard(l);
+        renderBoard();
+        updateHud();
+        hideOverlay();
+        ensureLoop();
+      }
+      function pause() {
+        const g = inputFlipGame;
+        if (g.state !== "active") return;
+        g.state = "paused";
+        g.locked = true;
+        g.pointer = null;
+        showOverlay(
+          "Session Paused",
+          '<p>The patch is held.</p><div class="overlay-actions"><button class="small-button" onclick="inputFlipGame.resume()">Resume</button></div>',
+        );
+      }
+      function resume() {
+        if (inputFlipGame.state !== "paused") return;
+        inputFlipGame.state = "active";
+        inputFlipGame.locked = false;
+        inputFlipGame.lastTick = performance.now();
+        hideOverlay();
+        ensureLoop();
+      }
+      function resetLevel() {
+        startLevel(inputFlipGame.levelIndex);
+      }
+      function completeLevel() {
+        const g = inputFlipGame,
+          l = currentLevel(),
+          stars = starsEarned(),
+          oldStars = g.levelStars[l.id] || 0;
+        g.state = "complete";
+        g.locked = true;
+        g.score += Math.max(0, g.moves) * 50;
+        g.bestScore = Math.max(g.bestScore, Math.floor(g.score));
+        g.levelBest[l.id] = Math.max(
+          g.levelBest[l.id] || 0,
+          Math.floor(g.score),
+        );
+        g.levelStars[l.id] = Math.max(oldStars, stars);
+        g.totalStars += Math.max(0, stars - oldStars);
+        g.highestLevel = Math.max(
+          g.highestLevel,
+          l.id,
+        );
+        saveProgress();
+        sound("complete");
+        const next =
+          l.id < LEVELS.length
+            ? '<button class="small-button" onclick="inputFlipGame.startLevel(' +
+              l.id +
+              ')">Next Level</button>'
+            : "";
+        showOverlay(
+          l.id === LEVELS.length ? "Campaign Complete" : "Mix Printed",
+          '<p class="stars">' +
+            [1, 2, 3].map((n) => (stars >= n ? "★" : "☆")).join(" ") +
+            "</p><p>Score " +
+            Math.floor(g.score) +
+            " · Best " +
+            g.levelBest[l.id] +
+            '</p><div class="overlay-actions">' +
+            next +
+            '<button class="small-button" onclick="inputFlipGame.resetLevel()">Replay</button><a class="button-link" href="index.html">Back to Game Library</a></div>',
+        );
+      }
+      function failLevel() {
+        inputFlipGame.state = "failed";
+        inputFlipGame.locked = true;
+        sound("failed");
+        showOverlay(
+          "Session Dropped",
+          '<p>The goal was not reached in time. Your progress is ready for another pass.</p><div class="overlay-actions"><button class="small-button" onclick="inputFlipGame.resetLevel()">Retry</button><a class="button-link" href="index.html">Back to Game Library</a></div>',
+        );
+      }
+      function showTitle() {
+        let difficulties = Object.keys(DIFFICULTIES)
+          .map(
+            (k) =>
+              '<button class="difficulty-button" data-difficulty="' +
+              k +
+              '" aria-pressed="' +
+              (k === inputFlipGame.difficulty) +
+              '">' +
+              DIFFICULTIES[k].label +
+              "</button>",
+          )
+          .join("");
+        let levels = LEVELS.map(
+          (l, i) =>
+            '<button class="level-button" data-level="' +
+            i +
+            '" ' +
+            (l.id > inputFlipGame.highestLevel + 1 ? "disabled" : "") +
+            ' aria-pressed="' +
+            (i === inputFlipGame.levelIndex) +
+            '">' +
+            l.id +
+            ". " +
+            l.name +
+            "</button>",
+        ).join("");
+        showOverlay(
+          "Input Flip",
+          '<p>Route the signal. Build the mix.</p><div class="difficulty-row">' +
+            difficulties +
+            '</div><div class="level-grid">' +
+            levels +
+            '</div><div class="overlay-actions"><button id="startLevelButton" class="small-button">Start Session</button><a class="button-link" href="index.html" onclick="inputFlipGame.stop()">Back to Game Library</a></div>',
+        );
+        document.querySelectorAll("[data-difficulty]").forEach(
+          (b) =>
+            (b.onclick = () => {
+              inputFlipGame.difficulty = b.dataset.difficulty;
+              showTitle();
+              sound("select");
+            }),
+        );
+        document.querySelectorAll("[data-level]").forEach(
+          (b) =>
+            (b.onclick = () => {
+              inputFlipGame.levelIndex = Number(b.dataset.level);
+              showTitle();
+              sound("select");
+            }),
+        );
+        $("startLevelButton").onclick = () => {
+          audio();
+          startLevel();
+        };
+      }
+      function showOverlay(title, body) {
+        $("overlayTitle").textContent = title;
+        $("overlayBody").innerHTML = body;
+        $("overlay").classList.remove("hidden");
+      }
+      function hideOverlay() {
+        $("overlay").classList.add("hidden");
+      }
+      function showMessage(text) {
+        const e = $("boardMessage");
+        e.textContent = text;
+        e.classList.add("show");
+      }
+      function delay(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+      function loop(now) {
+        inputFlipGame.frameId = 0;
+        const g = inputFlipGame;
+        if (g.state === "active" || g.state === "resolving") {
+          const dt = Math.min(0.1, (now - g.lastTick) / 1000);
+          g.lastTick = now;
+          if (currentLevel().goal === "timed") {
+            g.timeLeft = Math.max(0, g.timeLeft - dt);
+            if (
+              g.state === "active" &&
+              g.timeLeft <= 0 &&
+              !goalComplete()
+            )
+              failLevel();
+          }
+          if (g.state === "active") maybeHint(now);
+          updateHud();
+        }
+        if (!g.stopped && !["complete", "failed", "title"].includes(g.state))
+          ensureLoop();
+      }
+      function ensureLoop() {
+        if (!inputFlipGame.frameId)
+          inputFlipGame.frameId = requestAnimationFrame(loop);
+      }
+      function resize() {
+        if (inputFlipGame.state === "active") renderBoard();
+      }
+      function stop() {
+        inputFlipGame.stopped = true;
+        inputFlipGame.pointer = null;
+        saveProgress();
+        if (inputFlipGame.frameId) cancelAnimationFrame(inputFlipGame.frameId);
+        inputFlipGame.frameId = 0;
+        if (inputFlipGame.audio) inputFlipGame.audio.suspend();
+      }
+
+      /* ==========================================================================
+       Input Flip Input / Initialization
+       ========================================================================== */
+      function tileElement(p) {
+        return document.querySelector(
+          '.tile[data-row="' + p.r + '"][data-col="' + p.c + '"]',
+        );
+      }
+      function pointFromEventTarget(target) {
+        const el = target.closest(".tile");
+        return el
+          ? { r: Number(el.dataset.row), c: Number(el.dataset.col) }
+          : null;
+      }
+      function chooseTile(p) {
+        const g = inputFlipGame;
+        if (g.locked) return;
+        clearHint();
+        if (!g.selected) {
+          g.selected = p;
+          sound("select");
+          renderBoard();
+          return;
+        }
+        if (g.selected.r === p.r && g.selected.c === p.c) {
+          g.selected = null;
+          renderBoard();
+          return;
+        }
+        if (adjacent(g.selected, p)) {
+          const a = g.selected;
+          g.selected = null;
+          attemptSwap(a, p);
+        } else {
+          g.selected = p;
+          sound("select");
+          renderBoard();
+        }
+      }
+      $("boardShell").addEventListener("pointerdown", (e) => {
+        const p = pointFromEventTarget(e.target);
+        if (!p || inputFlipGame.locked || inputFlipGame.pointer) return;
+        e.preventDefault();
+        inputFlipGame.pointer = {
+          id: e.pointerId,
+          start: p,
+          x: e.clientX,
+          y: e.clientY,
+          used: false,
+        };
+        $("boardShell").setPointerCapture(e.pointerId);
+      });
+      $("boardShell").addEventListener("pointerup", (e) => {
+        const x = inputFlipGame.pointer;
+        if (!x || x.id !== e.pointerId || x.used) return;
+        inputFlipGame.pointer = null;
+        const dx = e.clientX - x.x,
+          dy = e.clientY - x.y;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) {
+          chooseTile(x.start);
+          return;
+        }
+        const d =
+          Math.abs(dx) > Math.abs(dy)
+            ? { r: 0, c: dx > 0 ? 1 : -1 }
+            : { r: dy > 0 ? 1 : -1, c: 0 };
+        const b = { r: x.start.r + d.r, c: x.start.c + d.c };
+        if (inBounds(b.r, b.c)) attemptSwap(x.start, b);
+      });
+      $("boardShell").addEventListener(
+        "pointercancel",
+        () => (inputFlipGame.pointer = null),
+      );
+      document.addEventListener("keydown", (e) => {
+        const g = inputFlipGame;
+        if (e.code === "KeyP" || e.code === "Escape") {
+          e.preventDefault();
+          g.state === "paused" ? resume() : pause();
+          return;
+        }
+        if (g.state === "failed" && e.code === "KeyR") return resetLevel();
+        if (g.state !== "active" || g.locked) return;
+        const dirs = {
+          ArrowLeft: [0, -1],
+          ArrowRight: [0, 1],
+          ArrowUp: [-1, 0],
+          ArrowDown: [1, 0],
+        };
+        if (dirs[e.code]) {
+          e.preventDefault();
+          g.cursor.r = Math.max(
+            0,
+            Math.min(BOARD_SIZE - 1, g.cursor.r + dirs[e.code][0]),
+          );
+          g.cursor.c = Math.max(
+            0,
+            Math.min(BOARD_SIZE - 1, g.cursor.c + dirs[e.code][1]),
+          );
+          renderBoard();
+        }
+        if (e.code === "Enter" || e.code === "Space") {
+          e.preventDefault();
+          chooseTile({ ...g.cursor });
+        }
+      });
+      $("pauseButton").onclick = () =>
+        inputFlipGame.state === "paused" ? resume() : pause();
+      $("restartButton").onclick = resetLevel;
+      $("hintButton").onclick = () => {
+        inputFlipGame.hints = !inputFlipGame.hints;
+        inputFlipGame.hintPair = null;
+        $("hintButton").textContent =
+          "Hints: " + (inputFlipGame.hints ? "On" : "Off");
+        $("hintStatus").textContent = $("hintButton").textContent;
+        renderBoard();
+      };
+      $("muteButton").onclick = () => {
+        inputFlipGame.muted = !inputFlipGame.muted;
+        writeNumber("studioArcadeMuted", inputFlipGame.muted ? 1 : 0);
+        updateMute();
+      };
+      $("backLink").addEventListener("click", stop);
+      window.addEventListener("resize", resize);
+      window.addEventListener("orientationchange", () => {
+        if (inputFlipGame.state === "active") pause();
+      });
+      window.addEventListener("blur", () => {
+        inputFlipGame.pointer = null;
+        if (inputFlipGame.state === "active") pause();
+      });
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden && inputFlipGame.state === "active") pause();
+      });
+      window.addEventListener("beforeunload", stop);
+      inputFlipGame.init = showTitle;
+      inputFlipGame.startLevel = startLevel;
+      inputFlipGame.pause = pause;
+      inputFlipGame.resume = resume;
+      inputFlipGame.resetLevel = resetLevel;
+      inputFlipGame.resize = resize;
+      inputFlipGame.saveProgress = saveProgress;
+      inputFlipGame.stop = stop;
+      inputFlipGame.destroy = stop;
+      loadProgress();
+      inputFlipGame.board = generateBoard();
+      renderBoard();
+      updateHud();
+      updateMute();
+      showTitle();
+    </script>
+  </body>
+</html>
