@@ -790,6 +790,13 @@
           cartridgeArt: "giga",
           href: "giga-hertz.html",
         },
+        {
+          id: "signal-run",
+          title: "Signal Run",
+          subtitle: "Keep the session alive.",
+          cartridgeArt: "signal-run",
+          href: "signal-run.html",
+        },
       ];
 
       /* ==========================================================================
@@ -947,6 +954,23 @@
           );
         }
 
+        if (type === "signal-run") {
+          return (
+            "" +
+            '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Runner carrying a glowing signal through a studio hallway">' +
+            "<defs>" +
+            '<filter id="signalRunGlow"><feGaussianBlur stdDeviation="2.4" result="blur"><\/feGaussianBlur><feMerge><feMergeNode in="blur"><\/feMergeNode><feMergeNode in="SourceGraphic"><\/feMergeNode><\/feMerge><\/filter>' +
+            "</defs>" +
+            '<path d="M18 102 L49 36 M102 102 L71 36 M42 102 L55 36 M78 102 L65 36" fill="none" stroke="#252533" stroke-width="3"><\/path>' +
+            '<path d="M18 102 H102 M25 88 H95 M32 73 H88 M39 58 H81 M46 43 H74" fill="none" stroke="#5b9cf6" stroke-width="2" opacity=".6"><\/path>' +
+            '<path d="M20 52 C34 36 43 66 56 49 S76 34 100 48" fill="none" stroke="#c8a86b" stroke-width="4" stroke-linecap="round" filter="url(#signalRunGlow)"><\/path>' +
+            '<circle cx="61" cy="54" r="8" fill="#e6e2d9"><\/circle>' +
+            '<path d="M60 63 L55 80 L43 92 M57 79 L72 93 M59 67 L76 73 M58 67 L47 75" fill="none" stroke="#e6e2d9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><\/path>' +
+            '<rect x="65" y="61" width="13" height="16" rx="3" fill="#5b9cf6" stroke="#c8a86b" stroke-width="2" filter="url(#signalRunGlow)"><\/rect>' +
+            "</svg>"
+          );
+        }
+
         return (
           "" +
           '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Empty cartridge slot">' +
@@ -982,6 +1006,16 @@
         if (gameId === "giga-hertz") {
           return (
             "Best " + readNumberFromStorage("studioArcadeGigaHertzBestScore", 0)
+          );
+        }
+
+        if (gameId === "signal-run") {
+          return (
+            "1P · Best " +
+            Math.floor(
+              readNumberFromStorage("studioArcadeSignalRunBestDistance", 0),
+            ) +
+            "m"
           );
         }
 
