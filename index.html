@@ -804,6 +804,13 @@
           cartridgeArt: "input-flip",
           href: "input-flip.html",
         },
+        {
+          id: "flammy-dude",
+          title: "Flammy Dude",
+          subtitle: "Stay in the signal path.",
+          cartridgeArt: "flammy-dude",
+          href: "flammy-dude.html",
+        },
       ];
 
       /* ==========================================================================
@@ -996,6 +1003,27 @@
           );
         }
 
+        if (type === "flammy-dude") {
+          return (
+            "" +
+            '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Floating microphone mascot passing through glowing studio meter gates">' +
+            "<defs>" +
+            '<filter id="flammyGlow"><feGaussianBlur stdDeviation="2.3" result="blur"><\/feGaussianBlur><feMerge><feMergeNode in="blur"><\/feMergeNode><feMergeNode in="SourceGraphic"><\/feMergeNode><\/feMerge><\/filter>' +
+            "</defs>" +
+            '<rect x="16" y="15" width="20" height="38" rx="4" fill="#1b1b26" stroke="#c8a86b" stroke-width="3"><\/rect>' +
+            '<rect x="16" y="78" width="20" height="27" rx="4" fill="#1b1b26" stroke="#c8a86b" stroke-width="3"><\/rect>' +
+            '<rect x="84" y="15" width="20" height="24" rx="4" fill="#1b1b26" stroke="#5b9cf6" stroke-width="3"><\/rect>' +
+            '<rect x="84" y="66" width="20" height="39" rx="4" fill="#1b1b26" stroke="#5b9cf6" stroke-width="3"><\/rect>' +
+            '<path d="M21 24 H31 M21 32 H31 M89 76 H99 M89 84 H99 M89 92 H99" stroke="#7ee3b2" stroke-width="2"><\/path>' +
+            '<path d="M36 64 C48 48 66 78 84 53" fill="none" stroke="#5b9cf6" stroke-width="4" stroke-linecap="round" filter="url(#flammyGlow)"><\/path>' +
+            '<rect x="48" y="43" width="25" height="34" rx="11" fill="#13131b" stroke="#e6e2d9" stroke-width="4" filter="url(#flammyGlow)"><\/rect>' +
+            '<path d="M46 50 Q60 33 75 50" fill="none" stroke="#c8a86b" stroke-width="4"><\/path>' +
+            '<circle cx="56" cy="56" r="2.5" fill="#5b9cf6"><\/circle><circle cx="66" cy="56" r="2.5" fill="#5b9cf6"><\/circle>' +
+            '<path d="M54 67 Q61 72 68 67" fill="none" stroke="#c8a86b" stroke-width="2"><\/path>' +
+            "</svg>"
+          );
+        }
+
         return (
           "" +
           '<svg class="patch-icon" viewBox="0 0 120 120" role="img" aria-label="Empty cartridge slot">' +
@@ -1049,6 +1077,15 @@
             "1P · Best " +
             Math.floor(
               readNumberFromStorage("studioArcadeInputFlipBestScore", 0),
+            )
+          );
+        }
+
+        if (gameId === "flammy-dude") {
+          return (
+            "1P · Best " +
+            Math.floor(
+              readNumberFromStorage("studioArcadeFlammyDudeBestScore", 0),
             )
           );
         }

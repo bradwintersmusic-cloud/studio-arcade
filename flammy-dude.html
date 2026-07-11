@@ -1,0 +1,1625 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flammy Dude | Studio Arcade</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <style>
+      /* ==========================================================================
+       Shared Studio Arcade Theme
+       ========================================================================== */
+      :root {
+        --background: #0b0b0f;
+        --surface: #13131b;
+        --surface2: #1b1b26;
+        --border: #252533;
+        --gold: #c8a86b;
+        --accent: var(--gold);
+        --text: #e6e2d9;
+        --muted: #8f8e9d;
+        --blue: #5b9cf6;
+        --danger: #f66f8d;
+        --success: #7ee3b2;
+        --shadow: rgba(0, 0, 0, 0.55);
+        --radius: 8px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        background: var(--background);
+        color: var(--text);
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+      }
+      body {
+        overflow-x: hidden;
+      }
+      button,
+      select {
+        font: inherit;
+      }
+      button,
+      a.button-link {
+        cursor: pointer;
+      }
+      .app {
+        min-height: 100vh;
+        background:
+          linear-gradient(rgba(91, 156, 246, 0.05) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(200, 168, 107, 0.04) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 20% 10%,
+            rgba(91, 156, 246, 0.16),
+            transparent 28rem
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(200, 168, 107, 0.12),
+            transparent 22rem
+          ),
+          var(--background);
+        background-size:
+          32px 32px,
+          32px 32px,
+          auto,
+          auto,
+          auto;
+      }
+
+      /* ==========================================================================
+       Flammy Dude Page Layout / HUD
+       ========================================================================== */
+      .cabinet {
+        width: min(1180px, calc(100vw - 20px));
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 14px 0 24px;
+        display: grid;
+        gap: 12px;
+        grid-template-rows: auto minmax(380px, 70vh) auto;
+      }
+      .topbar,
+      .controls {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: rgba(19, 19, 27, 0.88);
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.34);
+      }
+      .topbar {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        align-items: center;
+        min-width: 0;
+        padding: 10px;
+      }
+      .title-block {
+        min-width: 0;
+      }
+      .eyebrow {
+        margin: 0 0 2px;
+        color: var(--gold);
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+      h1 {
+        margin-bottom: 1px;
+        font-size: clamp(1.2rem, 3.5vw, 1.9rem);
+        line-height: 1;
+        text-transform: uppercase;
+        text-shadow: 0 0 24px rgba(91, 156, 246, 0.22);
+      }
+      .subtitle {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .button-link,
+      .small-button,
+      .difficulty-button {
+        border: 1px solid rgba(200, 168, 107, 0.48);
+        border-radius: 6px;
+        background: rgba(200, 168, 107, 0.08);
+        color: var(--text);
+        padding: 10px 12px;
+        min-height: 42px;
+        text-decoration: none;
+        transition:
+          background 140ms ease,
+          border-color 140ms ease;
+      }
+      .button-link:hover,
+      .small-button:hover,
+      .difficulty-button:hover,
+      .button-link:focus-visible,
+      .small-button:focus-visible,
+      .difficulty-button:focus-visible {
+        background: rgba(200, 168, 107, 0.16);
+        border-color: var(--gold);
+        outline: none;
+      }
+      .difficulty-button[aria-pressed="true"] {
+        border-color: var(--blue);
+        background: rgba(91, 156, 246, 0.14);
+      }
+      .hud {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        min-width: 0;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .score-pill {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 7px 10px;
+        background: var(--surface2);
+        color: var(--text);
+        min-width: 74px;
+        text-align: center;
+      }
+      .score-pill strong {
+        color: var(--blue);
+        font-size: 1.15rem;
+      }
+      .arena-wrap {
+        position: relative;
+        min-height: 380px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: #050508;
+        box-shadow: 0 22px 60px rgba(0, 0, 0, 0.55);
+        touch-action: none;
+      }
+      #flammyCanvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 380px;
+        touch-action: none;
+      }
+      .notice {
+        position: absolute;
+        z-index: 3;
+        top: 72px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 7px 10px;
+        border: 1px solid rgba(200, 168, 107, 0.5);
+        border-radius: 6px;
+        background: rgba(19, 19, 27, 0.9);
+        color: var(--gold);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 140ms ease;
+      }
+      .notice.show {
+        opacity: 1;
+      }
+      .overlay {
+        position: absolute;
+        z-index: 4;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 18px;
+        background: radial-gradient(
+          circle,
+          rgba(11, 11, 15, 0.18),
+          rgba(11, 11, 15, 0.72)
+        );
+      }
+      .overlay.hidden {
+        display: none;
+      }
+      .overlay-card {
+        width: min(570px, 100%);
+        max-height: 100%;
+        overflow: auto;
+        border: 1px solid rgba(200, 168, 107, 0.42);
+        border-radius: var(--radius);
+        padding: 20px;
+        background: rgba(19, 19, 27, 0.94);
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.52);
+      }
+      .overlay-card h2 {
+        margin-bottom: 8px;
+        color: var(--gold);
+        font-size: clamp(1.4rem, 5vw, 2.4rem);
+        text-transform: uppercase;
+      }
+      .overlay-card p {
+        color: var(--text);
+        line-height: 1.55;
+      }
+      .preview {
+        width: 82px;
+        height: 82px;
+        margin: 10px auto;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(91, 156, 246, 0.38);
+        border-radius: 50%;
+        background: rgba(91, 156, 246, 0.08);
+        box-shadow: 0 0 24px rgba(91, 156, 246, 0.18);
+        font-size: 2.4rem;
+      }
+      .difficulty-row,
+      .overlay-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin: 14px 0;
+      }
+
+      /* ==========================================================================
+       Flammy Dude Mobile Controls
+       ========================================================================== */
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+        min-width: 0;
+        padding: 12px;
+      }
+      .instructions,
+      .control-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        min-width: 0;
+      }
+      .instructions {
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.5;
+      }
+      .kbd {
+        display: inline-block;
+        border: 1px solid var(--border);
+        border-bottom-color: #09090d;
+        border-radius: 4px;
+        padding: 1px 6px;
+        background: var(--surface2);
+        color: var(--text);
+        white-space: nowrap;
+      }
+      .impulse-button {
+        min-width: 150px;
+        border-color: rgba(91, 156, 246, 0.58);
+        background: rgba(91, 156, 246, 0.14);
+        color: var(--text);
+        font-weight: bold;
+        touch-action: none;
+      }
+      .power-chip {
+        color: var(--gold);
+      }
+      .page-footer {
+        max-width: 920px;
+        margin: 64px auto 0;
+        padding-top: 28px;
+        border-top: 1px solid var(--border);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        z-index: 1;
+      }
+      .footer-nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px 4px;
+        align-items: center;
+      }
+      .footer-nav a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+      .footer-nav a:hover,
+      .footer-nav a:focus-visible {
+        color: var(--blue);
+        outline: none;
+      }
+      .footer-nav span {
+        opacity: 0.4;
+      }
+      .footer-meta {
+        opacity: 0.5;
+      }
+      .page-footer a {
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+      .page-footer a:hover,
+      .page-footer a:focus-visible {
+        color: var(--accent);
+        outline: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .app {
+          background:
+            linear-gradient(rgba(91, 156, 246, 0.04) 1px, transparent 1px),
+            var(--background);
+          background-size:
+            32px 32px,
+            auto;
+        }
+        .notice,
+        .button-link,
+        .small-button,
+        .difficulty-button {
+          transition: none;
+        }
+      }
+      @media (max-width: 720px) {
+        .cabinet {
+          width: min(calc(100% - 12px), 560px);
+          grid-template-rows: auto minmax(460px, 68vh) auto;
+          padding-top: 6px;
+        }
+        .topbar {
+          grid-template-columns: 1fr;
+        }
+        .hud {
+          justify-content: stretch;
+          flex-wrap: wrap;
+          white-space: normal;
+        }
+        .score-pill {
+          flex: 1;
+          min-width: 65px;
+        }
+        .score-pill:nth-child(n + 5) {
+          display: none;
+        }
+        .controls {
+          grid-template-columns: 1fr;
+        }
+        .instructions {
+          display: none;
+        }
+        .control-actions {
+          display: grid;
+          grid-template-columns: 2fr 1fr 1fr;
+        }
+        .control-actions button {
+          min-height: 52px;
+        }
+        .arena-wrap,
+        #flammyCanvas {
+          min-height: 460px;
+        }
+        .page-footer {
+          margin-top: 36px;
+          padding-inline: 8px;
+        }
+      }
+      @media (max-height: 520px) and (orientation: landscape) {
+        .cabinet {
+          min-height: auto;
+          grid-template-rows: auto minmax(260px, 1fr) auto;
+          gap: 8px;
+          padding-top: 8px;
+        }
+        .topbar .subtitle,
+        .eyebrow {
+          display: none;
+        }
+        .arena-wrap,
+        #flammyCanvas {
+          min-height: 260px;
+        }
+        .controls {
+          padding: 8px;
+        }
+        .page-footer {
+          margin-top: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="cabinet" aria-label="Flammy Dude cabinet">
+        <header class="topbar">
+          <a id="backLink" class="button-link" href="index.html"
+            >Back to Game Library</a
+          >
+          <div class="title-block">
+            <p class="eyebrow">Studio Arcade standalone cabinet</p>
+            <h1>Flammy Dude</h1>
+            <p class="subtitle">Stay in the signal path.</p>
+          </div>
+          <div class="hud" aria-live="polite">
+            <span class="score-pill"
+              >Score <strong id="scoreValue">0</strong></span
+            ><span class="score-pill"
+              >Best <strong id="bestValue">0</strong></span
+            ><span class="score-pill"
+              >Streak <strong id="streakValue">0</strong></span
+            ><span class="score-pill"
+              >Speed <strong id="speedValue">1.0</strong></span
+            ><span class="score-pill power-chip"
+              >Power <strong id="powerValue">—</strong></span
+            >
+          </div>
+        </header>
+        <div id="arenaWrap" class="arena-wrap">
+          <canvas
+            id="flammyCanvas"
+            aria-label="Flammy Dude side-scrolling signal path game"
+          ></canvas>
+          <div id="notice" class="notice" aria-live="polite"></div>
+          <div id="overlay" class="overlay">
+            <div class="overlay-card">
+              <h2 id="overlayTitle">Flammy Dude</h2>
+              <div id="overlayBody"></div>
+            </div>
+          </div>
+        </div>
+        <footer class="controls">
+          <div class="instructions">
+            <span><span class="kbd">Space / W / ↑</span> impulse</span
+            ><span><span class="kbd">Click / Tap</span> impulse</span
+            ><span><span class="kbd">Enter</span> start</span
+            ><span><span class="kbd">P / Esc</span> pause</span
+            ><span><span class="kbd">R</span> restart</span>
+          </div>
+          <div class="control-actions">
+            <button
+              id="impulseButton"
+              class="small-button impulse-button"
+              type="button"
+            >
+              Impulse</button
+            ><button id="pauseButton" class="small-button" type="button">
+              Pause</button
+            ><button id="muteButton" class="small-button" type="button">
+              Sound: On
+            </button>
+          </div>
+        </footer>
+      </section>
+      <footer class="page-footer">
+        <nav class="footer-nav">
+          <a href="https://bradwintersmusic-cloud.github.io/studio-home/"
+            >Studio Hub</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-news/"
+            >AET News</a
+          ><span>|</span
+          ><a
+            href="https://bradwintersmusic-cloud.github.io/studioassistant-sync/"
+            >Studio Schedule</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-videos/"
+            >Video Library</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-policies/"
+            >Policies</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-tools/"
+            >Studio Tools</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-musicians/"
+            >Session Musicians</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-resources/"
+            >Resources</a
+          ><span>|</span
+          ><a href="https://bradwintersmusic-cloud.github.io/studio-contact/"
+            >Contact</a
+          >
+        </nav>
+        <div class="footer-meta">
+          Belmont University &middot; Audio Engineering Technology &middot; CEMB
+        </div>
+        <div class="footer-meta">
+          <a href="mailto:brad.winters@belmont.edu">brad.winters@belmont.edu</a>
+        </div>
+      </footer>
+    </main>
+    <script>
+      "use strict";
+
+      /* ==========================================================================
+       Flammy Dude Configuration / Difficulty Settings
+       ========================================================================== */
+      const CONFIG = {
+        logicalWidth: 960,
+        logicalHeight: 540,
+        playerX: 250,
+        playerRadius: 20,
+        ceiling: 28,
+        floor: 506,
+        gravity: 910,
+        impulse: -355,
+        maxRise: -430,
+        maxFall: 470,
+        baseSpeed: 174,
+        maxSpeed: 286,
+        speedRamp: 0.8,
+        baseGap: 178,
+        minGap: 126,
+        gapShrink: 0.55,
+        spacing: 285,
+        minSpacing: 238,
+        spawnAhead: 1050,
+        debugHitbox: false,
+        maxParticles: 90,
+        restartLock: 0.38,
+      };
+      const DIFFICULTIES = {
+        chill: {
+          label: "Chill Session",
+          gravity: 0.88,
+          impulse: 0.92,
+          speed: 0.84,
+          gap: 1.2,
+          spacing: 1.12,
+          ramp: 0.7,
+          moving: 0,
+          power: 1.5,
+          score: 1,
+          hitbox: 0.86,
+        },
+        studio: {
+          label: "Studio Session",
+          gravity: 1,
+          impulse: 1,
+          speed: 1,
+          gap: 1,
+          spacing: 1,
+          ramp: 1,
+          moving: 0.14,
+          power: 1,
+          score: 1,
+          hitbox: 0.8,
+        },
+        deadline: {
+          label: "Deadline Mode",
+          gravity: 1.06,
+          impulse: 1.03,
+          speed: 1.13,
+          gap: 0.9,
+          spacing: 0.93,
+          ramp: 1.2,
+          moving: 0.25,
+          power: 0.75,
+          score: 1.25,
+          hitbox: 0.76,
+        },
+        live: {
+          label: "Live Take",
+          gravity: 1.1,
+          impulse: 1.05,
+          speed: 1.25,
+          gap: 0.84,
+          spacing: 0.88,
+          ramp: 1.36,
+          moving: 0.34,
+          power: 0.62,
+          score: 1.5,
+          hitbox: 0.74,
+        },
+      };
+      const OBSTACLE_TYPES = [
+        "patchbay",
+        "meter",
+        "console",
+        "wave",
+        "speaker",
+      ];
+      const ENVIRONMENTS = [
+        "Control Room",
+        "Live Room",
+        "Patchbay Tunnel",
+        "Waveform Grid",
+      ];
+
+      /* ==========================================================================
+       Flammy Dude State / LocalStorage
+       ========================================================================== */
+      const flammyDudeGame = {
+        canvas: null,
+        ctx: null,
+        w: 0,
+        h: 0,
+        dpr: 1,
+        state: "title",
+        difficulty: "studio",
+        frameId: 0,
+        lastTime: 0,
+        gameTime: 0,
+        travel: 0,
+        score: 0,
+        best: 0,
+        streak: 0,
+        bestStreak: 0,
+        speed: 0,
+        nextSpawn: 0,
+        lastGap: 270,
+        obstacles: [],
+        items: [],
+        particles: [],
+        player: { x: CONFIG.playerX, y: 270, vy: 0, angle: 0 },
+        started: false,
+        pointer: null,
+        muted: false,
+        audio: null,
+        power: null,
+        powerUntil: 0,
+        shield: false,
+        graceUntil: 0,
+        noticeUntil: 0,
+        hitAt: 0,
+        restartAt: 0,
+        newBest: false,
+        environment: 0,
+        reduced: matchMedia("(prefers-reduced-motion: reduce)").matches,
+        stopped: false,
+      };
+      const $ = (id) => document.getElementById(id),
+        canvas = $("flammyCanvas"),
+        ctx = canvas.getContext("2d");
+      flammyDudeGame.canvas = canvas;
+      flammyDudeGame.ctx = ctx;
+      function readNumber(key, fallback = 0) {
+        try {
+          const n = Number(localStorage.getItem(key));
+          return Number.isFinite(n) && n >= 0 ? n : fallback;
+        } catch (e) {
+          return fallback;
+        }
+      }
+      function writeNumber(key, value) {
+        try {
+          localStorage.setItem(key, String(Math.max(0, Math.floor(value))));
+        } catch (e) {}
+      }
+      function loadStorage() {
+        const saved = localStorageSafe(
+          "studioArcadeFlammyDudePreferredDifficulty",
+        );
+        flammyDudeGame.best = readNumber("studioArcadeFlammyDudeBestScore");
+        flammyDudeGame.bestStreak = readNumber(
+          "studioArcadeFlammyDudeBestStreak",
+        );
+        flammyDudeGame.difficulty = DIFFICULTIES[saved] ? saved : "studio";
+        flammyDudeGame.muted = readNumber("studioArcadeMuted") === 1;
+      }
+      function localStorageSafe(key) {
+        try {
+          return localStorage.getItem(key) || "";
+        } catch (e) {
+          return "";
+        }
+      }
+      function saveScore() {
+        const g = flammyDudeGame;
+        g.best = Math.max(g.best, g.score);
+        g.bestStreak = Math.max(g.bestStreak, g.streak);
+        writeNumber("studioArcadeFlammyDudeBestScore", g.best);
+        writeNumber("studioArcadeFlammyDudeBestStreak", g.bestStreak);
+        try {
+          localStorage.setItem(
+            "studioArcadeFlammyDudePreferredDifficulty",
+            g.difficulty,
+          );
+        } catch (e) {}
+        updateHud();
+      }
+
+      /* ==========================================================================
+       Flammy Dude Physics / Obstacles / Generation
+       ========================================================================== */
+      function settings() {
+        return DIFFICULTIES[flammyDudeGame.difficulty] || DIFFICULTIES.studio;
+      }
+      function reset() {
+        const g = flammyDudeGame,
+          d = settings();
+        g.state = "ready";
+        g.gameTime = 0;
+        g.travel = 0;
+        g.score = 0;
+        g.streak = 0;
+        g.speed = CONFIG.baseSpeed * d.speed;
+        g.nextSpawn = 330;
+        g.lastGap = 270;
+        g.obstacles = [];
+        g.items = [];
+        g.particles = [];
+        g.player = { x: CONFIG.playerX, y: 270, vy: 0, angle: 0 };
+        g.started = false;
+        g.pointer = null;
+        g.power = null;
+        g.powerUntil = 0;
+        g.shield = false;
+        g.graceUntil = 0;
+        g.hitAt = 0;
+        g.restartAt = 0;
+        g.newBest = false;
+        g.environment = 0;
+        g.stopped = false;
+        g.lastTime = performance.now();
+        hideOverlay();
+        ensureLoop();
+        updateHud();
+      }
+      function impulse() {
+        const g = flammyDudeGame;
+        if (g.state === "title") {
+          start();
+          return;
+        }
+        if (g.state === "over") {
+          if (performance.now() >= g.restartAt) reset();
+          return;
+        }
+        if (g.state === "paused") {
+          resume();
+          return;
+        }
+        if (g.state !== "ready" && g.state !== "active") return;
+        audio();
+        if (!g.started) {
+          g.started = true;
+          g.state = "active";
+        }
+        const leveling = g.power === "Auto-Level" ? 0.82 : 1;
+        g.player.vy = Math.max(
+          CONFIG.maxRise,
+          CONFIG.impulse * settings().impulse * leveling,
+        );
+        burst(g.player.x - 14, g.player.y, "#5b9cf6", 5);
+        sound("impulse");
+      }
+      function updatePhysics(dt) {
+        const g = flammyDudeGame,
+          d = settings(),
+          auto = g.power === "Auto-Level" ? 0.56 : 1;
+        g.player.vy = Math.min(
+          CONFIG.maxFall,
+          g.player.vy + CONFIG.gravity * d.gravity * auto * dt,
+        );
+        g.player.y += g.player.vy * dt;
+        g.player.angle = Math.max(-0.28, Math.min(0.48, g.player.vy / 700));
+      }
+      function currentGap() {
+        return Math.max(
+          CONFIG.minGap,
+          CONFIG.baseGap * settings().gap -
+            flammyDudeGame.score * CONFIG.gapShrink,
+        );
+      }
+      function currentSpacing() {
+        return Math.max(
+          CONFIG.minSpacing,
+          CONFIG.spacing * settings().spacing - flammyDudeGame.score * 0.65,
+        );
+      }
+      function spawnObstacle() {
+        const g = flammyDudeGame,
+          d = settings(),
+          gap = currentGap(),
+          margin = CONFIG.ceiling + gap / 2 + 42,
+          min = margin,
+          max = CONFIG.floor - gap / 2 - 42,
+          maxShift = 78;
+        let center = Math.max(
+          min,
+          Math.min(max, g.lastGap + (Math.random() * 2 - 1) * maxShift),
+        );
+        g.lastGap = center;
+        const moving = g.score >= 6 && Math.random() < d.moving,
+          ob = {
+            x: CONFIG.spawnAhead,
+            gapCenter: center,
+            baseCenter: center,
+            minCenter: min,
+            maxCenter: max,
+            gapSize: gap,
+            type: OBSTACLE_TYPES[
+              Math.floor(Math.random() * OBSTACLE_TYPES.length)
+            ],
+            passed: false,
+            moving,
+            phase: Math.random() * Math.PI * 2,
+            amplitude: moving ? Math.min(18, (max - min) * 0.15) : 0,
+          };
+        g.obstacles.push(ob);
+        if (Math.random() < 0.42)
+          g.items.push({
+            x: ob.x + 24,
+            y: center,
+            type: "energy",
+            active: true,
+          });
+        if (Math.random() < 0.07 * d.power)
+          g.items.push({
+            x: ob.x + 68,
+            y: center + (Math.random() * 2 - 1) * gap * 0.18,
+            type: "power",
+            power: ["Noise Gate", "Compression", "Auto-Level"][
+              Math.floor(Math.random() * 3)
+            ],
+            active: true,
+          });
+        g.nextSpawn = g.travel + currentSpacing();
+      }
+      function updateWorld(dt) {
+        const g = flammyDudeGame,
+          d = settings(),
+          target = Math.min(
+            CONFIG.maxSpeed * d.speed,
+            CONFIG.baseSpeed * d.speed + g.score * CONFIG.speedRamp * d.ramp,
+          ),
+          scale = g.power === "Compression" ? 0.72 : 1;
+        g.speed += (target * scale - g.speed) * Math.min(1, dt * 2.8);
+        g.travel += g.speed * dt;
+        if (g.travel >= g.nextSpawn) spawnObstacle();
+        for (const ob of g.obstacles) {
+          ob.x -= g.speed * dt;
+          if (ob.moving)
+            ob.gapCenter = Math.max(
+              ob.minCenter,
+              Math.min(
+                ob.maxCenter,
+                ob.baseCenter +
+                  Math.sin(g.gameTime * 0.95 + ob.phase) * ob.amplitude,
+              ),
+            );
+          if (!ob.passed && ob.x + 58 < g.player.x) {
+            ob.passed = true;
+            scoreObstacle(ob);
+          }
+        }
+        for (const item of g.items) item.x -= g.speed * dt;
+        g.obstacles = g.obstacles.filter((ob) => ob.x > -110);
+        g.items = g.items.filter((item) => item.active && item.x > -40);
+      }
+
+      /* ==========================================================================
+       Flammy Dude Collision / Scoring / Power-Ups
+       ========================================================================== */
+      function collision() {
+        const g = flammyDudeGame,
+          d = settings(),
+          r = CONFIG.playerRadius * d.hitbox,
+          p = g.player;
+        if (g.gameTime < g.graceUntil) return false;
+        if (p.y - r <= CONFIG.ceiling || p.y + r >= CONFIG.floor) return hit();
+        for (const ob of g.obstacles) {
+          if (p.x + r < ob.x || p.x - r > ob.x + 58) continue;
+          const top = ob.gapCenter - ob.gapSize / 2,
+            bottom = ob.gapCenter + ob.gapSize / 2;
+          if (p.y - r < top || p.y + r > bottom) return hit();
+        }
+        for (const item of g.items) {
+          if (!item.active) continue;
+          const dx = p.x - item.x,
+            dy = p.y - item.y;
+          if (dx * dx + dy * dy < 34 * 34) {
+            item.active = false;
+            if (item.type === "energy") {
+              g.score += 1;
+              if (g.score > g.best) {
+                g.best = g.score;
+                writeNumber("studioArcadeFlammyDudeBestScore", g.best);
+              }
+              notice("Signal Energy");
+              sound("energy");
+            } else activatePower(item.power);
+          }
+        }
+        return false;
+      }
+      function hit() {
+        const g = flammyDudeGame;
+        if (g.state !== "active") return true;
+        if (g.shield) {
+          const r = CONFIG.playerRadius * settings().hitbox;
+          g.shield = false;
+          g.power = null;
+          g.powerUntil = 0;
+          g.graceUntil = g.gameTime + 0.48;
+          g.player.y = Math.max(
+            CONFIG.ceiling + r + 2,
+            Math.min(CONFIG.floor - r - 2, g.player.y),
+          );
+          g.player.vy = CONFIG.impulse * 0.55;
+          notice("Noise Gate absorbed the hit");
+          sound("shield");
+          return true;
+        }
+        g.state = "hit";
+        g.hitAt = g.gameTime + 0.34;
+        sound("hit");
+        burst(g.player.x, g.player.y, "#f66f8d", 16);
+        return true;
+      }
+      function scoreObstacle(ob) {
+        const g = flammyDudeGame;
+        if (g.state !== "active") return;
+        g.score += 1;
+        g.streak++;
+        if (Math.abs(g.player.y - ob.gapCenter) < 18) {
+          g.score += 1;
+          notice("Center Signal +1");
+          sound("center");
+        } else sound("score");
+        if (g.score % 5 === 0) {
+          notice("Signal chain: " + g.score);
+          sound("speed");
+        }
+        if (g.score > g.best) {
+          g.best = g.score;
+          writeNumber("studioArcadeFlammyDudeBestScore", g.best);
+        }
+        updateHud();
+      }
+      function activatePower(name) {
+        const g = flammyDudeGame;
+        g.power = name;
+        g.shield = name === "Noise Gate";
+        g.powerUntil = g.gameTime + (name === "Noise Gate" ? 12 : 7);
+        notice(name);
+        sound("power");
+      }
+      function finishHit() {
+        const g = flammyDudeGame;
+        g.state = "over";
+        g.restartAt = performance.now() + CONFIG.restartLock * 1000;
+        g.newBest = g.score > g.best;
+        saveScore();
+        sound(g.newBest ? "best" : "over");
+        showOverlay(
+          g.newBest ? "New High Score" : "Signal Lost",
+          "<p>Score <strong>" +
+            g.score +
+            "</strong> · Best <strong>" +
+            g.best +
+            "</strong></p><p>Longest streak: " +
+            Math.max(g.streak, g.bestStreak) +
+            '</p><div class="overlay-actions"><button class="small-button" onclick="flammyDudeGame.reset()">Restart</button><a class="button-link" href="index.html" onclick="flammyDudeGame.stop()">Back to Game Library</a></div>',
+        );
+      }
+
+      /* ==========================================================================
+       Flammy Dude Backgrounds / Rendering / Effects
+       ========================================================================== */
+      function drawBackground() {
+        const g = flammyDudeGame,
+          w = CONFIG.logicalWidth,
+          h = CONFIG.logicalHeight,
+          env = ENVIRONMENTS[g.environment],
+          colors = [
+            ["#09101b", "#17243a"],
+            ["#140d18", "#302039"],
+            ["#07151b", "#123545"],
+            ["#080c19", "#152b59"],
+          ][g.environment],
+          backgroundTravel = g.reduced ? 0 : g.travel,
+          grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, colors[0]);
+        grad.addColorStop(1, colors[1]);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = "rgba(91,156,246,.12)";
+        ctx.lineWidth = 1;
+        for (let y = 80; y < h; y += 42) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(w, y);
+          ctx.stroke();
+        }
+        for (let x = -((backgroundTravel * 0.18) % 80); x < w; x += 80) {
+          ctx.beginPath();
+          ctx.moveTo(x, CONFIG.floor);
+          ctx.lineTo(x + 130, CONFIG.ceiling);
+          ctx.stroke();
+        }
+        ctx.fillStyle = "rgba(200,168,107,.55)";
+        ctx.font = "12px monospace";
+        ctx.fillText(env, 16, 22);
+        if (env === "Control Room")
+          for (let i = 0; i < 9; i++) {
+            ctx.fillStyle =
+              i % 2 ? "rgba(91,156,246,.18)" : "rgba(200,168,107,.15)";
+            ctx.fillRect(30 + i * 112, 72 + (i % 3) * 16, 72, 30);
+          }
+        if (env === "Patchbay Tunnel")
+          for (let i = 0; i < 30; i++) {
+            ctx.fillStyle =
+              i % 3 ? "rgba(91,156,246,.3)" : "rgba(200,168,107,.3)";
+            ctx.beginPath();
+            ctx.arc(
+              24 + (i % 15) * 65,
+              70 + Math.floor(i / 15) * 38,
+              2.5,
+              0,
+              7,
+            );
+            ctx.fill();
+          }
+      }
+      function drawBoundaries() {
+        ctx.fillStyle = "#101018";
+        ctx.fillRect(0, 0, CONFIG.logicalWidth, CONFIG.ceiling);
+        ctx.fillRect(
+          0,
+          CONFIG.floor,
+          CONFIG.logicalWidth,
+          CONFIG.logicalHeight - CONFIG.floor,
+        );
+        ctx.strokeStyle = "#c8a86b";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(0, CONFIG.ceiling);
+        ctx.lineTo(CONFIG.logicalWidth, CONFIG.ceiling);
+        ctx.moveTo(0, CONFIG.floor);
+        ctx.lineTo(CONFIG.logicalWidth, CONFIG.floor);
+        ctx.stroke();
+        for (
+          let x = -((flammyDudeGame.travel * 0.5) % 44);
+          x < CONFIG.logicalWidth;
+          x += 44
+        ) {
+          ctx.fillStyle = "rgba(91,156,246,.34)";
+          ctx.fillRect(x, CONFIG.floor + 9, 24, 4);
+        }
+      }
+      function drawObstacle(ob) {
+        const top = ob.gapCenter - ob.gapSize / 2,
+          bottom = ob.gapCenter + ob.gapSize / 2,
+          w = 58;
+        ctx.save();
+        ctx.translate(ob.x, 0);
+        ctx.fillStyle = "#1b1b26";
+        ctx.strokeStyle = ob.type === "meter" ? "#5b9cf6" : "#c8a86b";
+        ctx.lineWidth = 3;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = ctx.strokeStyle;
+        ctx.fillRect(0, CONFIG.ceiling, w, top - CONFIG.ceiling);
+        ctx.strokeRect(0, CONFIG.ceiling, w, top - CONFIG.ceiling);
+        ctx.fillRect(0, bottom, w, CONFIG.floor - bottom);
+        ctx.strokeRect(0, bottom, w, CONFIG.floor - bottom);
+        ctx.shadowBlur = 0;
+        if (ob.type === "patchbay")
+          for (let y = CONFIG.ceiling + 12; y < top - 7; y += 15)
+            drawLEDs(y, w);
+        if (ob.type === "patchbay")
+          for (let y = bottom + 12; y < CONFIG.floor - 7; y += 15)
+            drawLEDs(y, w);
+        if (ob.type === "meter") {
+          for (let y = CONFIG.ceiling + 8; y < top - 5; y += 9) {
+            ctx.fillStyle = y % 18 ? "#5b9cf6" : "#7ee3b2";
+            ctx.fillRect(12, y, 34, 4);
+          }
+          for (let y = bottom + 8; y < CONFIG.floor - 5; y += 9) {
+            ctx.fillStyle = y % 18 ? "#5b9cf6" : "#7ee3b2";
+            ctx.fillRect(12, y, 34, 4);
+          }
+        }
+        if (ob.type === "console") {
+          ctx.strokeStyle = "#8f8e9d";
+          for (let y = CONFIG.ceiling + 18; y < top; y += 38) {
+            ctx.beginPath();
+            ctx.moveTo(14, y);
+            ctx.lineTo(44, y);
+            ctx.stroke();
+            ctx.fillStyle = "#c8a86b";
+            ctx.fillRect(25, y - 6, 8, 12);
+          }
+        }
+        if (ob.type === "speaker") {
+          ctx.strokeStyle = "#5b9cf6";
+          for (const y of [top - 28, bottom + 28]) {
+            ctx.beginPath();
+            ctx.arc(29, y, 17, 0, 7);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(29, y, 7, 0, 7);
+            ctx.stroke();
+          }
+        }
+        if (ob.type === "wave") {
+          ctx.strokeStyle = "#f66f8d";
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          for (let y = CONFIG.ceiling; y < top; y += 5)
+            ctx.lineTo(29 + Math.sin(y * 0.12) * 18, y);
+          ctx.stroke();
+          ctx.beginPath();
+          for (let y = bottom; y < CONFIG.floor; y += 5)
+            ctx.lineTo(29 + Math.sin(y * 0.12) * 18, y);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+      function drawLEDs(y, w) {
+        for (let x = 10; x < w - 4; x += 13) {
+          ctx.fillStyle = x % 2 ? "#5b9cf6" : "#c8a86b";
+          ctx.fillRect(x, y, 5, 4);
+        }
+      }
+      function drawPlayer() {
+        const g = flammyDudeGame,
+          p = g.player;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
+        ctx.shadowBlur = 14;
+        ctx.shadowColor = g.shield ? "#7ee3b2" : "#5b9cf6";
+        ctx.fillStyle = "#13131b";
+        ctx.strokeStyle = g.shield ? "#7ee3b2" : "#e6e2d9";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.roundRect(-18, -23, 36, 46, 14);
+        ctx.fill();
+        ctx.stroke();
+        ctx.strokeStyle = "#c8a86b";
+        ctx.beginPath();
+        ctx.arc(0, -12, 23, Math.PI * 1.05, Math.PI * 1.95);
+        ctx.stroke();
+        ctx.fillStyle = "#5b9cf6";
+        ctx.beginPath();
+        ctx.arc(-7, -6, 2.5, 0, 7);
+        ctx.arc(7, -6, 2.5, 0, 7);
+        ctx.fill();
+        ctx.strokeStyle = "#c8a86b";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 4, 7, 0.15, Math.PI - 0.15);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-18, 3);
+        ctx.lineTo(-27, 10 + Math.sin(g.gameTime * 14) * 5);
+        ctx.moveTo(18, 3);
+        ctx.lineTo(27, 10 - Math.sin(g.gameTime * 14) * 5);
+        ctx.stroke();
+        if (CONFIG.debugHitbox) {
+          ctx.strokeStyle = "#f66f8d";
+          ctx.beginPath();
+          ctx.arc(0, 0, CONFIG.playerRadius * settings().hitbox, 0, 7);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+      function drawItems() {
+        for (const item of flammyDudeGame.items) {
+          ctx.save();
+          ctx.translate(item.x, item.y);
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = item.type === "power" ? "#7ee3b2" : "#c8a86b";
+          ctx.strokeStyle = ctx.shadowColor;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(0, 0, item.type === "power" ? 15 : 10, 0, 7);
+          ctx.stroke();
+          ctx.fillStyle = ctx.shadowColor;
+          ctx.font = "bold 11px monospace";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            item.type === "power"
+              ? item.power
+                  .split(" ")
+                  .map((x) => x[0])
+                  .join("")
+              : "S",
+            0,
+            4,
+          );
+          ctx.restore();
+        }
+      }
+      function burst(x, y, color, count) {
+        if (flammyDudeGame.reduced) return;
+        for (
+          let i = 0;
+          i < count && flammyDudeGame.particles.length < CONFIG.maxParticles;
+          i++
+        )
+          flammyDudeGame.particles.push({
+            x,
+            y,
+            vx: (Math.random() - 0.5) * 120,
+            vy: (Math.random() - 0.5) * 120,
+            life: 0.55,
+            color,
+          });
+      }
+      function updateParticles(dt) {
+        for (const p of flammyDudeGame.particles) {
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.life -= dt;
+        }
+        flammyDudeGame.particles = flammyDudeGame.particles.filter(
+          (p) => p.life > 0,
+        );
+      }
+      function render() {
+        ctx.save();
+        ctx.clearRect(0, 0, CONFIG.logicalWidth, CONFIG.logicalHeight);
+        drawBackground();
+        for (const ob of flammyDudeGame.obstacles) drawObstacle(ob);
+        drawItems();
+        drawBoundaries();
+        drawPlayer();
+        for (const p of flammyDudeGame.particles) {
+          ctx.globalAlpha = Math.max(0, p.life * 2);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, 3, 3);
+        }
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "rgba(255,255,255,.02)";
+        for (let y = 0; y < CONFIG.logicalHeight; y += 4)
+          ctx.fillRect(0, y, CONFIG.logicalWidth, 1);
+        ctx.restore();
+      }
+
+      /* ==========================================================================
+       Flammy Dude Audio
+       ========================================================================== */
+      function audio() {
+        if (flammyDudeGame.muted) return null;
+        if (!flammyDudeGame.audio) {
+          const A = window.AudioContext || window.webkitAudioContext;
+          if (A) flammyDudeGame.audio = new A();
+        }
+        if (flammyDudeGame.audio && flammyDudeGame.audio.state === "suspended")
+          flammyDudeGame.audio.resume();
+        return flammyDudeGame.audio;
+      }
+      function sound(type) {
+        const a = audio();
+        if (!a) return;
+        const map = {
+            impulse: [360, 0.07],
+            score: [650, 0.08],
+            center: [850, 0.14],
+            energy: [720, 0.1],
+            power: [310, 0.28],
+            shield: [120, 0.24],
+            hit: [82, 0.34],
+            speed: [520, 0.16],
+            best: [900, 0.45],
+            over: [75, 0.58],
+          },
+          m = map[type] || map.score,
+          now = a.currentTime,
+          o = a.createOscillator(),
+          gain = a.createGain();
+        o.type = type === "hit" || type === "over" ? "sawtooth" : "sine";
+        o.frequency.setValueAtTime(m[0], now);
+        o.frequency.exponentialRampToValueAtTime(
+          Math.max(48, m[0] * (type === "impulse" ? 1.55 : 0.68)),
+          now + m[1],
+        );
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + m[1]);
+        o.connect(gain).connect(a.destination);
+        o.start(now);
+        o.stop(now + m[1]);
+      }
+      function updateMute() {
+        $("muteButton").textContent = flammyDudeGame.muted
+          ? "Sound: Off"
+          : "Sound: On";
+        $("muteButton").setAttribute(
+          "aria-pressed",
+          String(flammyDudeGame.muted),
+        );
+      }
+
+      /* ==========================================================================
+       Flammy Dude Lifecycle / Input
+       ========================================================================== */
+      function resize() {
+        const rect = $("arenaWrap").getBoundingClientRect(),
+          d = Math.min(2, devicePixelRatio || 1);
+        flammyDudeGame.w = Math.max(300, rect.width);
+        flammyDudeGame.h = Math.max(260, rect.height);
+        canvas.width = Math.floor(flammyDudeGame.w * d);
+        canvas.height = Math.floor(flammyDudeGame.h * d);
+        canvas.style.width = flammyDudeGame.w + "px";
+        canvas.style.height = flammyDudeGame.h + "px";
+        ctx.setTransform(
+          canvas.width / CONFIG.logicalWidth,
+          0,
+          0,
+          canvas.height / CONFIG.logicalHeight,
+          0,
+          0,
+        );
+        flammyDudeGame.dpr = d;
+      }
+      function start() {
+        audio();
+        reset();
+      }
+      function pause() {
+        const g = flammyDudeGame;
+        if (g.state !== "active" && g.state !== "ready") return;
+        g.state = "paused";
+        g.pointer = null;
+        showOverlay(
+          "Session Paused",
+          '<p>The signal is held. Resume deliberately when ready.</p><div class="overlay-actions"><button class="small-button" onclick="flammyDudeGame.resume()">Resume</button><a class="button-link" href="index.html" onclick="flammyDudeGame.stop()">Back to Game Library</a></div>',
+        );
+      }
+      function resume() {
+        if (flammyDudeGame.state !== "paused") return;
+        flammyDudeGame.state = flammyDudeGame.started ? "active" : "ready";
+        flammyDudeGame.lastTime = performance.now();
+        hideOverlay();
+        ensureLoop();
+      }
+      function stop() {
+        const g = flammyDudeGame;
+        g.stopped = true;
+        g.pointer = null;
+        saveScore();
+        if (g.frameId) cancelAnimationFrame(g.frameId);
+        g.frameId = 0;
+        if (g.audio) g.audio.suspend();
+      }
+      function ensureLoop() {
+        if (!flammyDudeGame.frameId)
+          flammyDudeGame.frameId = requestAnimationFrame(loop);
+      }
+      function loop(now) {
+        const g = flammyDudeGame;
+        g.frameId = 0;
+        const dt = Math.min(0.035, Math.max(0, (now - g.lastTime) / 1000 || 0));
+        g.lastTime = now;
+        if (g.state === "ready") {
+          g.gameTime += dt;
+          g.player.y = 270 + Math.sin(g.gameTime * 2.5) * 5;
+        }
+        if (g.state === "active") {
+          g.gameTime += dt;
+          updatePhysics(dt);
+          updateWorld(dt);
+          updateParticles(dt);
+          collision();
+          if (g.power && g.gameTime >= g.powerUntil) {
+            g.power = null;
+            g.shield = false;
+          }
+          const env = Math.min(
+            ENVIRONMENTS.length - 1,
+            Math.floor(g.travel / 3000),
+          );
+          if (env !== g.environment) {
+            g.environment = env;
+            notice(ENVIRONMENTS[env]);
+          }
+        }
+        if (g.state === "hit") {
+          g.gameTime += dt;
+          g.player.vy = Math.min(
+            CONFIG.maxFall,
+            g.player.vy + CONFIG.gravity * dt,
+          );
+          g.player.y += g.player.vy * dt;
+          updateParticles(dt);
+          if (g.gameTime >= g.hitAt) finishHit();
+        }
+        if (g.noticeUntil < g.gameTime) $("notice").classList.remove("show");
+        render();
+        updateHud();
+        if (!g.stopped && !["over", "title"].includes(g.state)) ensureLoop();
+      }
+      function updateHud() {
+        const g = flammyDudeGame;
+        $("scoreValue").textContent = g.score;
+        $("bestValue").textContent = g.best;
+        $("streakValue").textContent = g.streak;
+        $("speedValue").textContent = (
+          g.speed / (CONFIG.baseSpeed * settings().speed) || 1
+        ).toFixed(1);
+        $("powerValue").textContent = g.power || "—";
+      }
+      function notice(text) {
+        $("notice").textContent = text;
+        $("notice").classList.add("show");
+        flammyDudeGame.noticeUntil = flammyDudeGame.gameTime + 1.25;
+      }
+      function showOverlay(title, body) {
+        $("overlayTitle").textContent = title;
+        $("overlayBody").innerHTML = body;
+        $("overlay").classList.remove("hidden");
+      }
+      function hideOverlay() {
+        $("overlay").classList.add("hidden");
+      }
+      function showTitle() {
+        const g = flammyDudeGame,
+          buttons = Object.keys(DIFFICULTIES)
+            .map(
+              (k) =>
+                '<button class="difficulty-button" data-difficulty="' +
+                k +
+                '" aria-pressed="' +
+                (k === g.difficulty) +
+                '">' +
+                DIFFICULTIES[k].label +
+                "</button>",
+            )
+            .join("");
+        showOverlay(
+          "Flammy Dude",
+          '<div class="preview" aria-hidden="true">🎙</div><p>Stay in the signal path.</p><p>Best score: <strong>' +
+            g.best +
+            '</strong></p><div class="difficulty-row">' +
+            buttons +
+            '</div><div class="overlay-actions"><button id="startButton" class="small-button">Start</button><a class="button-link" href="index.html" onclick="flammyDudeGame.stop()">Back to Game Library</a></div><p><small>Start, then use one deliberate impulse to begin moving.</small></p>',
+        );
+        document.querySelectorAll("[data-difficulty]").forEach(
+          (b) =>
+            (b.onclick = () => {
+              g.difficulty = b.dataset.difficulty;
+              saveScore();
+              showTitle();
+              sound("score");
+            }),
+        );
+        $("startButton").onclick = start;
+      }
+      document.addEventListener("keydown", (e) => {
+        if (["Space", "ArrowUp", "KeyW"].includes(e.code)) {
+          if (["ready", "active", "over"].includes(flammyDudeGame.state))
+            e.preventDefault();
+          if (!e.repeat) impulse();
+        }
+        if (e.code === "Enter" && !e.repeat) {
+          e.preventDefault();
+          if (flammyDudeGame.state === "title") start();
+          else if (flammyDudeGame.state === "paused") resume();
+          else if (
+            flammyDudeGame.state === "over" &&
+            performance.now() >= flammyDudeGame.restartAt
+          )
+            reset();
+        }
+        if ((e.code === "KeyP" || e.code === "Escape") && !e.repeat) {
+          e.preventDefault();
+          flammyDudeGame.state === "paused" ? resume() : pause();
+        }
+        if (
+          e.code === "KeyR" &&
+          !e.repeat &&
+          flammyDudeGame.state === "over" &&
+          performance.now() >= flammyDudeGame.restartAt
+        )
+          reset();
+      });
+      $("arenaWrap").addEventListener("pointerdown", (e) => {
+        if (
+          e.target.closest("button") ||
+          e.target.closest("a") ||
+          flammyDudeGame.pointer
+        )
+          return;
+        e.preventDefault();
+        flammyDudeGame.pointer = e.pointerId;
+        $("arenaWrap").setPointerCapture(e.pointerId);
+        impulse();
+      });
+      $("arenaWrap").addEventListener("pointerup", (e) => {
+        if (flammyDudeGame.pointer === e.pointerId)
+          flammyDudeGame.pointer = null;
+      });
+      $("arenaWrap").addEventListener(
+        "pointercancel",
+        () => (flammyDudeGame.pointer = null),
+      );
+      $("impulseButton").addEventListener("pointerdown", (e) => {
+        if (flammyDudeGame.pointer) return;
+        e.preventDefault();
+        flammyDudeGame.pointer = e.pointerId;
+        $("impulseButton").setPointerCapture(e.pointerId);
+        impulse();
+      });
+      $("impulseButton").addEventListener("pointerup", (e) => {
+        if (flammyDudeGame.pointer === e.pointerId)
+          flammyDudeGame.pointer = null;
+      });
+      $("impulseButton").addEventListener(
+        "pointercancel",
+        () => (flammyDudeGame.pointer = null),
+      );
+      $("pauseButton").onclick = () =>
+        flammyDudeGame.state === "paused" ? resume() : pause();
+      $("muteButton").onclick = () => {
+        flammyDudeGame.muted = !flammyDudeGame.muted;
+        writeNumber("studioArcadeMuted", flammyDudeGame.muted ? 1 : 0);
+        updateMute();
+      };
+      $("backLink").addEventListener("click", stop);
+      window.addEventListener("resize", resize);
+      window.addEventListener("orientationchange", () => {
+        resize();
+        if (
+          flammyDudeGame.state === "active" ||
+          flammyDudeGame.state === "ready"
+        )
+          pause();
+      });
+      window.addEventListener("blur", () => {
+        flammyDudeGame.pointer = null;
+        if (
+          flammyDudeGame.state === "active" ||
+          flammyDudeGame.state === "ready"
+        )
+          pause();
+      });
+      document.addEventListener("visibilitychange", () => {
+        if (
+          document.hidden &&
+          (flammyDudeGame.state === "active" ||
+            flammyDudeGame.state === "ready")
+        )
+          pause();
+      });
+      window.addEventListener("beforeunload", stop);
+      flammyDudeGame.init = showTitle;
+      flammyDudeGame.start = start;
+      flammyDudeGame.pause = pause;
+      flammyDudeGame.resume = resume;
+      flammyDudeGame.reset = reset;
+      flammyDudeGame.resize = resize;
+      flammyDudeGame.saveScore = saveScore;
+      flammyDudeGame.stop = stop;
+      flammyDudeGame.destroy = stop;
+      loadStorage();
+      resize();
+      updateMute();
+      updateHud();
+      showTitle();
+      render();
+    </script>
+  </body>
+</html>
